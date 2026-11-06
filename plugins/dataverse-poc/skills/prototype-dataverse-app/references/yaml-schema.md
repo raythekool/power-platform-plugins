@@ -13,7 +13,7 @@ Riferimento delle chiavi dei quattro layer. Le chiavi marcate `legacy-html` sono
 
 ```yaml
 version: 1
-appType: model-driven       # model-driven | code-app, vedi tipi-di-app.md
+appType: model-driven       # model-driven | code-app | power-pages, vedi tipi-di-app.md
 mode: requirements          # requirements | legacy-html
 naming:
   prefix: ava_              # in altri contesti: cli_, enr_, ...
@@ -73,6 +73,31 @@ regole di validazione descritte in `dynamics-365-chrome.md` (un `form` non compa
 navigazione e quella disegnata per l'app, non una site map Dataverse.
 `showPrototypeBanner` va incluso solo negli assemblaggi che usano `assets/mda-shell.*` o
 uno shell equivalente; non richiede validazione specifica.
+
+### Blocco `powerPages` (solo `appType: power-pages`)
+
+```yaml
+powerPages:
+  navigation: [ava_home, ava_richieste_elenco]   # facoltativo: menu del sito (default: entita che non sono dettagli)
+  demoPersona: ava_cliente                         # persona iniziale del prototipo: anonymous | authenticated | web role
+  webRoles:                                        # anonymous e authenticated sono impliciti
+    - { logicalName: ava_cliente, displayName: Cliente, authenticated: true }
+  tablePermissions:
+    - logicalName: ava_tp_richiesta_cliente
+      displayName: Richieste del cliente
+      table: ava_richiesta                         # logical name Dataverse
+      scope: contact                               # global | contact | account | self | parent
+      relationship: ava_contact_richiesta           # contact/account: relazione verso la tabella corrispondente, con lookup nella tabella protetta
+      privileges: [read, create, write]            # read | create | write | delete | append | appendto
+      roles: [ava_cliente]                         # web role, anonymous o authenticated
+      # scope parent: anche parentPermission (logicalName) e relationship (schema name)
+```
+
+Nelle entita: `entity.access` (`anonymous`, `authenticated` o `[web role]`, default `authenticated`),
+`entity.hero: {title, text}` per home e pagine informative, `dataverse.table.entitySetName` per il nome
+della Web API. Il ruolo `authenticated` vale per ogni utente autenticato; una pagina `anonymous` la vedono
+tutti, quindi richiede table permission sia per `anonymous` sia per `authenticated`.
+Un dettaglio modificabile richiede `write` per almeno un ruolo che vede la pagina; gli altri ruoli mantengono la vista in sola lettura. Un dettaglio senza tabella propria eredita quella della lista che lo apre (`targetForm`).
 
 ## `config/entities/<entita>.yaml`
 
@@ -285,6 +310,8 @@ Il renderer dello scaffold disegna la POC solo da queste chiavi; non serve scriv
 | --- | --- | --- |
 | `config/index.yaml` | `demoUser.initials` | Iniziali dell'utente nell'header (default `MD`/`DU`) |
 | `config/index.yaml` (code-app) | `codeApp.navigation: [logicalName]` | Ordine delle voci di menu; default: entita che non sono `targetForm` di un'altra |
+| `config/index.yaml` (power-pages) | `powerPages.navigation`, `powerPages.demoPersona`, `webRoles`, `tablePermissions` | Menu in alto, selettore della persona, pagine riservate, privilegi (`Nuovo` con create, `Salva` con write) |
+| `entity` (power-pages) | `access`, `hero: {title, text}` | Chi vede la pagina; intestazione della home o di una pagina informativa |
 | `entity` | `dataset`, `targetForm`, `primaryColumn` | Vista (model-driven) o elenco (code-app) e schermata di dettaglio aperta dalla riga |
 | `entity` | `columns: [campo \| {field, label}]` | Colonne della griglia; default: colonna primaria + 5 colonne del primo record |
 | `entity` | `viewName` | Titolo della vista (default `displayName`) |
@@ -314,8 +341,9 @@ Le opzioni choice si leggono da `dataverse.choice.options`, `dataverse.choice` (
 
 I validator della POC devono segnalare almeno:
 
-- `appType` mancante o fuori da `{model-driven, code-app}`;
-- con `appType: code-app`, presenza di `pageType`, di un blocco `navigation`, o di componenti con `type: generative-page` o `type: pcf`;
+- `appType` mancante o fuori da `{model-driven, code-app, power-pages}`;
+- con `appType: code-app` o `power-pages`, presenza di `pageType`, di un blocco `navigation`, o di componenti con `type: generative-page` o `type: pcf`;
+- con `appType: power-pages`: web role o table permission non conformi al prefisso, `scope` o `privileges` fuori enum, ruoli inesistenti in `access` o `roles`, schermata con tabella vista da un ruolo senza table permission `read`, dettaglio modificabile senza `write` (avviso: permesso mai usato, `entitySetName` assente);
 - schermata record senza `entity.dataverse.table`, salvo che sia dichiaratamente una pagina puramente informativa senza tabella principale;
 - campo mappabile a Dataverse senza `fields[].dataverse.type`, `source` o `requiredLevel`;
 - `choice` senza opzioni complete `{value, label}`, `lookup` senza `targets`, `datetime` senza `format` e `behavior`, colonna numerica senza limiti quando il requisito li esprime;

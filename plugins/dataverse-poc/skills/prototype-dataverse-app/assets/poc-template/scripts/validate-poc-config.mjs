@@ -2,7 +2,7 @@
 // tipi-di-app.md and dynamics-365-chrome.md. Usage: node scripts/validate-poc-config.mjs [--json]
 import { loadModel, report } from './lib/poc-model.mjs';
 
-const APP_TYPES = ['model-driven', 'code-app'];
+const APP_TYPES = ['model-driven', 'code-app', 'power-pages'];
 const MODES = ['requirements', 'legacy-html'];
 const PAGE_TYPES = ['dashboard', 'view', 'form', 'custom-page'];
 const CONTROLS = ['text', 'memo', 'choice', 'lookup', 'money', 'decimal', 'whole', 'datetime', 'boolean', 'file'];
@@ -147,7 +147,7 @@ for (const e of model.entities) {
     entityByName.set(ent.logicalName, { ...e, pageType });
 
     if (md && !PAGE_TYPES.includes(pageType)) errors.push(`${where}: pageType mancante o non valido (${pageType ?? 'assente'})`);
-    if (!md && pageType) errors.push(`${where}: pageType non ammesso con appType code-app`);
+    if (!md && pageType) errors.push(`${where}: pageType non ammesso con appType ${appType}`);
     const isRecordScreen = md ? ['view', 'form'].includes(pageType) : Boolean(ent.dataset);
     if (isRecordScreen && !ent.dataverse?.table && !ent.dataverse?.tables && !ent.informational) errors.push(`${where}: schermata record senza entity.dataverse.table (o informational: true)`);
     if (ent.dataverse?.table) checkTable(`${where} dataverse.table`, ent.dataverse.table);
@@ -251,12 +251,72 @@ if (md) {
         if (e.pageType === 'form' && !formTargets.has(ln)) errors.push(`${e.file}: form mai aperto da una view (targetForm) ne da un componente`);
     }
     for (const ln of config.demoPath ?? []) if (!entityByName.has(ln) && !navItems.some(({ item }) => item?.logicalName === ln)) errors.push(`config/index.yaml: demoPath "${ln}" inesistente`);
-} else if (appType === 'code-app') {
-    if (config.navigation) errors.push('config/index.yaml: blocco navigation non ammesso con appType code-app');
+} else if (APP_TYPES.includes(appType)) {
+    if (config.navigation) errors.push(`config/index.yaml: blocco navigation non ammesso con appType ${appType}`);
     for (const e of entityByName.values()) {
         const target = e.doc.entity.targetForm;
         if (target && !entityByName.has(target)) errors.push(`${e.file}: targetForm "${target}" inesistente`);
     }
+}
+
+// --- Power Pages: web role, table permission, accesso alle schermate -----------------------------------
+// Una schermata con tabella Dataverse e visibile solo se ogni ruolo che la vede ha una table permission con read:
+// e lo stesso controllo che in ambiente fa la Web API (/_api/), qui anticipato sul YAML.
+if (appType === 'power-pages') {
+    const SCOPES = ['global', 'contact', 'account', 'self', 'parent'];
+    const PRIVILEGES = ['read', 'create', 'write', 'delete', 'append', 'appendto'];
+    const BUILTIN = ['anonymous', 'authenticated'];
+    const pp = config.powerPages ?? {};
+    const roles = new Set(BUILTIN);
+    for (const r of pp.webRoles ?? []) {
+        name('powerPages.webRoles', r); display(`powerPages.webRoles ${r?.logicalName ?? '?'}`, r);
+        if (r?.logicalName) roles.add(r.logicalName);
+    }
+    const knownRole = (where, r) => { if (!roles.has(r)) errors.push(`${where}: ruolo "${r}" inesistente (anonymous, authenticated o powerPages.webRoles)`); };
+    const perms = [];
+    for (const p of pp.tablePermissions ?? []) {
+        const w = `powerPages.tablePermissions ${p?.logicalName ?? '?'}`;
+        name(w, p); display(w, p);
+        if (!p.table) errors.push(`${w}: table mancante (logical name della tabella Dataverse)`);
+        if (!SCOPES.includes(p.scope)) errors.push(`${w}: scope non valido (${p.scope ?? 'assente'}): ammessi ${SCOPES.join(', ')}`);
+        if (p.scope === 'parent' && (!p.parentPermission || !p.relationship)) errors.push(`${w}: scope parent senza parentPermission e relationship`);
+        if (['contact', 'account'].includes(p.scope) && !p.relationship) errors.push(`${w}: scope ${p.scope} senza relationship verso ${p.scope}`);
+        if (!p.privileges?.length || p.privileges.some((x) => !PRIVILEGES.includes(x))) errors.push(`${w}: privileges mancanti o non validi: ammessi ${PRIVILEGES.join(', ')}`);
+        if (!p.roles?.length) errors.push(`${w}: roles mancante`);
+        for (const r of p.roles ?? []) knownRole(w, r);
+        perms.push({ ...p, used: false });
+    }
+    for (const ln of pp.navigation ?? []) if (!entityByName.has(ln)) errors.push(`config/index.yaml: powerPages.navigation "${ln}" inesistente`);
+    for (const ln of config.demoPath ?? []) if (!entityByName.has(ln)) errors.push(`config/index.yaml: demoPath "${ln}" inesistente`);
+    if (pp.demoPersona) knownRole('powerPages.demoPersona', pp.demoPersona);
+
+    // Il ruolo authenticated vale per ogni utente autenticato; anonymous solo per chi non ha fatto l'accesso.
+    const covers = (perm, role) => perm.roles?.includes(role) || (role !== 'anonymous' && perm.roles?.includes('authenticated'));
+    const grant = (table, role, privilege) => {
+        const hit = perms.filter((p) => p.table === table && p.privileges?.includes(privilege) && covers(p, role));
+        hit.forEach((p) => { p.used = true; });
+        return hit.length > 0;
+    };
+    const parents = new Map([...entityByName.values()].filter((e) => e.doc.entity.targetForm).map((e) => [e.doc.entity.targetForm, e.doc.entity]));
+    const details = new Set(parents.keys());
+    for (const [ln, e] of entityByName) {
+        const ent = e.doc.entity;
+        const access = ent.access ?? 'authenticated';
+        const list = access === 'anonymous' || access === 'authenticated' ? [access] : Array.isArray(access) ? access : null;
+        if (!list?.length) { errors.push(`${e.file}: access non valido: anonymous, authenticated o [ruoli]`); continue; }
+        list.forEach((r) => knownRole(`${e.file} access`, r));
+        // Una pagina anonima la vedono anche gli utenti autenticati: servono permessi per entrambi.
+        const viewers = [...new Set([...list, ...(list.includes('anonymous') ? ['authenticated'] : []), ...(list.includes('authenticated') || list.includes('anonymous') ? [...roles].filter((r) => r !== 'anonymous') : [])])];
+        const table = ent.dataverse?.table ?? parents.get(ln)?.dataverse?.table;
+        const tables = [table, ...(ent.dataverse?.tables ?? [])].filter((t) => t?.logicalName);
+        for (const t of tables) {
+            if (!t.entitySetName) warnings.push(`${e.file}: dataverse.table ${t.logicalName} senza entitySetName (lo scaffold SPA usera ${t.logicalName}s)`);
+            for (const r of viewers) if (!grant(t.logicalName, r, 'read')) errors.push(`${e.file}: nessuna table permission con read su ${t.logicalName} per il ruolo ${r}`);
+            const editable = details.has(ln) && (e.doc.sections ?? []).some((s) => (s.fields ?? []).some((f) => !f.readOnly));
+            if (editable && !viewers.some((r) => grant(t.logicalName, r, 'write'))) errors.push(`${e.file}: campi modificabili senza table permission con write su ${t.logicalName} per almeno un ruolo che vede la pagina (oppure readOnly: true sui campi)`);
+        }
+    }
+    for (const p of perms) if (!p.used) warnings.push(`powerPages.tablePermissions ${p.logicalName}: non usata da nessuna schermata`);
 }
 
 report('validate:config', errors, warnings, { entities: entityByName.size, components: locals.size, definitions: definitions.size });

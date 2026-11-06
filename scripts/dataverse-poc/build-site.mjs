@@ -44,6 +44,7 @@ if (!argv.includes('--no-demo')) {
     const builds = [
         { file: 'model-driven.html', args: ['--app-type', 'model-driven', '--name', 'Order Service'], hub: 'sales-hub' },
         { file: 'code-app.html', args: ['--app-type', 'code-app', '--name', 'Configuratore Offerte'] },
+        { file: 'power-pages.html', args: ['--app-type', 'power-pages', '--name', 'Portale Assistenza'] },
     ];
     mkdirSync(join(out, 'demo'), { recursive: true });
     for (const b of builds) {

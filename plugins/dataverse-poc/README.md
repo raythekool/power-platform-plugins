@@ -21,17 +21,20 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 | `poc-pcf` | agente | no | Controlli PCF: manifest, implementazione, PCF Workbench, push |
 | `poc-webresources` | agente | no | JavaScript di form, HTML/CSS, icone tabelle, comandi ribbon |
 | `poc-code-app` | agente | no | Power Apps code app (React/Vite) per POC `appType: code-app` |
+| `poc-power-pages` | agente | no | Sito Power Pages SPA (React/Vite) per POC `appType: power-pages`: scaffold dai YAML, pagine su mock, Web API, web role, table permission, upload |
 | `poc-tester` | agente | no | Verifica indipendente: validator, smoke test Playwright, metadata, browser |
 | `poc-deployer` | agente | no | Preflight ambiente, solution, publish, export/import, inventario cleanup |
 | `dataverse-poc-init` | skill | `/` | Setup di una POC nuova: requisiti, quattro domande, scaffold, piano, primo check |
 | `dataverse-poc-planner` | skill | `/` | appType, scope, schermate, percorso demo |
+| `dataverse-poc-plan-guide` | skill | `/` | Direttive per qualsiasi agente che pianifica una POC: domande, struttura del piano, ondate, criteri di done |
 | `dataverse-poc-schema` | skill | `/` | Contratto Dataverse di tabelle e colonne |
 | `dataverse-poc-model-driven` | skill | `/` | Prototipo model-driven con chrome Dynamics 365 CE |
 | `dataverse-poc-code-app` | skill | `/` | Prototipo code app |
+| `dataverse-poc-power-pages` | skill | `/` | Prototipo di sito Power Pages SPA (persone, web role, table permission) e passaggio al progetto React |
 | `dataverse-poc-pipeline` | skill | `/` | Comandi della pipeline: init, baseline standard, `npm run check`, aggiornamento script |
 | `dataverse-poc-realization` | skill | no | Contratto multi-agente: stage gate, brief/report, ownership, guardrail, gotcha |
 | `prototype-dataverse-app` | skill | no | Riferimenti e asset condivisi (schema YAML, template della pipeline, renderer generico, shell D365, app standard, smoke test) |
-| `poc-guard` | hook `PreToolUse` | — | Chiede conferma prima di comandi PAC/PACX distruttivi, cambi di ambiente, URL espliciti, import di solution |
+| `poc-guard` | hook `PreToolUse` | — | Chiede conferma prima di comandi PAC/PACX distruttivi, cambi di ambiente, URL espliciti, import di solution, upload di siti Power Pages |
 
 ### 🐚 Script
 
@@ -40,6 +43,7 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 | `scripts/check-prereqs.mjs` | Verifica in sola lettura di Node, npm, browser, `pac`, `pacx`, profili e server MCP (`--stage P\|R`) | utente, init, orchestratore |
 | `scripts/poc-init.mjs` | Scaffold completo di una POC (esempi, piano, `npm install`, primo check); `--update` per POC esistenti | init, orchestratore |
 | `scripts/poc-add-standard.mjs` | Baseline Sales Hub / Customer Service Hub o tabelle standard, con dati sintetici | orchestratore, `poc-prototype-builder` |
+| `scripts/poc-spa-scaffold.mjs` | Progetto React + Vite di un sito Power Pages dai YAML della POC: route, tipi, dati mock, Web API, site setting, web role, table permission | `poc-power-pages` |
 | `scripts/poc-preflight.mjs` | Profili PAC/PACX attivi contro il target del piano; blocca senza conferma dello stage R | orchestratore, sotto-agenti di stage R |
 | `scripts/poc-solution-zip.mjs` | Versione, componenti e generative page di uno zip esportato | `poc-deployer`, `poc-tester` |
 | `npm run check` (nella POC) | Validator config e dati, runtime, statico, copertura, smoke test, riepilogo JSON | orchestratore, `poc-prototype-builder`, `poc-tester` |
@@ -58,13 +62,14 @@ flowchart LR
     O --> PCF[poc-pcf]
     O --> WR[poc-webresources]
     O --> CA[poc-code-app]
+    O --> PP[poc-power-pages]
     O --> T[poc-tester]
 ```
 
 | Stage | Cosa produce | Gate |
 | --- | --- | --- |
-| P — Prototipo | YAML + HTML runtime/statico con componenti simulati | `appType` deciso con l'utente |
-| R — Realizzazione DEV | Metadata, dati demo, UI, pagine, controlli in un ambiente DEV | Prototipo validato e ambiente, solution, prefisso, LCID confermati |
+| P — Prototipo | YAML + HTML runtime/statico con componenti simulati; per power-pages anche il progetto React su mock | `appType` deciso con l'utente |
+| R — Realizzazione DEV | Metadata, dati demo, UI, pagine, controlli, code app o sito Power Pages in un ambiente DEV | Prototipo validato e ambiente, solution, prefisso, LCID confermati |
 | D — Rilascio | Export/import verso altri ambienti | Conferma per ogni rilascio |
 
 L'orchestratore tiene lo stato in un **documento di piano** (`POC/Piano_<Iniziativa>_<Cliente>.md`) con la tabella `🎯 Target ambiente`. Ogni sotto-agente riceve un brief autosufficiente e restituisce un report standard (`COMPLETATO` / `PARZIALE` / `BLOCCATO`). Il contratto completo è in [dataverse-poc-realization](skills/dataverse-poc-realization/SKILL.md).
@@ -108,7 +113,7 @@ Se un repository contiene già copie locali degli stessi agenti o skill (in `.gi
 
 1. POC nuova: avviare l'init. I dettagli sono nel [tutorial](https://github.com/raythekool/power-platform-plugins/blob/main/docs/dataverse-poc/tutorial-init.md).
 2. Descrivere requisiti, POC esistente o cartella, e fin dove arrivare (prototipo, realizzazione DEV, rilascio).
-3. Rispondere alle domande su `appType` e prefisso. Prima dello stage R rispondere anche su ambiente e solution.
+3. Rispondere alle domande su `appType` (`model-driven`, `code-app` o `power-pages`) e prefisso. Prima dello stage R rispondere anche su ambiente e solution.
 
 Nel selettore degli agenti compare solo **POC Dataverse**: i sotto-agenti hanno `user-invocable: false`. In Claude Code l'agente principale è una skill e non un agente, perché lì un sotto-agente non può avviare altri sotto-agenti. I file in `claude/` e `.claude-plugin/plugin.json` sono generati da `agents/` (vedi [CONTRIBUTING](https://github.com/raythekool/power-platform-plugins/blob/main/CONTRIBUTING.md)): non vanno modificati a mano.
 
@@ -116,7 +121,7 @@ Nel selettore degli agenti compare solo **POC Dataverse**: i sotto-agenti hanno 
 
 - Verifica automatica: `node scripts/check-prereqs.mjs` (stage P) o `--stage R`.
 - Node.js 18+ e npm (script del plugin, pipeline delle POC, hook).
-- `pac` (Power Platform CLI) e `pacx` per lo stage R; profili di autenticazione già creati dall'utente.
+- `pac` (Power Platform CLI) e `pacx` per lo stage R; profili di autenticazione già creati dall'utente. Per i siti Power Pages SPA serve `pac` 1.44 o successiva (`check-prereqs.mjs --stage R --app-type power-pages`).
 - Edge o Chrome installati per lo smoke test (`playwright-core` non scarica browser).
 - Server MCP configurati nel client. Gli agenti Copilot li referenziano con i nomi qui sotto e ignorano gli strumenti non disponibili. In Claude Code i sotto-agenti ereditano tutti i server MCP configurati; conviene usare gli stessi nomi.
 
@@ -128,7 +133,7 @@ Nel selettore degli agenti compare solo **POC Dataverse**: i sotto-agenti hanno 
 | `icons` | Icone delle tabelle |
 | `local-microsoft/markitdown` | Conversione di documenti sorgente in Markdown |
 
-Le skill di altri plugin richiamate per nome (`pacx-*`, `appmaker-*`, `pcf-*`, `genpage`, `create-code-app`, `deploy`, `model-driven-ribbon-*`, `test-automation`) vengono dai plugin Power Platform e P.R.I.S.M.A. già installati. Senza quei plugin gli agenti funzionano lo stesso, ma con meno guida.
+Le skill di altri plugin richiamate per nome (`pacx-*`, `appmaker-*`, `pcf-*`, `genpage`, `create-code-app`, `deploy`, `model-driven-ribbon-*`, `test-automation`; per Power Pages `integrate-webapi`, `setup-auth`, `create-webroles`, `deploy-site`, `activate-site`) vengono dai plugin Power Platform e P.R.I.S.M.A. già installati. Senza quei plugin gli agenti funzionano lo stesso, ma con meno guida.
 
 ### ⚠️ Limiti noti
 
@@ -137,6 +142,7 @@ Le skill di altri plugin richiamate per nome (`pacx-*`, `appmaker-*`, `pcf-*`, `
 - Lo smoke test presuppone le convenzioni del renderer generico (`[data-nav]`, `tr[data-open]`, `[data-form-tab]`, `.sim-frame`): un renderer scritto a mano deve rispettarle.
 - La modalità `legacy-html` (estrazione da HTML monolitico) non ha script pronti: l'estrazione resta guidata dalle procedure.
 - `poc-add-standard.mjs` riscrive `config/index.yaml` senza i commenti.
+- Siti Power Pages: il progetto React generato è un punto di partenza. I lookup della Web API (`_<colonna>_value`), l'URL di accesso e i ruoli dell'utente reale vanno verificati sul sito; il provider di identità si configura in Power Pages.
 
 ### 📜 Versioni
 

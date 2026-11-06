@@ -1,4 +1,5 @@
-// PreToolUse guard: asks the user before PAC/PACX commands that delete, switch environment or import solutions.
+// PreToolUse guard: asks the user before PAC/PACX commands that delete, switch environment, import solutions
+// or upload a Power Pages site.
 'use strict';
 
 const RULES = [
@@ -6,6 +7,7 @@ const RULES = [
     { re: /\b(auth|org|env)\s+(select|create|switch)\b/i, why: 'cambio di profilo o ambiente' },
     { re: /(--environment|--url|--env|-env|-u)\s+["']?https?:\/\//i, why: 'comando verso un URL di ambiente esplicito' },
     { re: /\bsolution\s+import\b/i, why: 'import di solution (stage D)' },
+    { re: /\b(pages|powerpages|paportal)\s+upload(-code-site)?\b/i, why: 'pubblicazione di un sito Power Pages' },
 ];
 
 function decide(text) {

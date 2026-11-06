@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 const KEYS = {
     'url ambiente': 'url', 'profilo pac': 'pacProfile', 'profilo pacx': 'pacxProfile', 'solution (unique name)': 'solution',
     solution: 'solution', 'publisher prefix': 'prefix', 'app module (unique name)': 'appModule', 'lcid etichette': 'lcid',
-    'conferma utente stage r': 'confirmed',
+    'conferma utente stage r': 'confirmed', 'sito power pages (nome)': 'site', 'url sito': 'siteUrl',
 };
 const PLACEHOLDER = /^(|-|—|da confermare|tbd|n\/d|se esiste)$/i;
 

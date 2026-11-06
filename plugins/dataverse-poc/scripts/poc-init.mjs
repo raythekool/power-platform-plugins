@@ -2,7 +2,7 @@
 // Deterministic scaffold of a new POC: folders, pipeline scripts, renderer, sample YAML, package.json,
 // optional plan document and Sales Hub / Customer Service Hub baseline. Replaces the hand-written scaffold.
 //
-// node poc-init.mjs --root <dir> --app-type model-driven|code-app --prefix ava_ --name "Order Service"
+// node poc-init.mjs --root <dir> --app-type model-driven|code-app|power-pages --prefix ava_ --name "Order Service"
 //   [--hub sales-hub|customer-service-hub] [--plan <file.md> | --initiative X --client Y]
 //   [--lcid 1040] [--no-sample] [--no-install] [--no-check] [--force] [--json]
 // node poc-init.mjs --root <dir> --update   aggiorna solo scripts/, app/poc-app.*, app/mda-shell.* e gli script npm
@@ -69,7 +69,7 @@ const appType = args['app-type'];
 const prefix = args.prefix;
 const name = args.name;
 if (!args.root) fail('--root obbligatorio (cartella della POC)');
-if (!['model-driven', 'code-app'].includes(appType)) fail('--app-type obbligatorio: model-driven o code-app (va chiesto all\'utente, mai dedotto)');
+if (!['model-driven', 'code-app', 'power-pages'].includes(appType)) fail('--app-type obbligatorio: model-driven, code-app o power-pages (va chiesto all\'utente, mai dedotto)');
 if (!prefix || !/^[a-z][a-z0-9]{1,7}_$/.test(prefix)) fail('--prefix obbligatorio: 2-8 caratteri minuscoli seguiti da underscore (es. ava_)');
 if (!name) fail('--name obbligatorio (nome visibile dell\'applicazione)');
 if (args.hub && appType !== 'model-driven') fail('--hub e ammesso solo con --app-type model-driven');
@@ -83,6 +83,7 @@ const appName = `${prefix}${slug}`;
 const p = prefix;
 const sample = !args.flags.has('no-sample');
 const md = appType === 'model-driven';
+const pp = appType === 'power-pages';
 const written = [];
 const write = (rel, content) => {
     const file = join(root, rel);
@@ -119,7 +120,7 @@ const requirements = sample ? `requirements:
     scope: in-scope
     source: Esempio dello scaffold
   - id: RF-003
-    title: ${md ? 'Riepilogo assistito della richiesta' : 'Indicatori per stato'}
+    title: ${md ? 'Riepilogo assistito della richiesta' : pp ? 'Home pubblica del portale' : 'Indicatori per stato'}
     scope: in-scope
     source: Esempio dello scaffold
 ` : 'requirements: []\n';
@@ -127,8 +128,12 @@ write('config/requirements.yaml', `version: 1\n# Manifest canonico dei requisiti
 
 const listName = md ? `${p}richiesta_view` : `${p}richieste_elenco`;
 const formName = md ? `${p}richiesta_form` : `${p}richiesta_dettaglio`;
+const homeName = `${p}home`;
 const entitiesIndex = sample ? `entities:
-  - logicalName: ${listName}
+${pp ? `  - logicalName: ${homeName}
+    displayName: Home
+    file: entities/${homeName}.yaml
+` : ''}  - logicalName: ${listName}
     displayName: Richieste${md ? '\n    pageType: view' : ''}
     file: entities/${listName}.yaml
   - logicalName: ${formName}
@@ -145,9 +150,23 @@ const navigation = md ? `navigation:
       groups:
         - displayName: Lavoro
           items: [${sample ? listName : ''}]
-${sample ? `demoPath:\n  - ${listName}\n  - ${formName}\n` : ''}` : (sample ? `demoPath:\n  - ${listName}\n` : '');
+${sample ? `demoPath:\n  - ${listName}\n  - ${formName}\n` : ''}` : pp ? `powerPages:
+  demoPersona: ${p}cliente         # persona iniziale del prototipo: anonymous, authenticated o un web role
+  webRoles:                        # anonymous e authenticated sono impliciti
+    - logicalName: ${p}cliente
+      displayName: Cliente
+      authenticated: true
+  tablePermissions:${sample ? `
+    - logicalName: ${p}tp_richiesta_cliente
+      displayName: Richieste del cliente
+      table: ${p}richiesta
+      scope: contact               # global | contact | account | self | parent
+      relationship: ${p}contact_richiesta
+      privileges: [read, create, write]
+      roles: [${p}cliente]` : ' []'}
+${sample ? `demoPath:\n  - ${homeName}\n  - ${listName}\n` : ''}` : (sample ? `demoPath:\n  - ${listName}\n` : '');
 write('config/index.yaml', `version: 1
-appType: ${appType}            # deciso con l'utente: model-driven | code-app
+appType: ${appType}            # deciso con l'utente: model-driven | code-app | power-pages
 mode: requirements
 naming:
   prefix: ${p}
@@ -163,7 +182,8 @@ if (sample) {
     const table = `  dataverse:
     table:
       source: custom
-      logicalName: ${p}richiesta
+      logicalName: ${p}richiesta${pp ? `
+      entitySetName: ${p}richiestas  # nome della Web API (/_api/), da verificare sui metadata in stage R` : ''}
       schemaName: ${p}Richiesta
       displayName: Richiesta
       displayCollectionName: Richieste
@@ -191,7 +211,7 @@ entity:
   logicalName: ${listName}
   displayName: Richieste
   requirements: [RF-001]
-${table}
+${pp ? `  access: [${p}cliente]          # anonymous | authenticated | [web role]\n` : ''}${table}
   dataset: ${p}richieste
   targetForm: ${formName}
   primaryColumn: ${p}titolo
@@ -206,7 +226,7 @@ entity:
   logicalName: ${formName}
   displayName: Richiesta
   requirements: [RF-002]
-${table}
+${pp ? `  access: [${p}cliente]\n` : ''}${table}
   dataset: ${p}richieste
 tabs:
   - logicalName: ${p}richiesta_generale
@@ -252,6 +272,20 @@ ${choice('priorita', 'Priorita', [[1, 'Bassa'], [2, 'Media'], [3, 'Alta']])}
           format: DateOnly
           behavior: DateOnly
           requiredLevel: None
+${pp ? `      - logicalName: ${p}richiesta_contatto
+        displayName: Contatto
+        control: lookup
+        readOnly: true
+        dataverse:
+          table: ${p}richiesta
+          column: ${p}contatto
+          source: custom
+          schemaName: ${p}Contatto
+          type: lookup
+          targets: [contact]
+          relationship: ${p}contact_richiesta
+          requiredLevel: None
+` : ''}\
       - logicalName: ${p}richiesta_importo
         displayName: Importo stimato
         control: money
@@ -290,12 +324,40 @@ ${md ? `  - logicalName: ${p}richiesta_assistente
 logicalName: ${p}richieste_per_stato
 displayName: Richieste per stato
 type: kpi
-requirements: [${md ? 'RF-001' : 'RF-003'}]
+requirements: [${md || pp ? 'RF-001' : 'RF-003'}]
 bindings:
   dataset: ${p}richieste
   groupBy: ${p}stato
 fallback: html
 `);
+    if (pp) {
+        write(`config/entities/${homeName}.yaml`, `version: 1
+entity:
+  logicalName: ${homeName}
+  displayName: Home
+  requirements: [RF-003]
+  access: anonymous                # pagina pubblica: nessuna tabella Dataverse, nessuna table permission
+  hero:
+    title: ${q(name)}
+    text: Apri e segui le tue richieste di assistenza in un unico posto.
+sections:
+  - logicalName: ${p}home_servizi
+    displayName: Il servizio in numeri
+    components: [${p}home_numeri]
+`);
+        write('config/components/' + `${p}home_numeri.yaml`, `version: 1
+logicalName: ${p}home_numeri
+displayName: Il servizio in numeri
+type: kpi
+requirements: [RF-003]
+bindings:
+  items:
+    - { label: Tempo medio di prima risposta, value: 1 giorno }
+    - { label: Richieste chiuse nel mese, value: 128 }
+    - { label: Soddisfazione dei clienti, value: 4.6/5 }
+fallback: html
+`);
+    }
     if (md) write('config/components/' + `${p}richiesta_riepilogo_ai.yaml`, `version: 1
 logicalName: ${p}richiesta_riepilogo_ai
 displayName: Riepilogo della richiesta
@@ -361,11 +423,47 @@ L'HTML autosufficiente da consegnare e in \`dist/${appName}.html\`; la copertura
 | KPI, BPF, timeline, subgrid${md ? ', componenti simulati' : ''} | \`config/components/\` |
 | Requisiti | \`config/requirements.yaml\` |
 | Stili o renderer specifici | \`app/custom.css\`, \`app/custom.js\` (\`PocApp.registerComponent\`) |
+${pp ? `| Web role, table permission, persona iniziale | \`config/index.yaml\` (blocco \`powerPages\`), \`access\` nelle entita |
 
+## Verso l'implementazione
+
+Il progetto React + Vite del sito si genera dagli stessi YAML, con dati mock:
+
+\`\`\`powershell
+node <plugin-root>/scripts/poc-spa-scaffold.mjs --root .   # crea realization/power-pages/
+cd realization/power-pages; npm install; npm run dev
+\`\`\`
+` : ''}
 Non modificare a mano \`poc-runtime.html\`, \`config/poc-config.js\`, \`config/data/poc-data.js\`, \`dist/\`, \`scripts/\` e \`app/poc-app.*\`${md ? ', `app/mda-shell.*`' : ''}: si rigenerano o arrivano dal plugin.
 `);
 
 // --- plan document --------------------------------------------------------------------------------
+// Ondate di lavoro precompilate per appType: sotto-agenti nella stessa riga lavorano in parallelo
+// (artefatti disgiunti), ogni ondata ha un criterio di done verificabile da comando.
+const WAVES = {
+    'model-driven': [
+        ['1 · Schema (P)', 'poc-datamodel', 'blocchi `dataverse`, reuseDecision', '`npm run validate:config` ok'],
+        ['2 · Prototipo (P)', 'poc-prototype-builder ∥ poc-demo-data', 'YAML UI, componenti simulati, dataset', '`npm run check` ok, 0 requisiti scoperti'],
+        ['3 · Base ambiente (R)', 'poc-deployer → poc-datamodel', 'publisher, solution, tabelle e colonne', 'preflight 0, publish'],
+        ['4 · UI in ambiente (R)', 'poc-demo-data ∥ poc-forms-views ∥ poc-webresources ∥ poc-pcf, poi poc-genpage ×N', 'record, form, viste, app, pagine', 'report COMPLETATO di ogni sotto-agente'],
+        ['5 · Verifica e rilascio (R/D)', 'poc-tester → poc-deployer', 'report di test, zip', 'scenari del percorso demo verdi'],
+    ],
+    'code-app': [
+        ['1 · Schema (P)', 'poc-datamodel', 'blocchi `dataverse`, reuseDecision', '`npm run validate:config` ok'],
+        ['2 · Prototipo (P)', 'poc-prototype-builder ∥ poc-demo-data', 'YAML UI, dataset', '`npm run check` ok, 0 requisiti scoperti'],
+        ['3 · Base ambiente (R)', 'poc-deployer → poc-datamodel', 'publisher, solution, tabelle e colonne', 'preflight 0, publish'],
+        ['4 · App (R)', 'poc-demo-data ∥ poc-code-app', 'record, code app pubblicata', '`npm run build` ok, URL dell\'app'],
+        ['5 · Verifica e rilascio (R/D)', 'poc-tester → poc-deployer', 'report di test, zip', 'scenari del percorso demo verdi'],
+    ],
+    'power-pages': [
+        ['1 · Schema (P)', 'poc-datamodel', 'blocchi `dataverse` con `entitySetName`, reuseDecision', '`npm run validate:config` ok'],
+        ['2 · Prototipo (P)', 'poc-prototype-builder ∥ poc-demo-data', 'YAML UI, persone, web role, table permission, dataset', '`npm run check` ok, 0 requisiti scoperti'],
+        ['3 · SPA su mock (P)', 'poc-power-pages', '`realization/power-pages/` da `poc-spa-scaffold.mjs`', '`npm run build` ok nel progetto SPA'],
+        ['4 · Base ambiente (R)', 'poc-deployer → poc-datamodel', 'publisher, solution, tabelle e colonne', 'preflight 0, publish'],
+        ['5 · Sito (R)', 'poc-demo-data ∥ poc-power-pages', 'record, site settings, web role, table permission, upload', 'sito caricato, URL del sito'],
+        ['6 · Verifica e rilascio (R/D)', 'poc-tester → poc-deployer', 'report per persona', 'percorso demo verde per ogni persona'],
+    ],
+};
 let planPath = args.plan;
 if (!planPath && args.initiative && args.client) planPath = join(dirname(root), `Piano_${args.initiative}_${args.client}.md`.replace(/\s+/g, ''));
 if (planPath) {
@@ -381,7 +479,10 @@ if (planPath) {
 - [🎯 Target ambiente](#-target-ambiente)
 - [🧭 Decisioni](#-decisioni)
 - [🖥️ Schermate](#️-schermate)
+- [🧱 Modello dati](#-modello-dati)
+- [🌊 Ondate](#-ondate)
 - [📋 Todo](#-todo)
+- [⚠️ Rischi e simulato](#️-rischi-e-simulato)
 - [🔁 Recap](#-recap)
 
 ## 🎯 Target ambiente
@@ -393,8 +494,8 @@ if (planPath) {
 | Profilo PACX | da confermare |
 | Solution (unique name) | da confermare |
 | Publisher prefix | ${p.replace(/_$/, '')} |
-| App module (unique name) | da confermare |
-| LCID etichette | ${args.lcid ?? '1040'} |
+| ${pp ? 'Sito Power Pages (nome)' : 'App module (unique name)'} | da confermare |
+${pp ? '| URL sito | da confermare |\n' : ''}| LCID etichette | ${args.lcid ?? '1040'} |
 | Conferma utente stage R | no |
 
 ## 🧭 Decisioni
@@ -407,13 +508,30 @@ if (planPath) {
 ${args.hub ? `| Baseline | ${args.hub} | utente |\n` : ''}
 ## 🖥️ Schermate
 
-| Schermata | Tipo | Dataset | Requisiti |
+| Schermata | Tipo | Dataset | ${pp ? 'Accesso | ' : ''}Requisiti |
+| --- | --- | --- | ${pp ? '--- | ' : ''}--- |
+
+## 🧱 Modello dati
+
+| Tabella | Scelta (standard, standard estesa, custom) | Verifica Microsoft Learn | ${pp ? 'Table permission' : 'Note'} |
 | --- | --- | --- | --- |
+
+## 🌊 Ondate
+
+Sotto-agenti nella stessa riga in parallelo (\`∥\`), in sequenza con \`→\`. Le ondate R partono solo dopo la conferma dello stage R.
+
+| Ondata | Sotto-agenti | Output | Done |
+| --- | --- | --- | --- |
+${WAVES[appType].map((w) => `| ${w.join(' | ')} |`).join('\n')}
 
 ## 📋 Todo
 
 - [ ] Stage P: sostituire gli esempi dello scaffold con le schermate della POC (poc-datamodel → poc-prototype-builder)
 - [ ] Stage P: \`npm run check\` verde e copertura senza requisiti scoperti (poc-tester)
+
+## ⚠️ Rischi e simulato
+
+- Prototipo con dati sintetici: nulla e collegato a Dataverse finche lo stage R non e confermato.
 
 ## 🔁 Recap
 

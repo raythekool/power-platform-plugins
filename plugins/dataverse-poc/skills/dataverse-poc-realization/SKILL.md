@@ -13,7 +13,7 @@ Questa skill è il contratto comune fra l'agente `POC Dataverse` e i sotto-agent
 | Stage | Cosa si produce | Dove | Gate di ingresso |
 | --- | --- | --- | --- |
 | **P — Prototipo** | YAML + HTML runtime/statico, componenti simulati | `<poc-root>/` nel repo | `appType` deciso |
-| **R — Realizzazione DEV** | Metadata, dati demo, form/viste/app, generative page, PCF, web resource in un ambiente DEV/demo | Ambiente target + sorgenti nel repo | Prototipo validato **e** target ambiente confermato dall'utente |
+| **R — Realizzazione DEV** | Metadata, dati demo, form/viste/app, generative page, PCF, web resource, code app o sito Power Pages in un ambiente DEV/demo | Ambiente target + sorgenti nel repo | Prototipo validato **e** target ambiente confermato dall'utente |
 | **D — Rilascio** | Export/import solution verso un altro ambiente, attivazione flow | Ambiente di destinazione | Conferma esplicita dell'utente per **ogni** rilascio |
 
 Uno stage non si apre per inferenza: lo apre solo l'orchestratore, dopo conferma dell'utente. Un sotto-agente che riceve un brief di stage R/D senza target confermato restituisce `BLOCCATO`.
@@ -65,12 +65,15 @@ Due sotto-agenti non lavorano in parallelo sullo stesso artefatto.
 | `poc-pcf` | `<poc-root>/realization/pcf/<Control>/` | PCF e relativi componenti di solution |
 | `poc-webresources` | `<poc-root>/realization/webresources/` | web resource, comandi ribbon |
 | `poc-code-app` | `<poc-root>/realization/code-app/` | code app pubblicata |
+| `poc-power-pages` | `<poc-root>/realization/power-pages/` (escluse `src/generated/` e `power-pages/`, rigenerate dai YAML) | sito Power Pages, site setting `Webapi/*`, web role, table permission |
 | `poc-tester` | `<poc-root>/realization/test-reports/` | sola lettura |
 | `poc-deployer` | `<poc-root>/realization/solutions/` (zip esportati, se richiesti) | solution, publish, import/export, flow |
 
 Ordine di dipendenza tipico in stage R (model-driven): `poc-deployer` (preflight + solution) → `poc-datamodel` → `poc-demo-data` ∥ `poc-forms-views` ∥ `poc-webresources` ∥ `poc-pcf` → `poc-genpage` (una istanza per pagina, in parallelo) → `poc-forms-views` (sitemap finale) → `poc-tester` → `poc-deployer` (publish/export).
 
 In stage R con `appType: code-app`: `poc-deployer` → `poc-datamodel` → `poc-demo-data` ∥ `poc-code-app` → `poc-tester` → `poc-deployer`.
+
+In stage R con `appType: power-pages`: `poc-deployer` → `poc-datamodel` → `poc-demo-data` ∥ `poc-power-pages` → `poc-tester` (una passata per persona) → `poc-deployer`. Lo scaffold SPA su mock può già girare in stage P.
 
 ## 5. Contratto del brief (orchestratore → sotto-agente)
 
@@ -117,6 +120,7 @@ Il lavoro meccanico lo fanno script Node senza dipendenze, nella cartella `scrip
 | Preflight stage R/D (sostituisce `pac org who` + confronto manuale) | `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json` |
 | Verifica dello zip esportato (versione, componenti, generative page) | `node <plugin-root>/scripts/poc-solution-zip.mjs <zip> --pages <id,...> --json` |
 | Validator, build, copertura, smoke test del prototipo | `npm run check -- --json` nella cartella POC |
+| Progetto React del sito Power Pages dai YAML (route, tipi, mock, site setting, permessi) | `node <plugin-root>/scripts/poc-spa-scaffold.mjs --root <poc-root> --build --json` |
 
 Esito del preflight diverso da 0: fermarsi e restituire `BLOCCATO` con l'output dello script.
 
@@ -126,3 +130,4 @@ Leggere solo il file pertinente al brief:
 
 - [gotcha-ambiente.md](references/gotcha-ambiente.md): terminale, PAC/PACX, choice e sitemap Dataverse, strumenti MCP nei sotto-agenti.
 - [gotcha-genpage.md](references/gotcha-genpage.md): generative page, solution `uxagentproject`, export e URL diretti.
+- [gotcha-power-pages.md](references/gotcha-power-pages.md): siti SPA, `upload-code-site`, siti inattivi, Web API, CSRF, sviluppo su mock.
