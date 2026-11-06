@@ -1,6 +1,6 @@
 // Web API di Power Pages (/_api/<entitySet>). Prerequisiti in ambiente, generati in power-pages/:
 // site setting Webapi/<tabella>/enabled e Webapi/<tabella>/fields, table permission e web role.
-// Le scritture richiedono il token anti-CSRF della pagina (/_layout/tokenhtml).
+// Tutte le richieste richiedono il token anti-CSRF della pagina (/_layout/tokenhtml).
 import type { Screen } from '../generated/screens';
 import type { DataAdapter, Row } from './adapter';
 
@@ -15,9 +15,9 @@ async function csrf(): Promise<string> {
 
 async function call(url: string, init: RequestInit = {}): Promise<any> {
   const headers: Record<string, string> = { Accept: 'application/json', 'OData-MaxVersion': '4.0', 'OData-Version': '4.0' };
+  headers['__RequestVerificationToken'] = await csrf();
   if (init.method && init.method !== 'GET') {
     headers['Content-Type'] = 'application/json';
-    headers['__RequestVerificationToken'] = await csrf();
   }
   const res = await fetch(url, { ...init, headers, credentials: 'same-origin' });
   if (!res.ok) throw new Error(`Web API ${res.status} su ${url}`);

@@ -87,6 +87,7 @@ powerPages:
       displayName: Richieste del cliente
       table: ava_richiesta                         # logical name Dataverse
       scope: contact                               # global | contact | account | self | parent
+      relationship: ava_contact_richiesta           # contact/account: relazione verso la tabella corrispondente, con lookup nella tabella protetta
       privileges: [read, create, write]            # read | create | write | delete | append | appendto
       roles: [ava_cliente]                         # web role, anonymous o authenticated
       # scope parent: anche parentPermission (logicalName) e relationship (schema name)
@@ -96,6 +97,7 @@ Nelle entita: `entity.access` (`anonymous`, `authenticated` o `[web role]`, defa
 `entity.hero: {title, text}` per home e pagine informative, `dataverse.table.entitySetName` per il nome
 della Web API. Il ruolo `authenticated` vale per ogni utente autenticato; una pagina `anonymous` la vedono
 tutti, quindi richiede table permission sia per `anonymous` sia per `authenticated`.
+Un dettaglio modificabile richiede `write` per almeno un ruolo che vede la pagina; gli altri ruoli mantengono la vista in sola lettura. Un dettaglio senza tabella propria eredita quella della lista che lo apre (`targetForm`).
 
 ## `config/entities/<entita>.yaml`
 

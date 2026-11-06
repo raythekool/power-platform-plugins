@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { can, useRoles } from '../auth/user';
 import { data, type Row } from '../data/adapter';
 import { fmt } from '../data/format';
@@ -15,6 +15,7 @@ export default function ListPage({ screen }: { screen: Screen }) {
     data.list(screen).then(setRows, (e) => setError(String(e)));
   }, [screen]);
   const target = screen.target ? screens[screen.target] : undefined;
+  const primaryColumn = screen.columns.find((c) => c.key === screen.primaryField) ?? screen.columns[0];
 
   return (
     <>
@@ -39,7 +40,13 @@ export default function ListPage({ screen }: { screen: Screen }) {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.__key} className={target ? 'clickable' : ''} onClick={() => target && navigate(`${target.path}/${encodeURIComponent(r.__key)}`)}>
-                  {screen.columns.map((c) => <td key={c.key}>{fmt(r[c.key], c)}</td>)}
+                  {screen.columns.map((c) => (
+                    <td key={c.key}>
+                      {target && c === primaryColumn ? (
+                        <Link to={`${target.path}/${encodeURIComponent(r.__key)}`} onClick={(e) => e.stopPropagation()}>{fmt(r[c.key], c) || r.__key}</Link>
+                      ) : fmt(r[c.key], c)}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>

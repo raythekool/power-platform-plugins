@@ -7,7 +7,7 @@ const RULES = [
     { re: /\b(auth|org|env)\s+(select|create|switch)\b/i, why: 'cambio di profilo o ambiente' },
     { re: /(--environment|--url|--env|-env|-u)\s+["']?https?:\/\//i, why: 'comando verso un URL di ambiente esplicito' },
     { re: /\bsolution\s+import\b/i, why: 'import di solution (stage D)' },
-    { re: /\bpages\s+upload(-code-site)?\b/i, why: 'pubblicazione di un sito Power Pages' },
+    { re: /\b(pages|powerpages|paportal)\s+upload(-code-site)?\b/i, why: 'pubblicazione di un sito Power Pages' },
 ];
 
 function decide(text) {

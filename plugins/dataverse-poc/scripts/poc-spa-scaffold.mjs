@@ -63,11 +63,13 @@ const parents = {};
 for (const [ln, doc] of entities) if (doc.entity.targetForm) parents[doc.entity.targetForm] = ln;
 
 const fieldKey = (f) => f.dataverse?.column ?? f.dataKey ?? f.logicalName;
+const mockKey = (f) => f.dataKey ?? f.dataverse?.column ?? f.logicalName;
 const optionsOf = (f) => { const dv = f.dataverse ?? {}; return (Array.isArray(dv.choice) ? dv.choice : dv.choice?.options) ?? dv.options ?? f.options; };
 const humanize = (k) => { const s = String(k).replace(new RegExp(`^${prefix}`), '').replace(/_/g, ' ').trim(); return s.charAt(0).toUpperCase() + s.slice(1); };
 const toField = (f, key) => (f ? clean({
     key: key ?? fieldKey(f), label: f.displayName, control: f.control ?? 'text', readOnly: f.readOnly || undefined, required: f.required || undefined,
     options: optionsOf(f)?.map((o) => ({ value: o.value, label: o.label })),
+    format: f.dataverse?.format, behavior: f.dataverse?.behavior,
 }) : undefined);
 const fieldsOf = (doc) => (doc.sections ?? []).flatMap((s) => s.fields ?? []);
 const datasetOf = (ln) => entities.get(ln)?.entity.dataset ?? (parents[ln] ? entities.get(parents[ln]).entity.dataset : undefined);
@@ -77,7 +79,11 @@ const tableOf = (ln) => entities.get(ln)?.entity.dataverse?.table ?? (parents[ln
 const metaByDataset = {};
 for (const [ln, doc] of entities) {
     const ds = datasetOf(ln);
-    if (ds) for (const f of fieldsOf(doc)) (metaByDataset[ds] ??= {})[fieldKey(f)] ??= f;
+    if (ds) for (const f of fieldsOf(doc)) {
+        const meta = (metaByDataset[ds] ??= {});
+        meta[fieldKey(f)] ??= f;
+        meta[mockKey(f)] ??= f;
+    }
 }
 const isLookup = (f) => ['lookup', 'customer'].includes(f?.dataverse?.type ?? f?.control);
 const selectName = (f) => (isLookup(f) ? `_${f.dataverse?.column ?? fieldKey(f)}_value` : fieldKey(f));
@@ -94,8 +100,9 @@ function component(doc, override = {}) {
     const b = { ...Object.fromEntries((doc.params ?? []).filter((p) => p.default !== undefined).map((p) => [p.name, p.default])), ...doc.bindings, ...override.args };
     return clean({
         logicalName: override.instance ?? doc.logicalName, displayName: override.displayName ?? doc.displayName, type: doc.type,
-        items: b.items?.map((i) => ({ label: String(i.label), value: i.value })), groupBy: b.groupBy,
-        groupField: b.groupBy ? toField(metaByDataset[b.dataset]?.[b.groupBy], b.groupBy) : undefined,
+        items: b.items?.map((i) => ({ label: String(i.label), value: i.value })),
+        groupBy: b.groupBy ? (metaByDataset[b.dataset]?.[b.groupBy] ? fieldKey(metaByDataset[b.dataset][b.groupBy]) : b.groupBy) : undefined,
+        groupField: b.groupBy ? toField(metaByDataset[b.dataset]?.[b.groupBy]) : undefined,
     });
 }
 
@@ -113,7 +120,7 @@ for (const [ln, doc] of entities) {
         const spec = e.columns?.length ? e.columns : Object.keys(dsDoc.records?.[0] ?? {}).filter((k) => k !== dsDoc.keyField).slice(0, 6);
         columns = spec.map((c) => {
             const key = typeof c === 'string' ? c : c.field;
-            const f = toField(meta[key], key) ?? { key, label: humanize(key), control: 'text' };
+            const f = toField(meta[key]) ?? { key, label: humanize(key), control: 'text' };
             return typeof c === 'object' && c.label ? { ...f, label: c.label } : f;
         });
     }
@@ -122,7 +129,7 @@ for (const [ln, doc] of entities) {
         fields: (s.fields ?? []).map((f) => toField(f)),
         components: [...(s.components ?? []).map((c) => component(locals.get(c))), ...(s.uses ?? []).map((u) => component(definitions.get(u.component), u))].filter(Boolean),
     })).map(clean);
-    const dvKeys = kind === 'list' ? columns.map((c) => c.key) : kind === 'detail' ? fieldsOf(doc).map(fieldKey) : [];
+    const dvKeys = kind === 'list' ? [...columns.map((c) => c.key), ...sections.flatMap((s) => s.components.filter((c) => c.type === 'kpi' && c.groupBy).map((c) => c.groupBy))] : kind === 'detail' ? fieldsOf(doc).map(fieldKey) : [];
     const select = [...new Set(dvKeys.map((k) => meta[k] ?? fieldsOf(doc).find((f) => fieldKey(f) === k)).filter((f) => f?.dataverse).map(selectName))];
     if (t && !t.entitySetName) warnings.push(`${ln}: entitySetName assente, usato ${t.logicalName}s (verificare sui metadata)`);
     screens[ln] = clean({
@@ -130,6 +137,7 @@ for (const [ln, doc] of entities) {
         access: e.access === undefined ? ['authenticated'] : [].concat(e.access),
         table: t?.logicalName, entitySet: t ? (t.entitySetName ?? `${t.logicalName}s`) : undefined, primaryId: t ? (t.primaryIdAttribute ?? `${t.logicalName}id`) : undefined,
         select, dataset: ds, keyField: ds ? (dsDoc.keyField ?? Object.keys(dsDoc.records?.[0] ?? {})[0]) : undefined,
+        mockKeys: Object.fromEntries(Object.values(meta).map((f) => [fieldKey(f), mockKey(f)])),
         primaryField: t?.primaryNameAttribute ?? dsDoc.primaryField, columns, target: e.targetForm, parent: parents[ln],
         tabs, sections, hero: e.hero ? clean({ title: e.hero.title, text: e.hero.text }) : undefined,
         privileges: t ? privilegesFor(t.logicalName) : {},
@@ -170,7 +178,7 @@ const header = '// Generato da poc-spa-scaffold.mjs dai YAML della POC (config/)
 
 write('src/generated/screens.ts', `${header}
 export interface Option { value: number | string; label: string }
-export interface Field { key: string; label: string; control: string; readOnly?: boolean; required?: boolean; options?: Option[] }
+export interface Field { key: string; label: string; control: string; readOnly?: boolean; required?: boolean; options?: Option[]; format?: string; behavior?: string }
 export interface Component { logicalName: string; displayName: string; type: string; items?: { label: string; value: string | number }[]; groupBy?: string; groupField?: Field }
 export interface Section { logicalName: string; displayName: string; tab?: string; fields: Field[]; components: Component[] }
 export interface Screen {
@@ -185,6 +193,7 @@ export interface Screen {
   select: string[];
   dataset?: string;
   keyField?: string;
+  mockKeys: Record<string, string>;
   primaryField?: string;
   columns: Field[];
   target?: string;
@@ -243,7 +252,8 @@ for (const src of walk(template)) {
     const dest = join(out, rel);
     if (existsSync(dest) && !force) { kept.push(rel); continue; }
     mkdirSync(dirname(dest), { recursive: true });
-    writeFileSync(dest, readFileSync(src, 'utf8').replaceAll('__SITE_NAME__', site.name).replaceAll('__PACKAGE_NAME__', packageName));
+    const escape = (value) => rel.endsWith('.json') ? JSON.stringify(value).slice(1, -1) : rel.endsWith('.html') ? value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) : value;
+    writeFileSync(dest, readFileSync(src, 'utf8').replace(/__(SITE_NAME|PACKAGE_NAME)__/g, (_, name) => escape(name === 'SITE_NAME' ? site.name : packageName)));
     created.push(rel);
 }
 

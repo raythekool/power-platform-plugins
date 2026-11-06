@@ -161,6 +161,7 @@ ${sample ? `demoPath:\n  - ${listName}\n  - ${formName}\n` : ''}` : pp ? `powerP
       displayName: Richieste del cliente
       table: ${p}richiesta
       scope: contact               # global | contact | account | self | parent
+      relationship: ${p}contact_richiesta
       privileges: [read, create, write]
       roles: [${p}cliente]` : ' []'}
 ${sample ? `demoPath:\n  - ${homeName}\n  - ${listName}\n` : ''}` : (sample ? `demoPath:\n  - ${listName}\n` : '');
@@ -271,6 +272,20 @@ ${choice('priorita', 'Priorita', [[1, 'Bassa'], [2, 'Media'], [3, 'Alta']])}
           format: DateOnly
           behavior: DateOnly
           requiredLevel: None
+${pp ? `      - logicalName: ${p}richiesta_contatto
+        displayName: Contatto
+        control: lookup
+        readOnly: true
+        dataverse:
+          table: ${p}richiesta
+          column: ${p}contatto
+          source: custom
+          schemaName: ${p}Contatto
+          type: lookup
+          targets: [contact]
+          relationship: ${p}contact_richiesta
+          requiredLevel: None
+` : ''}\
       - logicalName: ${p}richiesta_importo
         displayName: Importo stimato
         control: money

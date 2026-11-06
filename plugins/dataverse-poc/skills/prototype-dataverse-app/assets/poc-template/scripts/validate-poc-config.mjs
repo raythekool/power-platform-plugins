@@ -280,6 +280,7 @@ if (appType === 'power-pages') {
         if (!p.table) errors.push(`${w}: table mancante (logical name della tabella Dataverse)`);
         if (!SCOPES.includes(p.scope)) errors.push(`${w}: scope non valido (${p.scope ?? 'assente'}): ammessi ${SCOPES.join(', ')}`);
         if (p.scope === 'parent' && (!p.parentPermission || !p.relationship)) errors.push(`${w}: scope parent senza parentPermission e relationship`);
+        if (['contact', 'account'].includes(p.scope) && !p.relationship) errors.push(`${w}: scope ${p.scope} senza relationship verso ${p.scope}`);
         if (!p.privileges?.length || p.privileges.some((x) => !PRIVILEGES.includes(x))) errors.push(`${w}: privileges mancanti o non validi: ammessi ${PRIVILEGES.join(', ')}`);
         if (!p.roles?.length) errors.push(`${w}: roles mancante`);
         for (const r of p.roles ?? []) knownRole(w, r);
@@ -296,7 +297,8 @@ if (appType === 'power-pages') {
         hit.forEach((p) => { p.used = true; });
         return hit.length > 0;
     };
-    const details = new Set([...entityByName.values()].map((e) => e.doc.entity.targetForm).filter(Boolean));
+    const parents = new Map([...entityByName.values()].filter((e) => e.doc.entity.targetForm).map((e) => [e.doc.entity.targetForm, e.doc.entity]));
+    const details = new Set(parents.keys());
     for (const [ln, e] of entityByName) {
         const ent = e.doc.entity;
         const access = ent.access ?? 'authenticated';
@@ -304,13 +306,14 @@ if (appType === 'power-pages') {
         if (!list?.length) { errors.push(`${e.file}: access non valido: anonymous, authenticated o [ruoli]`); continue; }
         list.forEach((r) => knownRole(`${e.file} access`, r));
         // Una pagina anonima la vedono anche gli utenti autenticati: servono permessi per entrambi.
-        const viewers = list.includes('anonymous') ? ['anonymous', 'authenticated'] : list;
-        const tables = [ent.dataverse?.table, ...(ent.dataverse?.tables ?? [])].filter((t) => t?.logicalName);
+        const viewers = [...new Set([...list, ...(list.includes('anonymous') ? ['authenticated'] : []), ...(list.includes('authenticated') || list.includes('anonymous') ? [...roles].filter((r) => r !== 'anonymous') : [])])];
+        const table = ent.dataverse?.table ?? parents.get(ln)?.dataverse?.table;
+        const tables = [table, ...(ent.dataverse?.tables ?? [])].filter((t) => t?.logicalName);
         for (const t of tables) {
             if (!t.entitySetName) warnings.push(`${e.file}: dataverse.table ${t.logicalName} senza entitySetName (lo scaffold SPA usera ${t.logicalName}s)`);
             for (const r of viewers) if (!grant(t.logicalName, r, 'read')) errors.push(`${e.file}: nessuna table permission con read su ${t.logicalName} per il ruolo ${r}`);
             const editable = details.has(ln) && (e.doc.sections ?? []).some((s) => (s.fields ?? []).some((f) => !f.readOnly));
-            if (editable) for (const r of viewers) if (!grant(t.logicalName, r, 'write')) errors.push(`${e.file}: campi modificabili senza table permission con write su ${t.logicalName} per il ruolo ${r} (oppure readOnly: true sui campi)`);
+            if (editable && !viewers.some((r) => grant(t.logicalName, r, 'write'))) errors.push(`${e.file}: campi modificabili senza table permission con write su ${t.logicalName} per almeno un ruolo che vede la pagina (oppure readOnly: true sui campi)`);
         }
     }
     for (const p of perms) if (!p.used) warnings.push(`powerPages.tablePermissions ${p.logicalName}: non usata da nessuna schermata`);

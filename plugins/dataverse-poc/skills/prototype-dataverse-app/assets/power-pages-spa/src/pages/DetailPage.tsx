@@ -1,29 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { can, useRoles } from '../auth/user';
 import { data, type Row } from '../data/adapter';
-import { fmt } from '../data/format';
+import { datetimeInputValue, datetimePatch, fmt } from '../data/format';
 import { screens, type Field, type Screen } from '../generated/screens';
 
 export default function DetailPage({ screen }: { screen: Screen }) {
   const { key = '' } = useParams();
+  return <RecordDetail key={`${screen.logicalName}:${key}`} screen={screen} recordKey={key} />;
+}
+
+function RecordDetail({ screen, recordKey: key }: { screen: Screen; recordKey: string }) {
   const roles = useRoles();
   const [record, setRecord] = useState<Row | null | undefined>(undefined);
   const [draft, setDraft] = useState<Record<string, unknown>>({});
   const [tab, setTab] = useState(screen.tabs[0]?.logicalName);
   const [message, setMessage] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const request = useRef(0);
   useEffect(() => {
-    data.get(screen, key).then(setRecord, (e) => setMessage(String(e)));
+    const id = ++request.current;
+    setRecord(undefined);
+    setDraft({});
+    setTab(screen.tabs[0]?.logicalName);
+    setMessage(null);
+    setSaving(false);
+    data.get(screen, key).then(
+      (row) => { if (request.current === id) setRecord(row); },
+      (e) => { if (request.current === id) setMessage(String(e)); },
+    );
+    return () => { request.current++; };
   }, [screen, key]);
 
   const editable = can(screen.privileges, roles, 'write');
   const parent = screen.parent ? screens[screen.parent] : undefined;
   const value = (f: Field) => (f.key in draft ? draft[f.key] : record?.[f.key]);
   const save = async () => {
-    await data.update(screen, key, draft);
-    setRecord({ ...record!, ...draft });
-    setDraft({});
-    setMessage('Modifiche salvate.');
+    const id = request.current;
+    setSaving(true);
+    setMessage(null);
+    try {
+      await data.update(screen, key, draft);
+      if (request.current !== id) return;
+      setRecord({ ...record!, ...draft });
+      setDraft({});
+      setMessage('Modifiche salvate.');
+    } catch (e) {
+      if (request.current === id) setMessage(`Salvataggio non riuscito: ${String(e)}`);
+    } finally {
+      if (request.current === id) setSaving(false);
+    }
   };
 
   if (record === undefined) return <p className="empty">{message ?? 'Caricamento…'}</p>;
@@ -35,9 +61,9 @@ export default function DetailPage({ screen }: { screen: Screen }) {
         {parent && <Link className="button" to={parent.path}>← {parent.displayName}</Link>}
         <h1>{title || screen.displayName}</h1>
         <span className="grow" />
-        {editable && <button className="primary" disabled={!Object.keys(draft).length} onClick={save}>Salva</button>}
+        {editable && <button className="primary" disabled={saving || !Object.keys(draft).length} onClick={save}>Salva</button>}
       </div>
-      {message && <p className="message">{message}</p>}
+      {message && <p className="message" role="status">{message}</p>}
       {screen.tabs.length > 1 && (
         <div className="tabs">
           {screen.tabs.map((t) => (
@@ -52,7 +78,7 @@ export default function DetailPage({ screen }: { screen: Screen }) {
             {s.fields.map((f) => (
               <label key={f.key} className={f.control === 'memo' ? 'wide' : ''}>
                 <span>{f.label}{f.required && ' *'}</span>
-                {editable && !f.readOnly ? <Input field={f} value={value(f)} onChange={(v) => setDraft({ ...draft, [f.key]: v })} /> : <output>{fmt(value(f), f) || '—'}</output>}
+                {editable && !f.readOnly ? <Input field={f} value={value(f)} disabled={saving} onChange={(v) => setDraft({ ...draft, [f.key]: v })} /> : <output>{fmt(value(f), f) || '—'}</output>}
               </label>
             ))}
           </div>
@@ -62,20 +88,20 @@ export default function DetailPage({ screen }: { screen: Screen }) {
   );
 }
 
-function Input({ field, value, onChange }: { field: Field; value: unknown; onChange: (v: unknown) => void }) {
+function Input({ field, value, disabled, onChange }: { field: Field; value: unknown; disabled: boolean; onChange: (v: unknown) => void }) {
   if (field.options) {
     return (
-      <select value={value === undefined || value === null ? '' : String(value)} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))}>
+      <select disabled={disabled} value={value === undefined || value === null ? '' : String(value)} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))}>
         <option value="">—</option>
         {field.options.map((o) => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
       </select>
     );
   }
-  if (field.control === 'memo') return <textarea value={String(value ?? '')} onChange={(e) => onChange(e.target.value)} />;
+  if (field.control === 'memo') return <textarea disabled={disabled} value={String(value ?? '')} onChange={(e) => onChange(e.target.value)} />;
   if (['money', 'decimal', 'whole'].includes(field.control)) {
-    return <input type="number" value={value === undefined || value === null ? '' : String(value)} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} />;
+    return <input disabled={disabled} type="number" value={value === undefined || value === null ? '' : String(value)} onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))} />;
   }
-  if (field.control === 'datetime') return <input type="date" value={String(value ?? '').slice(0, 10)} onChange={(e) => onChange(e.target.value)} />;
-  if (field.control === 'boolean') return <input type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} />;
-  return <input value={String(value ?? '')} onChange={(e) => onChange(e.target.value)} />;
+  if (field.control === 'datetime') return <input disabled={disabled} type={field.format === 'DateOnly' || field.behavior === 'DateOnly' ? 'date' : 'datetime-local'} step="any" value={datetimeInputValue(value, field)} onChange={(e) => onChange(datetimePatch(e.target.value, field))} />;
+  if (field.control === 'boolean') return <input disabled={disabled} type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} />;
+  return <input disabled={disabled} value={String(value ?? '')} onChange={(e) => onChange(e.target.value)} />;
 }

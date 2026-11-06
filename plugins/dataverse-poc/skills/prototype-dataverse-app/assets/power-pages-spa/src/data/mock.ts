@@ -7,7 +7,11 @@ type Records = Record<string, Record<string, unknown>[]>;
 const store: Records = JSON.parse(JSON.stringify(mockData)) as Records;
 
 const rows = (s: Screen): Row[] =>
-  (s.dataset ? store[s.dataset] ?? [] : []).map((r) => ({ ...r, __key: String(r[s.keyField ?? ''] ?? '') }));
+  (s.dataset ? store[s.dataset] ?? [] : []).map((r) => ({
+    ...r,
+    ...Object.fromEntries(Object.entries(s.mockKeys).filter(([, key]) => key in r).map(([key, mockKey]) => [key, r[mockKey]])),
+    __key: String(r[s.keyField ?? ''] ?? ''),
+  }));
 
 export const mockAdapter: DataAdapter = {
   async list(s) {
@@ -18,6 +22,6 @@ export const mockAdapter: DataAdapter = {
   },
   async update(s, key, patch) {
     const record = (store[s.dataset ?? ''] ?? []).find((r) => String(r[s.keyField ?? '']) === key);
-    if (record) Object.assign(record, patch);
+    if (record) Object.assign(record, Object.fromEntries(Object.entries(patch).map(([key, value]) => [s.mockKeys[key] ?? key, value])));
   },
 };
