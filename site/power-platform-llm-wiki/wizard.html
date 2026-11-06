@@ -970,6 +970,104 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   </p>
                 </div>
                 <div data-env-only="cli">
+                  <div class="faq">
+                    <details>
+                      <summary>
+                        <span lang="en"
+                          >No Copilot CLI yet? Install it like this</span
+                        ><span lang="it"
+                          >Non hai ancora Copilot CLI? Installalo così</span
+                        >
+                      </summary>
+                      <p lang="en">
+                        You need an active <b>GitHub Copilot</b> subscription,
+                        and your organization must allow it: an administrator
+                        can turn Copilot CLI off in the policies. On Windows you
+                        also need PowerShell 6 or later, already covered by
+                        PowerShell 7 from step 0.
+                      </p>
+                      <p lang="it">
+                        Ti servono un abbonamento <b>GitHub Copilot</b> attivo e
+                        il via libera dell'organizzazione: un amministratore può
+                        disattivare Copilot CLI nelle policy. Su Windows serve
+                        anche PowerShell 6 o successivo, già coperto da
+                        PowerShell 7 del passo 0.
+                      </p>
+                      <div class="tbl">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>
+                                <span lang="en">System</span
+                                ><span lang="it">Sistema</span>
+                              </th>
+                              <th>
+                                <span lang="en">Command</span
+                                ><span lang="it">Comando</span>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Windows</td>
+                              <td><code>winget install GitHub.Copilot</code></td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span lang="en">macOS or Linux</span
+                                ><span lang="it">macOS o Linux</span>
+                              </td>
+                              <td><code>brew install --cask copilot-cli</code></td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span lang="en">Any system, with Node.js 22+</span
+                                ><span lang="it"
+                                  >Qualsiasi sistema, con Node.js 22+</span
+                                >
+                              </td>
+                              <td><code>npm install -g @github/copilot</code></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <p lang="en">
+                        Then open a new terminal and start <code>copilot</code>.
+                        If you are not signed in to GitHub, type
+                        <code>/login</code> in the session and follow the
+                        instructions on screen. Exit the session and come back
+                        here to install the plugin.
+                      </p>
+                      <p lang="it">
+                        Poi apri un nuovo terminale e avvia <code>copilot</code>.
+                        Se non sei collegato a GitHub, scrivi
+                        <code>/login</code> nella sessione e segui le istruzioni
+                        a schermo. Esci dalla sessione e torna qui per
+                        installare il plugin.
+                      </p>
+                      <p class="verify" lang="en">
+                        <b>✅ Verify:</b> <code>copilot --version</code> answers
+                        with a version number. Other install methods:
+                        <a
+                          href="https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli"
+                          target="_blank"
+                          rel="noopener"
+                          >GitHub documentation</a
+                        >.
+                      </p>
+                      <p class="verify" lang="it">
+                        <b>✅ Verifica:</b> <code>copilot --version</code>
+                        risponde con un numero di versione. Altri metodi di
+                        installazione:
+                        <a
+                          href="https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli"
+                          target="_blank"
+                          rel="noopener"
+                          >documentazione di GitHub</a
+                        >.
+                      </p>
+                    </details>
+                  </div>
                   <p lang="en">
                     Install from a terminal. Inside a session the same commands
                     work as <code>/plugin marketplace add ...</code> and

@@ -81,6 +81,26 @@ Servono sempre **PowerShell 7**, **git** e lo strumento che hai scelto (**VS Cod
 
 **⌨️ GitHub Copilot CLI**
 
+<details>
+<summary>Non hai ancora Copilot CLI? Installalo così</summary>
+
+Ti servono un abbonamento **GitHub Copilot** attivo e il via libera dell'organizzazione: un amministratore può disattivare Copilot CLI nelle policy. Su Windows serve anche PowerShell 6 o successivo, già coperto da PowerShell 7 del [passo 0](#-passo-0---prerequisiti).
+
+1. Installa con il comando del tuo sistema:
+
+    | Sistema                            | Comando                           |
+    | ---------------------------------- | --------------------------------- |
+    | Windows                            | `winget install GitHub.Copilot`   |
+    | macOS o Linux                      | `brew install --cask copilot-cli` |
+    | Qualsiasi sistema, con Node.js 22+ | `npm install -g @github/copilot`  |
+
+2. Apri un nuovo terminale e avvia `copilot`. Se non sei collegato a GitHub, scrivi `/login` nella sessione e segui le istruzioni a schermo.
+3. Esci dalla sessione e torna qui per installare il plugin.
+
+✅ **Verifica:** `copilot --version` risponde con un numero di versione. Altri metodi di installazione sono nella [documentazione di GitHub](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli).
+
+</details>
+
 ```shell
 copilot plugin marketplace add raythekool/power-platform-plugins
 copilot plugin install power-platform-llm-wiki@power-platform-plugins
