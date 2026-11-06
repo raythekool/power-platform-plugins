@@ -44,6 +44,8 @@ tabelle non confermabili senza verifica sull'ambiente (`forecast`, `quickcampaig
 
 ## Come usarli
 
+Con lo script del plugin (consigliato): `node <plugin-root>/scripts/poc-add-standard.mjs --root <poc-root> --tables account,contact` copia le coppie, sostituisce il prefisso, aggiorna `config/index.yaml` e genera dati sintetici. A mano:
+
 1. Copiare la coppia `<table>_view.yaml` + `<table>_form.yaml` in `config/entities/` del progetto.
 2. Cerca-e-sostituisci `{{prefix}}` con `naming.prefix` del progetto in entrambi i file.
 3. Aggiungere entrambi i `logicalName` all'elenco `entities:` di `config/index.yaml`.

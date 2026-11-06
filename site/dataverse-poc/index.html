@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="it" data-lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dataverse POC Agents - Dal requisito alla demo Dataverse</title>
+    <meta
+      name="description"
+      content="Plugin per GitHub Copilot che porta una POC Dataverse dal requisito al prototipo navigabile in stile Dynamics 365 e alla realizzazione in un ambiente DEV, con un orchestratore, dieci sotto-agenti e script deterministici."
+    />
+    <meta name="theme-color" content="#0b1220" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dataverse POC Agents - Dal requisito alla demo Dataverse" />
+    <meta
+      property="og:description"
+      content="Orchestratore multi-agente per POC Dataverse e Power Platform: prototipo in stile Dynamics 365, datamodel standard-first, realizzazione in DEV con guardrail."
+    />
+    <meta property="og:url" content="{{BASE_URL}}/" />
+    <meta property="og:image" content="{{BASE_URL}}/images/screenshot-form.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="{{BASE_URL}}/" />
+    <link rel="stylesheet" href="styles.css?v={{VERSION}}" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("dvpoc-lang");
+          var lang =
+            saved ||
+            ((navigator.language || "it").toLowerCase().indexOf("it") === 0
+              ? "it"
+              : "en");
+          document.documentElement.dataset.lang = lang;
+          document.documentElement.lang = lang;
+          document.documentElement.classList.add("js");
+        } catch (e) {
+          document.documentElement.classList.add("js");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main"
+      ><span lang="it">Vai al contenuto</span
+      ><span lang="en">Skip to content</span></a
+    >
+
+    <header class="nav">
+      <div class="wrap nav-in">
+        <a class="brand" href="#top" aria-label="Dataverse POC Agents">
+          <img src="favicon.svg" alt="" width="28" height="28" />
+          <span>Dataverse POC Agents</span>
+        </a>
+        <nav class="links" aria-label="Main">
+          <a href="#why"><span lang="it">Perché</span><span lang="en">Why</span></a>
+          <a href="#features"><span lang="it">Funzioni</span><span lang="en">Features</span></a>
+          <a href="#how"><span lang="it">Come funziona</span><span lang="en">How it works</span></a>
+          <a href="#scripts"><span lang="it">Script</span><span lang="en">Scripts</span></a>
+          <a href="#demo">Demo</a>
+          <a href="#start"><span lang="it">Inizia</span><span lang="en">Get started</span></a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <div class="nav-right">
+          <div class="lang" role="group" aria-label="Language">
+            <button type="button" data-set-lang="it" aria-pressed="true">IT</button>
+            <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="{{REPO_URL}}">GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- HERO -->
+      <section class="hero" id="top">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="wrap hero-in">
+          <div class="hero-copy">
+            <p class="badge">
+              <span>v{{VERSION}}</span>
+              <span lang="it">Plugin per GitHub Copilot (VS Code e CLI)</span>
+              <span lang="en">Plugin for GitHub Copilot (VS Code and CLI)</span>
+            </p>
+            <h1>
+              <span lang="it">Dal requisito alla demo Dataverse, <em>in un pomeriggio.</em></span>
+              <span lang="en">From requirements to a Dataverse demo, <em>in an afternoon.</em></span>
+            </h1>
+            <p class="lead" lang="it">
+              Un orchestratore e dieci sotto-agenti trasformano requisiti e verbali in un prototipo
+              navigabile in stile Dynamics 365, poi lo realizzano in un ambiente DEV. Il lavoro
+              meccanico lo fanno script deterministici: gli agenti pensano solo a decisioni e contenuti.
+            </p>
+            <p class="lead" lang="en">
+              An orchestrator and ten sub-agents turn requirements and meeting notes into a clickable
+              Dynamics 365-style prototype, then build it in a DEV environment. Deterministic scripts
+              do the mechanical work, so agents only spend tokens on decisions and content.
+            </p>
+            <div class="cta">
+              <a class="btn btn-primary" href="#start"
+                ><span lang="it">Inizia subito</span><span lang="en">Get started</span></a
+              >
+              <a class="btn btn-ghost" href="demo/model-driven.html"
+                ><span lang="it">Prova la demo</span><span lang="en">Try the demo</span></a
+              >
+            </div>
+            <ul class="chips" aria-label="Platforms">
+              <li>Dataverse</li>
+              <li>Dynamics 365 CE</li>
+              <li>Power Platform</li>
+              <li>GitHub Copilot</li>
+            </ul>
+          </div>
+
+          <figure class="term-wrap">
+            <div class="term" role="img" aria-label="Sessione di esempio: init, check, preflight">
+              <div class="term-bar"><i></i><i></i><i></i><span>Dataverse POC Orchestrator</span></div>
+              <div class="term-body">
+                <div class="l p" style="--d: 0">&gt; init POC ordini per Contoso</div>
+                <div class="l ok" style="--d: 1">✔ Requisiti: node, npm, Edge</div>
+                <div class="l ok" style="--d: 2">✔ Scaffold model-driven · prefisso ava_</div>
+                <div class="l ok" style="--d: 3">✔ Sales Hub: 29 schermate, 15 dataset sintetici</div>
+                <div class="l p" style="--d: 4">&gt; aggiungi gestione resi (RF-010…RF-018)</div>
+                <div class="l ok" style="--d: 5">✔ npm run check · smoke test OK</div>
+                <div class="l warn" style="--d: 6">⚠ RF-016 scoperto: nessuna schermata</div>
+                <div class="l p" style="--d: 7">&gt; stage R su DEV</div>
+                <div class="l ok" style="--d: 8">✔ preflight: profilo PAC = piano</div>
+              </div>
+            </div>
+            <figcaption>
+              <span lang="it">Output a scopo illustrativo.</span><span lang="en">Illustrative output.</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stats" aria-label="In breve">
+        <div class="wrap stats-in">
+          <div>
+            <strong>11</strong>
+            <b lang="it">Agenti</b><b lang="en">Agents</b>
+            <span lang="it">1 orchestratore, 10 specialisti nascosti</span>
+            <span lang="en">1 orchestrator, 10 hidden specialists</span>
+          </div>
+          <div>
+            <strong>8</strong>
+            <b lang="it">Skill</b><b lang="en">Skills</b>
+            <span lang="it">init, planner, schema, model-driven, code app…</span>
+            <span lang="en">init, planner, schema, model-driven, code app…</span>
+          </div>
+          <div>
+            <strong>3</strong>
+            <b lang="it">Stage con gate</b><b lang="en">Gated stages</b>
+            <span lang="it">prototipo, DEV, rilascio</span>
+            <span lang="en">prototype, DEV, release</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <b lang="it">Token negli script</b><b lang="en">Tokens in scripts</b>
+            <span lang="it">scaffold, build, test, preflight</span>
+            <span lang="en">scaffold, build, test, preflight</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHY -->
+      <section class="section" id="why">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow"><span lang="it">Perché serve</span><span lang="en">Why it matters</span></p>
+            <h2 lang="it">Una POC deve convincere presto, senza promettere troppo.</h2>
+            <h2 lang="en">A POC has to convince early, without overpromising.</h2>
+          </header>
+          <div class="grid g4">
+            <article class="card reveal">
+              <div class="ico i-amber">⏱️</div>
+              <h3 lang="it">Prototipi lenti</h3>
+              <h3 lang="en">Slow prototypes</h3>
+              <p lang="it">Schermate, dati demo e navigazione si descrivono in YAML; un renderer generico li disegna in stile Dynamics 365. Nessun HTML scritto a mano.</p>
+              <p lang="en">Screens, demo data and navigation are described in YAML; a generic renderer draws them in Dynamics 365 style. No hand-written HTML.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-violet">🎭</div>
+              <h3 lang="it">Demo scambiate per software</h3>
+              <h3 lang="en">Demos mistaken for software</h3>
+              <p lang="it">Generative page e PCF sono simulati con un badge «Simulazione» sempre visibile: lo sponsor vede la direzione, non una promessa.</p>
+              <p lang="en">Generative pages and PCF controls are simulated with an always-visible “Simulation” badge: sponsors see the direction, not a promise.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-sky">🛡️</div>
+              <h3 lang="it">Ambienti a rischio</h3>
+              <h3 lang="en">Environments at risk</h3>
+              <p lang="it">Stage gate confermati, preflight a script sul piano, tutto dentro la solution e un hook che chiede conferma prima di cancellare o cambiare ambiente.</p>
+              <p lang="en">Confirmed stage gates, scripted preflight against the plan, everything inside the solution and a hook that asks before deleting or switching environments.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-green">💸</div>
+              <h3 lang="it">Costi AI imprevisti</h3>
+              <h3 lang="en">AI cost surprises</h3>
+              <p lang="it">Scaffold, validazione, build, smoke test, preflight e verifica degli zip sono script: gli agenti leggono un riepilogo JSON invece di ragionare sui file.</p>
+              <p lang="en">Scaffold, validation, build, smoke test, preflight and zip checks are scripts: agents read a JSON summary instead of reasoning over files.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section class="section soft" id="features">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow"><span lang="it">Cosa ottieni</span><span lang="en">What you get</span></p>
+            <h2 lang="it">Tutto quello che serve a una POC su Power Platform.</h2>
+            <h2 lang="en">Everything a Power Platform POC needs.</h2>
+          </header>
+          <div class="grid g3">
+            <article class="card reveal">
+              <div class="ico i-indigo">🖥️</div>
+              <h3 lang="it">Prototipo fedele a D365</h3>
+              <h3 lang="en">Dynamics 365-faithful prototype</h3>
+              <p lang="it">Site map, schede di sessione, viste, moduli, Fluent 2 e Segoe UI. Un solo file HTML che si apre con un doppio clic.</p>
+              <p lang="en">Site map, session tabs, views, forms, Fluent 2 and Segoe UI. One HTML file that opens with a double click.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-sky">🧩</div>
+              <h3 lang="it">Model-driven o code app</h3>
+              <h3 lang="en">Model-driven or code app</h3>
+              <p lang="it">La scelta si fa con l'utente, mai per deduzione. La code app ha la sua shell, senza chrome D365, e diventa poi una Power Apps code app reale.</p>
+              <p lang="en">The choice is made with you, never inferred. Code apps get their own shell without D365 chrome, and later become a real Power Apps code app.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-amber">🗃️</div>
+              <h3 lang="it">Datamodel standard-first</h3>
+              <h3 lang="en">Standard-first data model</h3>
+              <p lang="it">Prima di ogni tabella custom si verifica lo standard su Microsoft Learn e si documenta la decisione. Baseline Sales Hub e Customer Service Hub pronte.</p>
+              <p lang="en">Before any custom table, the standard one is checked on Microsoft Learn and the decision is documented. Sales Hub and Customer Service Hub baselines included.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-green">✅</div>
+              <h3 lang="it">Copertura dei requisiti</h3>
+              <h3 lang="en">Requirements coverage</h3>
+              <p lang="it">Ogni schermata, campo e componente dichiara i requisiti che copre; la build produce il report e segnala quelli scoperti.</p>
+              <p lang="en">Every screen, field and component declares the requirements it covers; the build produces the report and flags the uncovered ones.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-violet">⚙️</div>
+              <h3 lang="it">Realizzazione in DEV</h3>
+              <h3 lang="en">Build in DEV</h3>
+              <p lang="it">Tabelle, colonne, choice, form, viste, sitemap, generative page, PCF, web resource e code app con PACX, PAC e AppMaker.</p>
+              <p lang="en">Tables, columns, choices, forms, views, site map, generative pages, PCF, web resources and code apps with PACX, PAC and AppMaker.</p>
+            </article>
+            <article class="card reveal">
+              <div class="ico i-pink">🧪</div>
+              <h3 lang="it">Verifica indipendente</h3>
+              <h3 lang="en">Independent verification</h3>
+              <p lang="it">Smoke test Playwright su ogni app e area, verifica dei metadata e degli zip esportati. Nulla è «funzionante» finché non è verificato.</p>
+              <p lang="en">Playwright smoke tests across every app and area, metadata and exported-zip checks. Nothing is “working” until verified.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW -->
+      <section class="section" id="how">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow"><span lang="it">Come funziona</span><span lang="en">How it works</span></p>
+            <h2 lang="it">Un orchestratore, specialisti nascosti, script per il resto.</h2>
+            <h2 lang="en">One orchestrator, hidden specialists, scripts for the rest.</h2>
+            <p lang="it">L'orchestratore pianifica, apre gli stage con la tua conferma, delega con brief autosufficienti e consolida i report nel piano della POC.</p>
+            <p lang="en">The orchestrator plans, opens stages with your confirmation, delegates with self-contained briefs and consolidates reports into the POC plan.</p>
+          </header>
+          <figure class="shot reveal">
+            <img
+              src="images/architecture.svg"
+              width="1200"
+              height="560"
+              loading="lazy"
+              alt="The user talks to the orchestrator, which runs deterministic scripts and delegates to ten sub-agents; the output is a prototype and, in stage R, a solution in a DEV environment"
+              data-alt-it="L'utente parla con l'orchestratore, che esegue script deterministici e delega a dieci sotto-agenti; il risultato è un prototipo e, in stage R, una solution in un ambiente DEV"
+            />
+          </figure>
+          <figure class="shot reveal">
+            <img
+              src="images/workflow.svg"
+              width="1200"
+              height="300"
+              loading="lazy"
+              alt="Init, stage P prototype, stage R build in DEV, stage D release, each opened by a confirmed gate"
+              data-alt-it="Init, stage P prototipo, stage R realizzazione in DEV, stage D rilascio, ognuno aperto da un gate confermato"
+            />
+          </figure>
+          <ul class="ticks reveal">
+            <li lang="it">Gli stage non si aprono per inferenza: il target ambiente sta nel piano e lo conferma l'utente.</li>
+            <li lang="en">Stages never open by inference: the target environment lives in the plan and is confirmed by you.</li>
+            <li lang="it">Due sotto-agenti non lavorano mai sullo stesso artefatto; più generative page vanno in parallelo.</li>
+            <li lang="en">Two sub-agents never touch the same artifact; multiple generative pages run in parallel.</li>
+            <li lang="it">Ogni report distingue verificato, non verificato e simulato.</li>
+            <li lang="en">Every report separates verified, unverified and simulated.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SCRIPTS -->
+      <section class="section soft" id="scripts">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow"><span lang="it">Script</span><span lang="en">Scripts</span></p>
+            <h2 lang="it">Il lavoro meccanico non passa da un modello.</h2>
+            <h2 lang="en">Mechanical work never goes through a model.</h2>
+            <p lang="it">Node puro, senza dipendenze, output JSON compatto: più veloce, ripetibile e verificabile in CI.</p>
+            <p lang="en">Plain Node, no dependencies, compact JSON output: faster, repeatable and testable in CI.</p>
+          </header>
+          <div class="grid g3 scripts reveal">
+            <div class="mini">
+              <code>check-prereqs</code
+              ><span lang="it">Node, npm, browser, pac, pacx, profili e server MCP per lo stage P o R.</span
+              ><span lang="en">Node, npm, browser, pac, pacx, auth profiles and MCP servers for stage P or R.</span>
+            </div>
+            <div class="mini">
+              <code>poc-init</code
+              ><span lang="it">Scaffold, esempi, piano, npm install e primo check in un comando.</span
+              ><span lang="en">Scaffold, samples, plan, npm install and first check in one command.</span>
+            </div>
+            <div class="mini">
+              <code>poc-add-standard</code
+              ><span lang="it">Baseline Sales Hub o Customer Service Hub con dati sintetici.</span
+              ><span lang="en">Sales Hub or Customer Service Hub baseline with synthetic data.</span>
+            </div>
+            <div class="mini">
+              <code>npm run check</code
+              ><span lang="it">Validator, runtime, HTML statico, copertura e smoke test Playwright.</span
+              ><span lang="en">Validators, runtime, static HTML, coverage and Playwright smoke test.</span>
+            </div>
+            <div class="mini">
+              <code>poc-preflight</code
+              ><span lang="it">Profili PAC e PACX attivi contro il target del piano, prima di ogni scrittura.</span
+              ><span lang="en">Active PAC and PACX profiles against the plan target, before any write.</span>
+            </div>
+            <div class="mini">
+              <code>poc-solution-zip</code
+              ><span lang="it">Versione, componenti e generative page di uno zip esportato.</span
+              ><span lang="en">Version, components and generative pages of an exported zip.</span>
+            </div>
+            <div class="mini mini-note">
+              <strong>0</strong><span lang="it">token negli script meccanici</span><span lang="en">tokens in the mechanical scripts</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEMO -->
+      <section class="section" id="demo">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow">Demo</p>
+            <h2 lang="it">Quello che vede lo sponsor.</h2>
+            <h2 lang="en">What your sponsor sees.</h2>
+            <p lang="it">Prototipi generati dallo scaffold, senza una riga di HTML scritta a mano. Dati interamente sintetici.</p>
+            <p lang="en">Prototypes generated by the scaffold, without a single hand-written line of HTML. Fully synthetic data.</p>
+          </header>
+          <div class="gallery">
+            <figure class="reveal">
+              <a href="images/screenshot-sales-hub.png"><img src="images/screenshot-sales-hub.png" width="1400" height="820" loading="lazy" alt="Sales Hub baseline: opportunity view with synthetic data" data-alt-it="Baseline Sales Hub: vista delle opportunità con dati sintetici" /></a>
+              <figcaption lang="it">Baseline Sales Hub, generata a script.</figcaption>
+              <figcaption lang="en">Sales Hub baseline, generated by script.</figcaption>
+            </figure>
+            <figure class="reveal">
+              <a href="images/screenshot-form.png"><img src="images/screenshot-form.png" width="1400" height="820" loading="lazy" alt="Record form with a simulated generative page and its Simulation badge" data-alt-it="Modulo record con una generative page simulata e il badge Simulazione" /></a>
+              <figcaption lang="it">Modulo con generative page simulata.</figcaption>
+              <figcaption lang="en">Form with a simulated generative page.</figcaption>
+            </figure>
+            <figure class="reveal">
+              <a href="images/screenshot-code-app.png"><img src="images/screenshot-code-app.png" width="1400" height="820" loading="lazy" alt="Code app prototype: custom shell with tabbed detail" data-alt-it="Prototipo code app: shell propria con dettaglio a schede" /></a>
+              <figcaption lang="it">Code app con shell propria.</figcaption>
+              <figcaption lang="en">Code app with its own shell.</figcaption>
+            </figure>
+          </div>
+          <div class="demo-links reveal">
+            <a class="btn btn-primary" href="demo/model-driven.html"
+              ><span lang="it">Apri la demo model-driven</span><span lang="en">Open the model-driven demo</span></a
+            >
+            <a class="btn btn-ghost" href="demo/code-app.html"
+              ><span lang="it">Apri la demo code app</span><span lang="en">Open the code app demo</span></a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- START -->
+      <section class="section soft start" id="start">
+        <div class="wrap">
+          <header class="sec-head reveal">
+            <p class="eyebrow"><span lang="it">Inizia</span><span lang="en">Get started</span></p>
+            <h2 lang="it">Operativo in dieci minuti.</h2>
+            <h2 lang="en">Up and running in ten minutes.</h2>
+          </header>
+          <div class="steps">
+            <ol class="reveal">
+              <li>
+                <b lang="it">Abilita i plugin in VS Code</b><b lang="en">Enable plugins in VS Code</b>
+                <span lang="it">Impostazioni → <code>Chat › Plugins: Enabled</code>.</span
+                ><span lang="en">Settings → <code>Chat › Plugins: Enabled</code>.</span>
+              </li>
+              <li>
+                <b lang="it">Aggiungi il marketplace</b><b lang="en">Add the marketplace</b>
+                <span lang="it">Lo slug del repository in <code>chat.plugins.marketplaces</code>.</span
+                ><span lang="en">The repository slug in <code>chat.plugins.marketplaces</code>.</span>
+              </li>
+              <li>
+                <b lang="it">Installa il plugin</b><b lang="en">Install the plugin</b>
+                <span lang="it">Extensions → cerca <code>@agentPlugins dataverse-poc</code>.</span
+                ><span lang="en">Extensions → search <code>@agentPlugins dataverse-poc</code>.</span>
+              </li>
+              <li>
+                <b lang="it">Scegli l'orchestratore e scrivi <code>init</code></b
+                ><b lang="en">Pick the orchestrator and type <code>init</code></b>
+                <span lang="it">Verifica dei requisiti, quattro domande, scaffold e primo check.</span
+                ><span lang="en">Prerequisite check, four questions, scaffold and first check.</span>
+              </li>
+            </ol>
+            <div class="code reveal">
+              <div class="code-bar">
+                <span>settings.json</span
+                ><button type="button" class="copy" data-copy="#cfg"><span lang="it">Copia</span><span lang="en">Copy</span></button>
+              </div>
+              <pre id="cfg"><code>"chat.plugins.enabled": true,
+"chat.plugins.marketplaces": [
+  "{{REPO_SLUG}}"
+]</code></pre>
+            </div>
+          </div>
+          <div class="install-alt">
+            <div class="reveal">
+              <h3 lang="it">Preferisci il terminale? GitHub Copilot CLI</h3>
+              <h3 lang="en">Prefer the terminal? GitHub Copilot CLI</h3>
+              <div class="code">
+                <div class="code-bar">
+                  <span>shell</span
+                  ><button type="button" class="copy" data-copy="#cli-copilot"><span lang="it">Copia</span><span lang="en">Copy</span></button>
+                </div>
+                <pre id="cli-copilot"><code>copilot plugin marketplace add {{REPO_SLUG}}
+copilot plugin install dataverse-poc@power-platform-plugins</code></pre>
+              </div>
+            </div>
+            <div class="reveal">
+              <h3 lang="it">Init senza chat</h3>
+              <h3 lang="en">Init without chat</h3>
+              <div class="code">
+                <div class="code-bar">
+                  <span>shell</span
+                  ><button type="button" class="copy" data-copy="#cli-init"><span lang="it">Copia</span><span lang="en">Copy</span></button>
+                </div>
+                <pre id="cli-init"><code>node plugins/dataverse-poc/scripts/check-prereqs.mjs
+node plugins/dataverse-poc/scripts/poc-init.mjs --root POC/OrderService \
+  --app-type model-driven --prefix ava_ --name "Order Service" --hub sales-hub</code></pre>
+              </div>
+            </div>
+          </div>
+          <p class="note reveal" lang="it">
+            Requisiti: Node.js 18+ ed Edge o Chrome per il prototipo; <code>pac</code>, <code>pacx</code> e i
+            profili di autenticazione solo per la realizzazione in DEV. Guida completa:
+            <a href="{{REPO_URL}}/blob/main/docs/dataverse-poc/tutorial-init.md">tutorial di init</a>.
+          </p>
+          <p class="note reveal" lang="en">
+            Requirements: Node.js 18+ and Edge or Chrome for the prototype; <code>pac</code>, <code>pacx</code>
+            and auth profiles only for the DEV build. Full guide:
+            <a href="{{REPO_URL}}/blob/main/docs/dataverse-poc/tutorial-init.md">init tutorial</a> (Italian).
+          </p>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section" id="faq">
+        <div class="wrap narrow">
+          <header class="sec-head reveal">
+            <p class="eyebrow">FAQ</p>
+            <h2 lang="it">Domande frequenti.</h2>
+            <h2 lang="en">Good questions.</h2>
+          </header>
+          <div class="faq reveal">
+            <details>
+              <summary><span lang="it">Serve un ambiente Dataverse per iniziare?</span><span lang="en">Do I need a Dataverse environment to start?</span></summary>
+              <p lang="it">No. Lo stage P produce un prototipo statico con dati sintetici: bastano Node.js e un browser. L'ambiente serve solo dallo stage R, dopo la tua conferma.</p>
+              <p lang="en">No. Stage P produces a static prototype with synthetic data: Node.js and a browser are enough. An environment is only needed from stage R, after your confirmation.</p>
+            </details>
+            <details>
+              <summary><span lang="it">Posso usare dati reali del cliente?</span><span lang="en">Can I use real customer data?</span></summary>
+              <p lang="it">No. I dati demo sono sempre sintetici; il validator dei dati segnala email non su domini demo, IBAN e codici fiscali.</p>
+              <p lang="en">No. Demo data is always synthetic; the data validator flags non-demo email domains, IBANs and Italian tax codes.</p>
+            </details>
+            <details>
+              <summary><span lang="it">Cosa impedisce di toccare l'ambiente sbagliato?</span><span lang="en">What stops it from touching the wrong environment?</span></summary>
+              <p lang="it">Il preflight confronta i profili attivi con il piano e si ferma se non coincidono; l'hook <code>poc-guard</code> chiede conferma prima di cancellazioni, cambi di profilo e import. Nessuna cancellazione senza autorizzazione esplicita.</p>
+              <p lang="en">The preflight compares active profiles with the plan and stops on mismatch; the <code>poc-guard</code> hook asks before deletions, profile switches and imports. No deletion without explicit authorization.</p>
+            </details>
+            <details>
+              <summary><span lang="it">Model-driven o code app?</span><span lang="en">Model-driven or code app?</span></summary>
+              <p lang="it">Se la UI nasce da record, viste e moduli, model-driven (con generative page e PCF nei punti custom). Se il valore sta in un'interazione disegnata su misura, code app. Nel dubbio si parte da model-driven.</p>
+              <p lang="en">If the UI comes from records, views and forms, model-driven (with generative pages and PCF where custom). If the value is a bespoke interaction, code app. When in doubt, start model-driven.</p>
+            </details>
+            <details>
+              <summary><span lang="it">È adatto a un progetto di delivery?</span><span lang="en">Is it meant for delivery projects?</span></summary>
+              <p lang="it">No: è pensato per POC e demo in ambienti DEV. Le decisioni di datamodel e i contratti YAML però diventano una specifica utile per chi implementa.</p>
+              <p lang="en">No: it targets POCs and demos in DEV environments. Data model decisions and YAML contracts still become a useful specification for the delivery team.</p>
+            </details>
+            <details>
+              <summary><span lang="it">Funziona con Claude Code?</span><span lang="en">Does it work with Claude Code?</span></summary>
+              <p lang="it">Il plugin usa il formato di GitHub Copilot (VS Code e Copilot CLI). Gli script sono Node puro e funzionano da qualsiasi terminale.</p>
+              <p lang="en">The plugin uses the GitHub Copilot format (VS Code and Copilot CLI). The scripts are plain Node and run from any terminal.</p>
+            </details>
+          </div>
+          <div class="docs reveal">
+            <h3 lang="it">Documentazione</h3>
+            <h3 lang="en">Documentation</h3>
+            <ul>
+              <li><a href="{{REPO_URL}}/blob/main/docs/dataverse-poc/tutorial-init.md">📘 <span lang="it">Tutorial di init</span><span lang="en">Init tutorial (Italian)</span></a></li>
+              <li><a href="{{REPO_URL}}/blob/main/plugins/dataverse-poc/README.md">🧭 <span lang="it">Guida al plugin</span><span lang="en">Plugin guide (Italian)</span></a></li>
+              <li><a href="{{REPO_URL}}/blob/main/plugins/dataverse-poc/skills/prototype-dataverse-app/references/yaml-schema.md">🧾 <span lang="it">Schema YAML del prototipo</span><span lang="en">Prototype YAML schema (Italian)</span></a></li>
+              <li><a href="{{REPO_URL}}/blob/main/plugins/dataverse-poc/CHANGELOG.md">📜 Changelog</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="final">
+        <div class="wrap">
+          <h2 lang="it">La prossima demo Dataverse parte da <code>init</code>.</h2>
+          <h2 lang="en">Your next Dataverse demo starts with <code>init</code>.</h2>
+          <div class="cta center">
+            <a class="btn btn-primary" href="#start"><span lang="it">Inizia subito</span><span lang="en">Get started</span></a>
+            <a class="btn btn-ghost" href="{{REPO_URL}}"><span lang="it">Metti una stella su GitHub</span><span lang="en">Star on GitHub</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap foot-in">
+        <span>Dataverse POC Agents · v{{VERSION}}</span>
+        <span
+          ><a href="{{REPO_URL}}">GitHub</a> ·
+          <a href="{{REPO_URL}}/blob/main/plugins/dataverse-poc/CHANGELOG.md">Changelog</a></span
+        >
+      </div>
+    </footer>
+    <script src="main.js?v={{VERSION}}"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
   "name": "dataverse-poc",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Multi-agent Dataverse POC: the orchestrator skill plans (model-driven or code app), opens stages with user confirmation and delegates to sub-agents for HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Includes a PreToolUse guard on PAC/PACX commands.",
   "author": {
     "name": "Marco Dodaro"

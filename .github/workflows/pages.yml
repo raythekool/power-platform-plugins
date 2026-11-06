@@ -5,9 +5,10 @@ on:
     branches: [main]
     paths:
       - site/**
-      - docs/power-platform-llm-wiki/images/**
-      - scripts/power-platform-llm-wiki/Build-Site.ps1
-      - plugins/*/plugin.json
+      - docs/*/images/**
+      - scripts/*/build-site.mjs
+      - scripts/*/Build-Site.ps1
+      - plugins/**
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -25,6 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The live demos are generated with the plugin's own scaffold (npm install inside a temp POC).
+      - name: Build dataverse-poc website
+        run: >
+          node scripts/dataverse-poc/build-site.mjs --out _site/dataverse-poc
+          --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/dataverse-poc"
+          --repo-url "https://github.com/${{ github.repository }}"
 
       - name: Build LLM Wiki website
         shell: pwsh

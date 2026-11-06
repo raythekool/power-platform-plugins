@@ -18,7 +18,7 @@ Non scrive renderer e non genera artefatti statici: produce le decisioni che le 
 3. Stabilire `naming.prefix`, nome applicazione, modalità (`requirements`, `legacy-html`, `html-diretto`) e cartella `<poc-root>`.
 4. Produrre una tabella di schermate con: logical name, display name, scopo, attori, dataset principale, requisiti coperti, tipo pagina atteso.
 5. Se `appType: model-driven`, classificare ogni schermata come dashboard, view, form o custom-page e indicare quali view aprono quali form.
-6. Se la richiesta e "una Sales Hub standard" o "una Customer Service Hub standard" (non un'app custom), verificare prima `../prototype-dataverse-app/references/standard-apps.md`: contiene il sitemap out-of-the-box gia mappato alle tabelle Dataverse standard. Gli YAML pronti da copiare (non solo la narrativa) sono in `../prototype-dataverse-app/assets/standard-navigation/` e `../prototype-dataverse-app/assets/standard-entities/`.
+6. Se la richiesta e "una Sales Hub standard" o "una Customer Service Hub standard" (non un'app custom), verificare prima `../prototype-dataverse-app/references/standard-apps.md`: contiene il sitemap out-of-the-box gia mappato alle tabelle Dataverse standard. La baseline si applica a script con `poc-init.mjs --hub` o `poc-add-standard.mjs`, senza ricopiare YAML a mano.
 7. Passare alla skill Dataverse schema prima di creare tabelle custom o campi custom.
 
 ## Output Atteso
@@ -27,4 +27,5 @@ Non scrive renderer e non genera artefatti statici: produce le decisioni che le 
 - Inventario schermate.
 - Percorso demo.
 - Decisioni aperte da chiedere all'utente.
-- Indicazione della skill successiva: schema Dataverse, model-driven POC, code-app POC o legacy extraction.
+- Parametri per lo scaffold (`--app-type`, `--prefix`, `--name`, `--root`, `--hub`) se la POC non esiste ancora.
+- Indicazione della skill successiva: init, schema Dataverse, model-driven POC, code-app POC o legacy extraction.

@@ -54,6 +54,7 @@ The marketplace `metadata.version` changes only when the marketplace itself chan
 node scripts/validate-marketplace.mjs
 node scripts/dataverse-poc/validate-plugin.mjs
 node scripts/dataverse-poc/build-claude.mjs --check
+node --test tests/dataverse-poc/*.test.mjs
 pwsh ./scripts/power-platform-llm-wiki/Validate-Plugin.ps1 -Human
 pwsh ./tests/power-platform-llm-wiki/Invoke-Tests.ps1
 claude plugin validate .
@@ -68,6 +69,9 @@ CI runs the same checks, except `claude plugin validate`. Open a pull request fr
 - The Claude Code files in `claude/` are **generated**: `claude/agents/poc-*.md` and the `claude/skills/orchestrator/` skill. Regenerate them after every change to `agents/` with `node scripts/dataverse-poc/build-claude.mjs`; CI fails when they are out of date. In Claude Code sub-agents cannot start other sub-agents, so the orchestrator becomes a skill that runs in the main conversation.
 - Front matter: skills and agents have `name` (equal to the folder or the file) and `description`. Sub-agents have `user-invocable: false` and are listed in the orchestrator's `agents:`.
 - `claude/hooks.json` (Claude) and `hooks.json` (Copilot) call the same `scripts/poc-guard.cjs`; keep it compatible with both payloads.
+- Agents and skills refer to the plugin folder as `<plugin-root>`. The generator turns it into `${CLAUDE_PLUGIN_ROOT}`, and the validator checks that every `<plugin-root>/scripts/...` exists.
+- Mechanical work goes into Node scripts in `plugins/dataverse-poc/scripts/` (Node 18+, no dependencies), with tests in `tests/dataverse-poc/scripts.test.mjs`. The end-to-end test needs npm registry access; set `SKIP_E2E=1` to skip it.
+- The tutorial and images are in `docs/dataverse-poc/`. The website (`site/dataverse-poc/`, built by `scripts/dataverse-poc/build-site.mjs`) includes live demos generated with the plugin's own scaffold.
 
 ## 📖 power-platform-llm-wiki
 

@@ -277,6 +277,39 @@ Contratto di output del report di copertura, generato in `dist/requirements-cove
 
 Un ID citato in un elemento ma assente dal manifest e un errore di validazione; un ID `in-scope` senza riferimenti risulta `scoperto` e va segnalato all'utente.
 
+## Chiavi lette dal renderer generico (`app/poc-app.js`)
+
+Il renderer dello scaffold disegna la POC solo da queste chiavi; non serve scrivere HTML o JavaScript di dominio.
+
+| Dove | Chiave | Effetto |
+| --- | --- | --- |
+| `config/index.yaml` | `demoUser.initials` | Iniziali dell'utente nell'header (default `MD`/`DU`) |
+| `config/index.yaml` (code-app) | `codeApp.navigation: [logicalName]` | Ordine delle voci di menu; default: entita che non sono `targetForm` di un'altra |
+| `entity` | `dataset`, `targetForm`, `primaryColumn` | Vista (model-driven) o elenco (code-app) e schermata di dettaglio aperta dalla riga |
+| `entity` | `columns: [campo \| {field, label}]` | Colonne della griglia; default: colonna primaria + 5 colonne del primo record |
+| `entity` | `viewName` | Titolo della vista (default `displayName`) |
+| `entity` | `headerFields: [logicalName]` | Campi nell'intestazione del modulo (default: i primi tre valorizzati) |
+| `entity` | `messageBar: {level, text}` | Barra dei messaggi del modulo (`info`, `warning`, `error`) |
+| `sections[]` | `components: [logicalName]` | Componenti locali ospitati dalla sezione (le definizioni usano `uses`) |
+| `fields[]` | `dataKey` | Chiave del record da leggere, se diversa da `dataverse.column` e `logicalName` |
+| dataset | `keyField`, `primaryField` | Chiave e colonna mostrata come titolo, nei lookup e nei Recenti |
+| dataset | `relations: [{field, references}]` | Relazioni verso altri dataset (in alternativa a `_schema.yaml`) |
+| `config/data/_schema.yaml` | `relationships: [{dataset, field, references}]` | Integrita referenziale verificata da `validate-poc-data` |
+
+`bindings` (o `args`/`params` delle definizioni, con gli stessi nomi) per tipo di componente:
+
+| `type` | Chiavi |
+| --- | --- |
+| tutti | `dataset`, `relatedField` (filtra sul record aperto), `filter: {campo: valore}`, `targetForm` |
+| `kpi` | `items: [{label, value, tone}]` statici, oppure `groupBy`, oppure conteggio con `sumField`/`sumLabel` |
+| `subgrid` | `fields` (colonne) |
+| `timeline` | `dateField`, `titleField`, `textField` |
+| `bpf` | `stages: [etichetta]`, `stageField` (dal record) o `activeStage` |
+| `generative-page` | `text` (contenuto generato simulato), `dataset` + `fields` + `limit` |
+| `pcf` | `field` (+ `max` per i numerici) sul record aperto, oppure `dataset` + `fields` |
+
+Le opzioni choice si leggono da `dataverse.choice.options`, `dataverse.choice` (lista) o `dataverse.options`, sempre come `{value, label}`.
+
 ## Regole di validazione attese
 
 I validator della POC devono segnalare almeno:
@@ -287,12 +320,12 @@ I validator della POC devono segnalare almeno:
 - campo mappabile a Dataverse senza `fields[].dataverse.type`, `source` o `requiredLevel`;
 - `choice` senza opzioni complete `{value, label}`, `lookup` senza `targets`, `datetime` senza `format` e `behavior`, colonna numerica senza limiti quando il requisito li esprime;
 - `logicalName` mancante o non conforme al prefisso dichiarato;
-- `logicalName` duplicato tra elementi che lo dichiarano, a qualsiasi livello: applicazione, entita, tab, sezioni, campi, dataset, componenti e contratti `pcf`;
+- `logicalName` duplicato tra elementi che lo dichiarano, a qualsiasi livello: entita, sezioni, campi, componenti, istanze e contratti `pcf` (i tab sono unici dentro la propria entita; i dataset fra loro, in `validate-poc-data`);
 - `displayName` mancante, di soli simboli, o uguale al `logicalName`;
 - sezione senza campi e senza componente ospitato;
 - `control` fuori dall'enum ammesso;
 - `selector`, `sourceVariable` o `hostSelector` mancanti in modalita `legacy-html`;
-- `uses[].component` che non corrisponde a nessuna definizione in `config/components/_definitions/`;
+- `uses[].component` che non corrisponde a nessuna definizione in `config/components/_definitions/`, o `sections[].components` che non corrisponde a un componente locale;
 - `args` con una chiave non dichiarata in `params`, un parametro `required` mancante o un valore incompatibile con `params[].type`;
 - definizione dichiarata e mai usata da nessuna istanza;
 - riferimenti `requirements` non presenti nel manifest `config/requirements.yaml`;

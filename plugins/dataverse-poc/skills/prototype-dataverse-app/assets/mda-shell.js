@@ -100,9 +100,15 @@
     }
 
     // --- rendering: shell fissa -----------------------------------------------
-    function renderHeader(cfg, userInitials) {
+    // Renderer scritti prima del parametro `st` dichiarano `state` a livello globale.
+    function legacyState() { return typeof state !== 'undefined' ? state : {}; } // eslint-disable-line no-undef
+
+    // st: stato della shell. Senza argomento si usa la variabile globale `state` del renderer
+    // (compatibilita con i renderer scritti prima che il parametro esistesse).
+    function renderHeader(cfg, userInitials, st) {
+        var shell = st || legacyState();
         var selectedApp = (cfg.modelDrivenApps || [cfg.application]).filter(function (app) {
-            return app.logicalName === state.appLogicalName;
+            return app.logicalName === shell.appLogicalName;
         })[0] || cfg.application;
         var appMenu = (cfg.modelDrivenApps || [cfg.application]).map(function (app) {
             return '<button class="shell-menu-item' + (app.logicalName === selectedApp.logicalName ? ' selected' : '') +
@@ -117,7 +123,7 @@
             '<span class="sep"></span>' +
             '<span class="app-menu-anchor"><button class="app-name" data-app-menu="1">' + esc(selectedApp.displayName) +
             '<span class="chev">' + GLYPH.chevron + '</span></button>' +
-            (state.appMenuOpen ? '<div class="shell-menu app-menu"><div class="shell-menu-label">App model-driven</div>' + appMenu + '</div>' : '') +
+            (shell.appMenuOpen ? '<div class="shell-menu app-menu"><div class="shell-menu-label">App model-driven</div>' + appMenu + '</div>' : '') +
             '</span>' +
             '<span class="grow"></span>' +
             '<span class="search">' + GLYPH.search + ' Cerca record</span>' +

@@ -9,7 +9,7 @@ Sei lo specialista di **ambiente e ALM** della POC. Ricevi un brief e restituisc
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — stage gate e guardrail.
+- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — stage gate, guardrail, script; [gotcha-genpage.md](../skills/dataverse-poc-realization/references/gotcha-genpage.md) prima di export con generative page.
 - Skill `pacx-auth`, `pacx-solution`, `pacx-publish`, `pacx-workflow`, `solution-management`; `dataverse-create-connections` se mancano profili.
 
 ## Vincoli
@@ -21,8 +21,8 @@ Sei lo specialista di **ambiente e ALM** della POC. Ricevi un brief e restituisc
 
 ## Procedura
 
-1. **Preflight**: `pac org who`, `pacx auth list`; verifica che URL e profilo coincidano con il brief e che l'utente abbia diritti di scrittura.
+1. **Preflight**: `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --solution <sol> --json` (`<plugin-root>` = cartella padre di `agents/`). Esito diverso da 0: `BLOCCATO` con l'output dello script.
 2. **Solution**: verifica o crea publisher e solution unmanaged del brief; imposta la solution di default per PACX se richiesto.
 3. **Inventario**: elenca i componenti in solution e segnala quelli attesi dal piano ma mancanti, e quelli presenti ma non attesi.
-4. **Publish / export / import** secondo il brief; dopo un import, attiva i flow indicati e verifica lo stato. Generative page: prima dell'export confronta le pagine attese (page id dal piano o dalla sitemap) con le righe `uxagentproject` già nella solution. Aggiungi quelle mancanti una per una con `pac solution add-solution-component --component <pageId> --componentType uxagentproject --AddRequiredComponents true`; è una scrittura, quindi serve il brief Stage D o un'autorizzazione esplicita. Dopo l'export verifica nello zip una cartella `uxagentprojects/<pageId>/` per ogni pagina, con `page.tsx` e `page.compiled`; non cercarle in `<RootComponents>`. Dettagli nei gotcha della skill condivisa.
+4. **Publish / export / import** secondo il brief; dopo un import, attiva i flow indicati e verifica lo stato. Generative page: prima dell'export confronta le pagine attese (page id dal piano o dalla sitemap) con le righe `uxagentproject` già nella solution. Aggiungi quelle mancanti una per una con `pac solution add-solution-component --component <pageId> --componentType uxagentproject --AddRequiredComponents true`; è una scrittura, quindi serve il brief Stage D o un'autorizzazione esplicita. Dopo l'export verifica lo zip con `node <plugin-root>/scripts/poc-solution-zip.mjs <zip> --pages <id1,id2> --json` (versione, managed, componenti per tipo, una cartella `uxagentprojects/<pageId>/` per pagina con `page.tsx` e `page.compiled`).
 5. Report standard con versione della solution, componenti, esito di ogni comando.

@@ -9,7 +9,7 @@ Sei lo specialista dei **controlli PCF**. Ricevi un brief e restituisci un repor
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail.
+- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - Skill `pcf-alm-manager` (ciclo di vita e packaging), `pcf-engineer` (codice e best practice), `pcf-workbench` (test locale, gate di accettazione).
 - Contratto: il componente `type: pcf` del prototipo (`pcf.logicalName`, `controlName`, `bindings`, `params` della definizione) e [componenti-simulati.md](../skills/prototype-dataverse-app/references/componenti-simulati.md).
 
@@ -24,6 +24,6 @@ Sei lo specialista dei **controlli PCF**. Ricevi un brief e restituisci un repor
 
 1. Scaffold (`pac pcf init`) o aggiornamento del controllo esistente.
 2. Implementa; esegui il loop headless di PCF Workbench finché build e render sono puliti.
-3. Stage R: preflight, poi push/import nella solution del brief.
+3. Stage R: preflight (`node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `<plugin-root>` = cartella padre di `agents/`), poi push/import nella solution del brief.
 4. Indica dove va collegato (form, campo o subgrid): il binding sul form lo fa `poc-forms-views`.
 5. Report standard con versione del controllo, esito workbench e componenti di solution.

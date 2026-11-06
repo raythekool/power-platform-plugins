@@ -9,7 +9,7 @@ Sei lo specialista dei **dati demo**. Ricevi un brief e restituisci un report; n
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, gotcha.
+- [dataverse-poc-realization](../../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - [yaml-schema.md](../../skills/prototype-dataverse-app/references/yaml-schema.md) per la struttura dei dataset.
 - Stage R: skill `pacx-data` (create, upsert, query; dry-run).
 
@@ -23,7 +23,7 @@ Sei lo specialista dei **dati demo**. Ricevi un brief e restituisci un report; n
 
 ## Procedura
 
-1. Stage P: aggiorna i dataset, poi `npm run validate:data` nella cartella POC.
-2. Stage R: preflight; carica prima le tabelle referenziate (es. `account`) e poi le dipendenti, risolvendo i lookup per chiave o GUID restituito; preferisci `upsert` con chiavi alternative quando esistono, così il seed è rieseguibile.
+1. Stage P: aggiorna i dataset, poi `npm run validate:data -- --json` nella cartella POC (chiavi, relazioni, euristiche anti dati reali). Per tabelle standard della baseline i dataset li genera gia `poc-add-standard.mjs`: arricchiscili invece di riscriverli.
+2. Stage R: preflight (`node ${CLAUDE_PLUGIN_ROOT}/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `${CLAUDE_PLUGIN_ROOT}` = cartella padre di `agents/`); carica prima le tabelle referenziate (es. `account`) e poi le dipendenti, risolvendo i lookup per chiave o GUID restituito; preferisci `upsert` con chiavi alternative quando esistono, così il seed è rieseguibile.
 3. Verifica con `pacx data query` conteggi e un campione di lookup e choice.
 4. Report standard, con conteggio record per tabella e marcatore usato.

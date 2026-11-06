@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc" font-family="Segoe UI, system-ui, sans-serif">
+  <title id="title">Fasi di una POC</title>
+  <desc id="desc">Init, stage P prototipo, stage R realizzazione in DEV, stage D rilascio; ogni stage si apre solo con un gate confermato dall'utente.</desc>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker></defs>
+  <rect width="1200" height="300" rx="24" fill="#F8FAFC"/>
+  <g font-size="13" fill="#475569">
+    <rect x="30" y="50" width="250" height="190" rx="18" fill="#fff" stroke="#E2E8F0"/>
+    <text x="50" y="86" font-size="20" font-weight="700" fill="#0B1220">0 · init</text>
+    <text x="50" y="116">check-prereqs</text>
+    <text x="50" y="138">4 domande: appType, prefisso,</text>
+    <text x="50" y="156">nome, baseline</text>
+    <text x="50" y="178">poc-init → piano + scaffold</text>
+    <text x="50" y="214" font-weight="600" fill="#0B5E56">~2 minuti, tutto a script</text>
+
+    <rect x="320" y="50" width="250" height="190" rx="18" fill="#fff" stroke="#B4D3F2"/>
+    <text x="340" y="86" font-size="20" font-weight="700" fill="#0F6CBD">P · prototipo</text>
+    <text x="340" y="116">schema standard-first (MS Learn)</text>
+    <text x="340" y="138">schermate, dati sintetici,</text>
+    <text x="340" y="156">componenti simulati in YAML</text>
+    <text x="340" y="178">npm run check: build + smoke</text>
+    <text x="340" y="214" font-weight="600" fill="#0C3B5E">gate: appType deciso</text>
+
+    <rect x="610" y="50" width="270" height="190" rx="18" fill="#fff" stroke="#9FDCD5"/>
+    <text x="630" y="86" font-size="20" font-weight="700" fill="#0B5E56">R · realizzazione DEV</text>
+    <text x="630" y="116">poc-preflight sul piano</text>
+    <text x="630" y="138">metadata, dati, form, viste,</text>
+    <text x="630" y="156">sitemap, genpage, PCF</text>
+    <text x="630" y="178">tutto nella solution del piano</text>
+    <text x="630" y="214" font-weight="600" fill="#0B5E56">gate: target confermato</text>
+
+    <rect x="920" y="50" width="250" height="190" rx="18" fill="#fff" stroke="#D7C7EE"/>
+    <text x="940" y="86" font-size="20" font-weight="700" fill="#5C2E91">D · rilascio</text>
+    <text x="940" y="116">export / import solution</text>
+    <text x="940" y="138">poc-solution-zip sullo zip</text>
+    <text x="940" y="156">attivazione flow</text>
+    <text x="940" y="178">inventario per il cleanup</text>
+    <text x="940" y="214" font-weight="600" fill="#3F2168">gate: conferma per ogni rilascio</text>
+  </g>
+  <line x1="282" y1="145" x2="316" y2="145" stroke="#64748B" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="572" y1="145" x2="606" y2="145" stroke="#64748B" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="882" y1="145" x2="916" y2="145" stroke="#64748B" stroke-width="2" marker-end="url(#a)"/>
+</svg>

@@ -93,13 +93,16 @@ async function testPage(browser, file) {
         await click(page, `[data-nav="${recordTarget.nav}"]`);
         await click(page, 'tr[data-open]');
         await page.waitForTimeout(80);
-        const formOk = await page.evaluate(() => Boolean(document.querySelector('.form-tabs, [data-form-tab]')));
-        if (!formOk) failures.push(`${file}: il record aperto da "${recordTarget.nav}" non mostra un modulo`);
+        const form = await page.evaluate(() => ({ ok: Boolean(document.querySelector('.form-tabs, [data-form-tab]')), sims: document.querySelectorAll('.sim-frame').length }));
+        if (!form.ok) failures.push(`${file}: il record aperto da "${recordTarget.nav}" non mostra un modulo`);
+        simFrames += form.sims;
     } else {
         warnings.push(`${file}: nessuna vista con righe cliccabili`);
     }
 
-    if (!simFrames) warnings.push(`${file}: nessun componente con contrassegno di simulazione (.sim-frame)`);
+    // Le code app non ospitano PCF ne generative page: l'assenza di simulazioni e attesa.
+    const modelDriven = await page.evaluate(() => Boolean(document.querySelector('.mda-header')));
+    if (!simFrames && modelDriven) warnings.push(`${file}: nessun componente con contrassegno di simulazione (.sim-frame)`);
     errors.forEach((e) => failures.push(`${file}: errore console · ${e}`));
 
     console.log(`${file}: ${screens.size} schermate, ${simFrames} riquadri simulati, record ${recordTarget ? 'aperto' : 'n/d'}`);

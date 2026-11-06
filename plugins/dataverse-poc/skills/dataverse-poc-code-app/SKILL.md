@@ -13,12 +13,12 @@ La POC resta HTML/YAML statico: non crea una code app reale, non inizializza Vit
 
 ## Procedura
 
-1. Verificare che `config/index.yaml` dichiari `appType: code-app`.
+1. Verificare che `config/index.yaml` dichiari `appType: code-app` (POC nuova: skill `dataverse-poc-init`).
 2. Disegnare la navigazione propria dell'app: sidebar, tab, stepper o workflow custom, senza site map Dynamics 365.
 3. Usare `dataverse-poc-schema` per dichiarare tabelle/campi Dataverse e distinguere standard, standard esteso e custom.
 4. Modellare KPI, timeline, subgrid e stati applicativi come componenti HTML della code app.
 5. Non usare `type: pcf` o `type: generative-page`: in una code app la UI custom si scrive direttamente.
-6. Validare e generare runtime/statico con la pipeline della POC.
+6. `npm run check -- --json` nella cartella POC. Il renderer generico disegna la shell code app (menu laterale, elenchi con `dataset`/`targetForm`, dettaglio a schede) dai soli YAML.
 
 ## Regole
 

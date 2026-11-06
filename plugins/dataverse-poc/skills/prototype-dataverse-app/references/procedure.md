@@ -51,7 +51,7 @@ Il dettaglio operativo e in `requisiti-to-poc.md`.
 7. Definire i dataset demo in `config/data/` con `index.yaml` e `_schema.yaml`. I dati devono essere sintetici e referenzialmente coerenti con le relazioni dichiarate.
 8. Dichiarare in `config/components/` i controlli non rappresentabili come campo, con `logicalName`, `displayName`, `type`, `bindings` e `fallback`. Se lo stesso controllo compare su piu schermate, dichiararlo come definizione in `config/components/_definitions/` e collegarlo con `uses` nelle sezioni che lo ospitano.
 9. Solo con `appType: model-driven`, per un futuro PCF aggiungere il contratto `pcf` con `logicalName`, `controlName` e `enabled: false`.
-10. Generare lo shell HTML dai layer YAML, quindi validare e produrre runtime e statico.
+10. Eseguire `npm run check`: il renderer generico dello scaffold produce runtime e statico dai soli YAML, senza HTML scritto a mano.
 11. Produrre il report di copertura requisiti secondo il contratto di `yaml-schema.md` e segnalare all'utente i requisiti non rappresentati. Nella consegna distinguere anche standard riusato, standard esteso con colonne custom e tabelle custom nuove.
 
 ## Procedura: modalita `legacy-html`
@@ -102,7 +102,7 @@ Vale per `generative-page` e `pcf`, entrambi ammessi solo con `appType: model-dr
 3. Creare o aggiornare il YAML del componente con `type`, `displayName`, `bindings`, `fallback` e il blocco `simulation`. Per un componente su piu schermate creare invece una definizione con `params` e `simulation`, e un'istanza con `args` in ogni sezione ospitante.
 4. Collegare la simulazione ai dati gia presenti in `config/data/`. Se servono contenuti nuovi, aggiungerli come dataset sintetici, mai come valori scritti nel markup.
 5. Per un `pcf`, dichiarare anche il contratto `pcf` con `enabled: false`: indica quale campo o subgrid il controllo sostituira quando sara implementato.
-6. Estendere il renderer in modo che il tipo dichiarato produca il proprio contorno grafico, insieme al contrassegno di simulazione.
+6. Il renderer generico disegna gia cornice e contrassegno di simulazione per `generative-page` e `pcf` (chiavi `bindings` in `yaml-schema.md`); solo per una resa che non copre, registrare un renderer in `app/custom.js`.
 7. Rigenerare runtime e statico e verificare la resa nel browser.
 8. Aggiornare `requirements` sugli elementi coinvolti e rieseguire il report di copertura.
 
@@ -125,6 +125,7 @@ Eseguire dalla cartella della POC:
 
 ```powershell
 npm install
+npm run check            # tutti i passi sotto, riepilogo con --json
 npm run validate:config
 npm run validate:data
 npm run build

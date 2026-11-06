@@ -10,6 +10,7 @@ Questa skill non è più un punto di ingresso: contiene le regole e gli asset co
 
 | Fase | Skill |
 | --- | --- |
+| Setup di una POC nuova (requisiti, scaffold, primo check) | `dataverse-poc-init` |
 | Scelta appType, scope e percorso demo | `dataverse-poc-planner` |
 | Riuso standard/custom e metadata Dataverse | `dataverse-poc-schema` |
 | UI model-driven, chrome D365, generative page e PCF simulati | `dataverse-poc-model-driven` |
@@ -33,23 +34,7 @@ Questa skill non è più un punto di ingresso: contiene le regole e gli asset co
 
 ## Struttura di una POC
 
-```text
-<poc-root>/
-  config/
-    index.yaml
-    requirements.yaml
-    entities/
-    data/
-    components/
-      _definitions/      # solo per componenti riusati su piu schermate
-  scripts/
-  app/                   # renderer e stili (o mda-shell.* copiati da assets/)
-  poc-runtime.html       # generato
-  dist/                  # generato
-  realization/           # solo stage R: sorgenti PCF, web resource, report di test
-  README.md
-  package.json
-```
+Generata da `scripts/poc-init.mjs` del plugin: dettaglio in [scaffold.md](references/scaffold.md). Si modificano solo i YAML in `config/` (piu `app/custom.*` se serve); script, renderer e artefatti generati arrivano dal plugin o dalla build.
 
 ## Riferimenti
 
@@ -65,6 +50,7 @@ Questa skill non è più un punto di ingresso: contiene le regole e gli asset co
 
 ## Asset
 
-- `assets/mda-shell.css`, `assets/mda-shell.js`: shell model-driven riusabile, da copiare in `<poc-root>/app/` solo con `appType: model-driven`.
-- `assets/standard-navigation/`, `assets/standard-entities/`: blocco `navigation` e coppie view/form pronte per Sales Hub e Customer Service Hub (sostituire `{{prefix}}`).
-- `assets/smoke-test.mjs`: smoke test Playwright riusabile per `npm run test:smoke` (vedi `scaffold.md`).
+- `assets/poc-template/`: pipeline (`scripts/`: validator, build runtime/statico, copertura, check, server) e renderer generico (`app/poc-app.js`, `app/poc-app.css`), copiati da `poc-init.mjs`.
+- `assets/mda-shell.css`, `assets/mda-shell.js`: shell model-driven composta dal renderer, copiata solo con `appType: model-driven`.
+- `assets/standard-navigation/`, `assets/standard-entities/`: blocco `navigation` e coppie view/form per Sales Hub e Customer Service Hub; si applicano con `scripts/poc-add-standard.mjs`, che sostituisce `{{prefix}}` e genera i dati sintetici.
+- `assets/smoke-test.mjs`: smoke test Playwright per `npm run test:smoke`.

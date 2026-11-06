@@ -253,7 +253,7 @@ Non usare font generici o una palette inventata. Il prototipo deve usare:
 
 `assets/mda-shell.css` e `assets/mda-shell.js` in questa skill contengono la shell
 strutturale gia pronta (header, site map, strip delle schede, command bar, griglia, modulo)
-con i token Fluent sopra descritti. Per una nuova POC:
+con i token Fluent sopra descritti. Lo scaffold (`poc-init.mjs`) li copia e il renderer generico `app/poc-app.js` li compone gia: i passi seguenti servono solo per un renderer scritto a mano. Per una nuova POC senza scaffold:
 
 1. Copiare entrambi i file in `<poc-root>/app/`.
 2. Nel renderer specifico della POC, riusare le funzioni esposte da `MdaShell`

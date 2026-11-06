@@ -1,6 +1,8 @@
 // Validates the dataverse-poc plugin: manifests, skill/agent frontmatter, subagent references,
-// Claude Code variant (.claude-plugin/ + claude/), relative links, hook scripts.
+// Claude Code variant (.claude-plugin/ + claude/), relative links, hook scripts, plugin scripts referenced by
+// agents and skills, JavaScript syntax.
 // Repository-wide checks (both marketplaces, versions, confidentiality) live in scripts/validate-marketplace.mjs.
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -70,6 +72,14 @@ if (pluginDir && existsSync(pluginDir)) {
             }
         }
 
+        // Plugin scripts named in agents and skills must exist (agents run them by name).
+        // Copilot files use <plugin-root>, the generated Claude files ${CLAUDE_PLUGIN_ROOT}.
+        for (const file of walk(pluginDir).filter((f) => f.endsWith('.md'))) {
+            for (const m of readFileSync(file, 'utf8').matchAll(/(?:<plugin-root>|\$\{CLAUDE_PLUGIN_ROOT\})\/scripts\/([\w.-]+\.m?c?js)/g)) {
+                if (!existsSync(join(pluginDir, 'scripts', m[1]))) errors.push(`${file.replace(root, '.')}: script inesistente scripts/${m[1]}`);
+            }
+        }
+
         const hooksFile = join(pluginDir, manifest.hooks ?? 'hooks.json');
         if (existsSync(hooksFile)) {
             for (const script of readFileSync(hooksFile, 'utf8').match(/scripts\/[\w.-]+/g) ?? []) {
@@ -120,6 +130,13 @@ if (pluginDir && existsSync(pluginDir)) {
             if (!existsSync(resolve(dirname(file), decodeURIComponent(target)))) errors.push(`${file.replace(root, '.')}: link rotto ${target}`);
         }
     }
+}
+
+// Syntax check of every script of this plugin (plugin scripts, POC template, assets) and of its tooling.
+const jsRoots = [pluginDir, join(root, 'scripts', PLUGIN), join(root, 'tests', PLUGIN)].filter((d) => d && existsSync(d));
+for (const file of jsRoots.flatMap(walk).filter((f) => /\.(mjs|cjs|js)$/.test(f))) {
+    const r = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
+    if (r.status !== 0) errors.push(`${file.replace(root, '.')}: sintassi non valida (${r.stderr.trim().split('\n').find((l) => /Error/.test(l)) ?? ''})`);
 }
 
 if (errors.length) {

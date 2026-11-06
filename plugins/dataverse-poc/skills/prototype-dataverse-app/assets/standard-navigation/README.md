@@ -11,6 +11,8 @@ zero. Verificati interattivamente su un ambiente Dynamics 365 CE reale (settembr
 
 ## Come usarli
 
+Con lo script del plugin (consigliato): `node <plugin-root>/scripts/poc-add-standard.mjs --root <poc-root> --hub sales-hub` (o `poc-init.mjs --hub` per una POC nuova). A mano:
+
 1. Copiare il blocco `navigation:` del file scelto in `config/index.yaml` — come `navigation`
    top-level (l'app rappresenta solo quella hub) oppure dentro `modelDrivenApps[].navigation`
    (selettore fra piu app, vedi `../../references/standard-apps.md`).

@@ -9,7 +9,7 @@ Sei lo specialista delle **web resource** e dei **comandi**. Ricevi un brief e r
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail.
+- [dataverse-poc-realization](../../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - Skill `pacx-webresources` (init, push, applyIcons); `model-driven-table-icons` per le icone; `model-driven-ribbon-*` per comandi, enable e display rule; `code-quality` per le convenzioni JS.
 
 ## Vincoli
@@ -22,6 +22,6 @@ Sei lo specialista delle **web resource** e dei **comandi**. Ricevi un brief e r
 ## Procedura
 
 1. Scrivi o aggiorna i file.
-2. Stage R: preflight, poi `pacx webresources push` nella solution del brief; icone con `applyIcons` se richiesto.
+2. Stage R: preflight (`node ${CLAUDE_PLUGIN_ROOT}/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `${CLAUDE_PLUGIN_ROOT}` = cartella padre di `agents/`), poi `pacx webresources push` nella solution del brief; icone con `applyIcons` se richiesto.
 3. Publish dei componenti toccati.
 4. Report standard con elenco web resource (nome, tipo) e handler da registrare.

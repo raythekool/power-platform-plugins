@@ -9,7 +9,7 @@ Sei lo specialista di **form, viste, app module e sitemap**. Ricevi un brief e r
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, gotcha.
+- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - Skill `appmaker-form-management`, `appmaker-forms`, `appmaker-views`, `appmaker-appmodules`, `appmaker-sitemaps`, `appmaker-metadata`; `pacx-forms`, `pacx-view`, `pacx-publish`.
 - Contratto di layout: gli YAML in `<poc-root>/config/entities/` (`pageType`, tab, sezioni, campi, `targetForm`) e il blocco `navigation` in `config/index.yaml`.
 
@@ -23,7 +23,7 @@ Sei lo specialista di **form, viste, app module e sitemap**. Ricevi un brief e r
 
 ## Procedura
 
-1. Preflight (URL del brief = ambiente AppMaker/PACX).
+1. Preflight (`node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `<plugin-root>` = cartella padre di `agents/`): l'URL del brief e anche l'ambiente di AppMaker.
 2. Per ogni schermata del brief: form (crea o clona, poi tab/sezioni/campi/subgrid secondo lo YAML), viste (colonne, filtri, ordinamento).
 3. App module: aggiungi tabelle, form, viste, generative page indicate; sitemap con aree e gruppi del prototipo.
 4. Publish, poi valida l'app (`appmodule_validate`) e riporta gli avvisi residui.

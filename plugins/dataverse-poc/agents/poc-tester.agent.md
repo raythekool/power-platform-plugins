@@ -10,7 +10,7 @@ Sei il **verificatore indipendente** della POC. Non correggi il codice altrui: t
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti e gotcha (in particolare click via `dispatchEvent` e URL diretti genux).
+- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti; in stage R anche [gotcha-genpage.md](../skills/dataverse-poc-realization/references/gotcha-genpage.md) (click via `dispatchEvent`, URL diretti genux).
 - [dataverse-poc-pipeline](../skills/dataverse-poc-pipeline/SKILL.md) — comandi della POC e criteri di verifica.
 - Skill `test-automation` o `webapp-testing` per scenari Playwright più strutturati.
 
@@ -22,7 +22,7 @@ Sei il **verificatore indipendente** della POC. Non correggi il codice altrui: t
 
 ## Procedura
 
-1. **Prototipo**: `npm run build` nella cartella POC; leggi il report di copertura e confrontalo con i requisiti del brief.
-2. **Smoke test prototipo**: `npm run test:smoke` (Playwright su `dist/`, tutte le app e aree, apertura record, badge, errori console). Per verifiche mirate oltre allo script, avvia `npm run serve` in modalità asincrona, apri `poc-runtime.html` e controlla il componente toccato; ferma il server alla fine.
-3. **Ambiente** (stage R): verifica con AppMaker che tabelle, colonne, form, viste e sitemap esistano come dichiarato; apri l'app e le generative page (URL diretto) e controlla rendering, dati, lookup e choice formattati, errori in console.
+1. **Prototipo**: `npm run check -- --json` nella cartella POC: validator, build, copertura e smoke test Playwright in un solo comando. Confronta `uncovered` e la copertura con i requisiti del brief.
+2. **Verifiche mirate** solo se il brief le chiede oltre allo script: `npm run serve` in modalità asincrona, apri `poc-runtime.html`, controlla il componente toccato, ferma il server.
+3. **Ambiente** (stage R): preflight in sola lettura con `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json` (`<plugin-root>` = cartella padre di `agents/`); per uno zip esportato `poc-solution-zip.mjs <zip> --pages <id,...> --json`. Poi verifica con AppMaker che tabelle, colonne, form, viste e sitemap esistano come dichiarato; apri l'app e le generative page (URL diretto) e controlla rendering, dati, lookup e choice formattati, errori in console.
 4. Report standard; in `FATTO` metti la tabella `scenario · esito · evidenza`, in `RISCHI/DEBITI` ciò che non è stato possibile verificare. Per ogni difetto indica il sotto-agente proprietario.

@@ -1,6 +1,6 @@
 {
   "name": "dataverse-poc",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "POC Dataverse multi-agente: un orchestratore pianifica (model-driven o code app), apre gli stage con conferma dell'utente e delega a sotto-agenti nascosti per prototipo HTML/YAML, datamodel, dati demo, form/viste/sitemap, generative page, PCF, web resource, code app, test e deploy.",
   "author": {
     "name": "Marco Dodaro"

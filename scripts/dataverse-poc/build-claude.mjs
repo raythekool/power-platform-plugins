@@ -26,8 +26,9 @@ const parse = (file) => {
     return { get, list, body: m[2] };
 };
 
-// Re-bases relative Markdown links from the source folder to the target folder.
-const rebase = (body, fromDir, toDir) => body.replace(/\]\((?!https?:|mailto:|#)([^)\s]+)\)/g, (all, target) => {
+// Re-bases relative Markdown links from the source folder to the target folder, and turns the Copilot
+// placeholder <plugin-root> into ${CLAUDE_PLUGIN_ROOT}, which Claude Code substitutes in agent and skill bodies.
+const rebase = (body, fromDir, toDir) => body.replaceAll('<plugin-root>', '${CLAUDE_PLUGIN_ROOT}').replace(/\]\((?!https?:|mailto:|#)([^)\s]+)\)/g, (all, target) => {
     const abs = resolve(fromDir, target);
     return `](${relative(toDir, abs).split('\\').join(posix.sep)})`;
 });

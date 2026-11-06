@@ -9,7 +9,7 @@ Sei lo specialista delle **code app** reali. Ricevi un brief e restituisci un re
 
 ## Leggi prima
 
-- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, gotcha.
+- [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - [dataverse-poc-code-app](../skills/dataverse-poc-code-app/SKILL.md) — il prototipo da cui parti (navigazione, schermate, componenti).
 - Skill `create-code-app` (scaffold), `add-dataverse` / `add-datasource` / `add-connector` (dati), `list-connections`, `deploy` (build e publish).
 
@@ -26,5 +26,5 @@ Sei lo specialista delle **code app** reali. Ricevi un brief e restituisci un re
 1. Scaffold (o aggiornamento) della code app; mappa schermate e componenti del prototipo su route e componenti React.
 2. Aggiungi le origini dati del brief e implementa le schermate in scope.
 3. `npm run build` senza errori di tipo.
-4. Stage R: preflight, poi deploy con la skill `deploy`; restituisci l'URL di avvio dell'app per `poc-tester`.
+4. Stage R: preflight (`node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `<plugin-root>` = cartella padre di `agents/`), poi deploy con la skill `deploy`; restituisci l'URL di avvio dell'app per `poc-tester`.
 5. Report standard con schermate realizzate, origini dati collegate e requisiti coperti.

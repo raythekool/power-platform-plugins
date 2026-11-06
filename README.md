@@ -17,7 +17,7 @@ One repository, one marketplace: add it once to **VS Code (GitHub Copilot)**, **
 
 | Plugin | Version | What it does | VS Code | Copilot CLI | Claude Code | Docs |
 | --- | --- | --- | :-: | :-: | :-: | --- |
-| 🧪 [`dataverse-poc`](plugins/dataverse-poc/README.md) | 1.1.0 | Multi-agent **Dataverse POC**: an orchestrator plans the POC (model-driven or code app) and delegates to sub-agents for the HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. A `PreToolUse` guard asks before risky PAC/PACX commands. Content in Italian. | ✅ | ✅ | ✅ | [README](plugins/dataverse-poc/README.md) · [CHANGELOG](plugins/dataverse-poc/CHANGELOG.md) |
+| 🧪 [`dataverse-poc`](plugins/dataverse-poc/README.md) | 1.2.0 | Multi-agent **Dataverse POC**: an orchestrator plans the POC (model-driven or code app) and delegates to sub-agents for the HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Deterministic scripts do the mechanical work: init, prototype pipeline, preflight and solution checks. A `PreToolUse` guard asks before risky PAC/PACX commands. Content in Italian. | ✅ | ✅ | ✅ | [README](plugins/dataverse-poc/README.md) · [Tutorial 🇮🇹](docs/dataverse-poc/tutorial-init.md) · [CHANGELOG](plugins/dataverse-poc/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/dataverse-poc/) |
 | 📖 [`power-platform-llm-wiki`](plugins/power-platform-llm-wiki/README.md) | 3.3.1 | **LLM Wiki**: a code-first project knowledge base for Dynamics 365 (CE / Power Platform and F&O). It analyses code, Dataverse and F&O metadata, work items, meetings and FDD/TDD, and publishes to Azure DevOps Wiki or GitHub Wiki. | ✅ | ✅ | ✅ | [Guide](docs/power-platform-llm-wiki/README.md) · [Guida utente 🇮🇹](docs/power-platform-llm-wiki/guida-utente.md) · [CHANGELOG](plugins/power-platform-llm-wiki/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/) |
 
 ## 🚀 Install
@@ -91,6 +91,7 @@ site/                               # GitHub Pages: home + one folder per plugin
 node scripts/validate-marketplace.mjs                         # both marketplaces, manifests, versions, confidentiality
 node scripts/dataverse-poc/validate-plugin.mjs                # dataverse-poc structure and links
 node scripts/dataverse-poc/build-claude.mjs --check           # Claude Code files are in sync with agents/
+node --test tests/dataverse-poc/*.test.mjs                    # dataverse-poc scripts + end-to-end scaffold (SKIP_E2E=1 to skip)
 pwsh ./scripts/power-platform-llm-wiki/Validate-Plugin.ps1 -Human
 pwsh ./tests/power-platform-llm-wiki/Invoke-Tests.ps1
 claude plugin validate .                                      # optional, if Claude Code is installed

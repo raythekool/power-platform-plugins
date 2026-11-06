@@ -31,12 +31,13 @@ Lo stato della POC vive nel **documento di piano** (es. `POC/Piano_<Iniziativa>_
 | Publisher prefix         | `ava`                             |
 | App module (unique name) | se esiste                         |
 | LCID etichette           | `1040`                            |
+| Conferma utente stage R  | `sì, <data>` (letta da `poc-preflight.mjs`) |
 
 Solo l'orchestratore aggiorna il piano. I sotto-agenti riportano nel report cosa è cambiato.
 
 ## 3. Guardrail (stage R e D)
 
-1. **Preflight obbligatorio** prima di ogni scrittura: `pac org who` e `pacx auth list` devono puntare all'URL del brief. Se non coincidono: fermarsi, non selezionare profili diversi per tentativi.
+1. **Preflight obbligatorio** prima di ogni scrittura: `poc-preflight.mjs` (sezione 7) verifica che `pac org who`, `pac auth list` e `pacx auth list` puntino all'URL del piano e che lo stage R sia confermato. Se non coincidono: fermarsi, non selezionare profili diversi per tentativi.
 2. **Mai produzione** né ambienti cliente senza conferma esplicita riportata nel brief.
 3. Ogni componente nasce **dentro la solution** del brief, con il prefisso del publisher.
 4. Tabelle standard (`account`, `incident`, `email`, …): solo **aggiunta** di colonne prefissate; mai modificare colonne, form o viste standard esistenti; mai colonne obbligatorie.
@@ -104,40 +105,24 @@ RISCHI/DEBITI: <cosa resta simulato, non verificato o da pulire>
 
 `BLOCCATO` è un esito legittimo: meglio fermarsi che improvvisare su ambiente, scope o cancellazioni.
 
-## 7. Gotcha verificati
+## 7. Script deterministici (prima degli strumenti AI)
 
-Ambiente e CLI:
+Il lavoro meccanico lo fanno script Node senza dipendenze, nella cartella `scripts/` del plugin (`<plugin-root>`, la cartella con `plugin.json`, due livelli sopra questa skill). Usarli sempre al posto di ragionamenti o comandi composti a mano: sono piu veloci, ripetibili e consumano meno contesto. Tutti accettano `--json` per un output compatto.
 
-- In `run_in_terminal` i blocchi PowerShell multi-riga spesso restituiscono solo l'eco del prompt: eseguire comandi su una riga.
-- Non filtrare l'output di PAC/PACX con `Select-String`: nasconde gli errori.
-- Se `node` non è nel `PATH`: `$env:PATH = "C:\Program Files\nodejs;$env:PATH"`.
-- `pacx script all/table`: la sezione entità e la sezione relazioni hanno lo stesso formato di riga; isolare la sezione prima di contare. Verificare sempre statistiche sorprendenti prima di scriverle in un deliverable.
+| Bisogno | Comando |
+| --- | --- |
+| Requisiti della postazione | `node <plugin-root>/scripts/check-prereqs.mjs --stage P\|R` |
+| Scaffold di una POC nuova | `node <plugin-root>/scripts/poc-init.mjs --root <dir> --app-type <tipo> --prefix <p_> --name "<nome>"` |
+| Baseline Sales Hub / Customer Service Hub o tabelle standard | `node <plugin-root>/scripts/poc-add-standard.mjs --root <dir> --hub sales-hub` |
+| Preflight stage R/D (sostituisce `pac org who` + confronto manuale) | `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json` |
+| Verifica dello zip esportato (versione, componenti, generative page) | `node <plugin-root>/scripts/poc-solution-zip.mjs <zip> --pages <id,...> --json` |
+| Validator, build, copertura, smoke test del prototipo | `npm run check -- --json` nella cartella POC |
 
-Dataverse:
+Esito del preflight diverso da 0: fermarsi e restituire `BLOCCATO` con l'output dello script.
 
-- I valori delle choice locali su tabelle custom partono da `7139500xx` (dipende dal publisher): leggerli dai metadata, non assumerli.
-- PACX crea le choice locali con suffisso `code` (es. `ava_categorycode`): mappare il nome del dataset sul logical name reale.
-- Sitemap: i titoli richiedono la LCID della lingua utente (es. `1040`) o compaiono come "Nuova area secondaria"; aggiornare con AppMaker `sitemap_update`, poi `pacx publish all`.
+## 8. Gotcha verificati
 
-Generative page nella solution (verificato con PAC 2.12.2):
+Leggere solo il file pertinente al brief:
 
-- Le generative page sono *solution-aware*: tabella `uxagentproject` ("UX Agent Project"), con i file in `uxagentprojectfile`. Il **page id coincide con `uxagentprojectid`**. `pac model genpage upload` non ha un parametro di solution e non aggiunge la pagina alla solution.
-- Aggiungerle **una per una per nome di tipo**: `pac solution add-solution-component --solutionUniqueName <sol> --component <pageId> --componentType uxagentproject --AddRequiredComponents true`. I file della pagina entrano come componenti richiesti.
-- Non usare codici numerici di tipo: il codice di `uxagentproject` dipende dall'ambiente (si legge da `solutioncomponentdefinition`). Passare dall'app non funziona: `--componentType 80` restituisce "Component Type Id (80) is not known" e `--componentType AppModule` restituisce "Invalid component type 9006".
-- Elenco delle pagine in ambiente: `pacx data query -q "<fetch><entity name='uxagentproject'><attribute name='name'/></entity></fetch>"`.
-- Verifica dopo l'export: lo zip contiene `uxagentprojects/<pageId>/uxagentproject.xml` e `uxagentprojectfiles/<fileId>/filecontent/` con `page.tsx`, `page.compiled`, `config.json` e `firstPrompt.json`. Le pagine **non** compaiono in `<RootComponents>` di `solution.xml`: per verificarle, controllare le cartelle nello zip.
-- Nel target arrivano solo il primo prompt e il codice pubblicato, non la conversazione. Le pagine create in preview vanno aperte una volta nel designer per migrarle.
-- Una solution managed non si importa nell'ambiente dove la stessa solution è unmanaged (tipicamente il DEV sorgente): l'import viene rifiutato. Prima di un rilascio managed, verificare che l'URL del profilo di destinazione sia diverso da quello sorgente. Se coincide, fare solo l'export managed e restituire `BLOCCATO` per l'import. Non cancellare la solution unmanaged per "convertirla".
-- Alternativa code-first: `pac model genpage download` dall'origine, `upload` nella destinazione, poi `pac model genpage add` per agganciarle alla sitemap. Fonte: [Adding generative pages to solutions](https://learn.microsoft.com/power-apps/maker/model-driven-apps/generative-pages#adding-generative-pages-to-solutions).
-
-Strumenti e sotto-agenti:
-
-- Nei sotto-agenti gli strumenti MCP "deferred" (es. AppMaker) possono non essere caricabili: in quel caso usare letture CLI (`pac`/`pacx`, ispezione dello zip esportato) oppure restituire `BLOCCATO` indicando la verifica da far eseguire all'agente principale.
-- `pac org who` in un terminale di sotto-agente può restituire output parziale con exit code 1: ripetere una volta; i nomi dei profili PAC si leggono con `pac auth list`, quelli PACX con `pacx auth list` (possono essere diversi per lo stesso URL).
-
-Generative page:
-
-- `dataApi.queryTable` restituisce i lookup come `/tabella(guid)`, non come GUID: estrarre il GUID prima dei join.
-- Spread su iteratori (`[...map.entries()]`) compila in array vuoto (niente `downlevelIteration`): usare array e oggetti semplici.
-- `pac model genpage upload --page-id` richiede anche `--prompt`.
-- URL diretto: `main.aspx?appid=<app>&pagetype=genux&id=<pageId>`. Se il browser riporta l'elemento "not visible", usare `run_playwright_code` con `dispatchEvent('click')`.
+- [gotcha-ambiente.md](references/gotcha-ambiente.md): terminale, PAC/PACX, choice e sitemap Dataverse, strumenti MCP nei sotto-agenti.
+- [gotcha-genpage.md](references/gotcha-genpage.md): generative page, solution `uxagentproject`, export e URL diretti.

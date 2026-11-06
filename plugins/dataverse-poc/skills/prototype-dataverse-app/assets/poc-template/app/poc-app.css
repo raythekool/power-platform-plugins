@@ -1,0 +1,433 @@
+/* poc-app.css — stili dei componenti dichiarativi (kpi, bpf, timeline, simulazioni) e shell code app.
+   In model-driven si somma a mda-shell.css; in code app e l'unico foglio di stile.
+   Personalizzazioni di progetto in app/custom.css, non qui. */
+
+/* --- componenti (entrambi gli appType) --------------------------------------------- */
+.poc-comp {
+  margin-top: 14px;
+}
+.poc-comp:first-child {
+  margin-top: 0;
+}
+.poc-comp-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.poc-comp-head .reqs,
+.sim-head .reqs {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--fg-4, #707070);
+}
+.poc-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.poc-kpi {
+  border: 1px solid var(--stroke-2, #e0e0e0);
+  border-radius: var(--radius-lg, 6px);
+  background: var(--bg-1, #fff);
+  padding: 10px 14px;
+}
+.poc-kpi .v {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: var(--brand, #0f6cbd);
+}
+.poc-kpi .k {
+  font-size: 12px;
+  color: var(--fg-3, #616161);
+}
+.poc-kpi.warn .v {
+  color: var(--warning, #bc4b09);
+}
+.poc-kpi.danger .v {
+  color: var(--danger, #b10e1c);
+}
+.poc-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 14px;
+  border-left: 2px solid var(--stroke-2, #e0e0e0);
+}
+.poc-timeline li {
+  position: relative;
+  padding: 0 0 12px 10px;
+  display: grid;
+  gap: 2px;
+}
+.poc-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -21px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--brand, #0f6cbd);
+}
+.poc-timeline .when {
+  font-size: 12px;
+  color: var(--fg-3, #616161);
+}
+.poc-timeline .text {
+  font-size: 13px;
+  color: var(--fg-2, #424242);
+}
+.poc-bpf {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+  overflow-x: auto;
+}
+.poc-bpf li {
+  flex: 1;
+  min-width: 110px;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: var(--bg-3, #f5f5f5);
+  color: var(--fg-2, #424242);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%);
+}
+.poc-bpf li.done {
+  background: var(--brand-subtle, #ebf3fc);
+}
+.poc-bpf li.active {
+  background: var(--brand, #0f6cbd);
+  color: #fff;
+  font-weight: 600;
+}
+.poc-meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-4, #f0f0f0);
+  overflow: hidden;
+}
+.poc-meter span {
+  display: block;
+  height: 100%;
+  background: var(--brand, #0f6cbd);
+}
+.poc-meter-label {
+  font-size: 13px;
+  margin-top: 4px;
+}
+.poc-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: var(--brand-subtle, #ebf3fc);
+  color: var(--brand-hover, #115ea3);
+  font-size: 13px;
+}
+.poc-pcf-contract {
+  margin-top: 10px;
+  font: 12px/16px Consolas, "Cascadia Mono", monospace;
+  color: var(--fg-4, #707070);
+}
+.poc-gen-text {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+.sim-frame .sim-note {
+  font-size: 12px;
+  color: #6b5413;
+  margin-bottom: 10px;
+}
+.sim-frame .sim-host {
+  color: var(--fg-3, #616161);
+}
+.sim-frame .grow {
+  flex: 1;
+}
+
+/* --- shell code app ---------------------------------------------------------------- */
+.ca-app {
+  --brand: #0f6cbd;
+  --brand-hover: #115ea3;
+  --brand-subtle: #ebf3fc;
+  --bg-1: #fff;
+  --bg-3: #f5f5f5;
+  --bg-4: #f0f0f0;
+  --stroke-1: #d1d1d1;
+  --stroke-2: #e0e0e0;
+  --stroke-3: #ebebeb;
+  --fg-1: #242424;
+  --fg-2: #424242;
+  --fg-3: #616161;
+  --fg-4: #707070;
+  --radius: 4px;
+  --radius-lg: 8px;
+  min-height: 100vh;
+  background: #f7f8fa;
+  color: var(--fg-1);
+  font: 14px/20px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+}
+body:has(.ca-app) {
+  margin: 0;
+}
+.ca-app .grow {
+  flex: 1;
+}
+.ca-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 20px;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--stroke-2);
+}
+.ca-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #0f6cbd, #5c2e91);
+}
+.ca-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+.ca-user {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--brand-subtle);
+  color: var(--brand-hover);
+  font-size: 12px;
+  font-weight: 600;
+}
+.ca-banner {
+  padding: 6px 20px;
+  background: #fff4ce;
+  border-bottom: 1px solid #f2d78b;
+  font-size: 13px;
+}
+.ca-app .badge.sim {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: #fde7a9;
+  color: #6b5413;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.ca-body {
+  display: flex;
+  align-items: flex-start;
+}
+.ca-nav {
+  width: 220px;
+  flex: 0 0 220px;
+  padding: 16px 10px;
+  display: grid;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+}
+.ca-nav-item {
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--fg-2);
+}
+.ca-nav-item:hover {
+  background: var(--bg-4);
+}
+.ca-nav-item.active {
+  background: var(--brand-subtle);
+  color: var(--brand-hover);
+  font-weight: 600;
+}
+.ca-main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 24px 40px;
+}
+.ca-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ca-head h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+}
+.ca-btn {
+  border: 1px solid var(--stroke-1);
+  background: var(--bg-1);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+.ca-btn.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.ca-header-fields {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.ca-header-fields .k {
+  font-size: 12px;
+  color: var(--fg-3);
+}
+.ca-surface,
+.ca-app .card {
+  background: var(--bg-1);
+  border: 1px solid var(--stroke-2);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.ca-app .card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--stroke-3);
+}
+.ca-app .card-head h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ca-app .card-head .reqs {
+  font-size: 12px;
+  color: var(--fg-4);
+}
+.ca-app .card-body {
+  padding: 16px;
+}
+.ca-app .form-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--stroke-2);
+}
+.ca-app .form-tabs button {
+  border: 0;
+  background: none;
+  font: inherit;
+  padding: 8px 12px 9px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: var(--fg-2);
+}
+.ca-app .form-tabs button.active {
+  color: var(--brand-hover);
+  font-weight: 600;
+  border-bottom-color: var(--brand);
+}
+.ca-app .field-grid {
+  display: grid;
+  gap: 16px 24px;
+}
+.ca-app .field label {
+  display: block;
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-bottom: 4px;
+}
+.ca-app .field .req {
+  color: #b10e1c;
+  margin-left: 2px;
+}
+.ca-app .field .value {
+  border: 1px solid var(--stroke-1);
+  border-radius: 6px;
+  padding: 5px 10px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  background: var(--bg-1);
+}
+.ca-app .field .value.empty {
+  color: var(--fg-4);
+}
+.ca-app .field .value.memo {
+  min-height: 72px;
+  align-items: flex-start;
+}
+.ca-app .field .glyph {
+  margin-left: auto;
+  color: var(--fg-3);
+  font-size: 10px;
+}
+.ca-app table.grid {
+  border-collapse: collapse;
+  width: 100%;
+}
+.ca-app table.grid th {
+  text-align: left;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--stroke-1);
+}
+.ca-app table.grid td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--stroke-3);
+  white-space: nowrap;
+}
+.ca-app table.grid th.sel,
+.ca-app table.grid td.sel {
+  width: 36px;
+}
+.ca-app table.grid td.num {
+  text-align: right;
+}
+.ca-app table.grid tr.clickable {
+  cursor: pointer;
+}
+.ca-app table.grid tr.clickable:hover td {
+  background: var(--bg-3);
+}
+.ca-app table.grid td.primary a {
+  color: var(--brand);
+  text-decoration: none;
+}
+.ca-app .checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--fg-3);
+  border-radius: 3px;
+  display: inline-block;
+}
+.ca-app .grid-empty {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--fg-3);
+}
+.ca-app .grid-scroll {
+  overflow-x: auto;
+}
+
+@media (max-width: 800px) {
+  .ca-nav {
+    display: none;
+  }
+}
