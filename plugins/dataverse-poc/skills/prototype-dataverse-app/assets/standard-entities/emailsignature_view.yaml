@@ -1,0 +1,26 @@
+version: 1
+# Asset standard (tabella `emailsignature`, source: standard). Fonte: Microsoft Learn entity
+# reference. Uso: vedi ../standard-entities/account_view.yaml.
+# Nota: schema colonne oltre a title/description non completamente verificato: controllare su
+# Microsoft Learn / ambiente target prima di un uso reale.
+entity:
+  logicalName: "{{prefix}}emailsignature_view"
+  displayName: Firme e-mail
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: emailsignature
+      schemaName: EmailSignature
+      displayName: Email Signature
+      displayCollectionName: Email Signatures
+      primaryIdAttribute: emailsignatureid
+      primaryNameAttribute: title
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/emailsignature
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}emailsignatures"
+  targetForm: "{{prefix}}emailsignature_form"
+  primaryColumn: title

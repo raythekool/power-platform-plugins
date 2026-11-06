@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `queue`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}queue_view"
+  displayName: Code
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: queue
+      schemaName: Queue
+      displayName: Queue
+      displayCollectionName: Queues
+      primaryIdAttribute: queueid
+      primaryNameAttribute: name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/queue
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}queues"
+  targetForm: "{{prefix}}queue_form"
+  primaryColumn: name

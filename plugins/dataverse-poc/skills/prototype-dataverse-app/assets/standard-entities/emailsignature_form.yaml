@@ -1,0 +1,48 @@
+version: 1
+# Asset standard (tabella `emailsignature`, source: standard). Vedi emailsignature_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}emailsignature_form"
+  displayName: Firma e-mail
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: emailsignature
+      schemaName: EmailSignature
+      displayName: Email Signature
+      displayCollectionName: Email Signatures
+      primaryIdAttribute: emailsignatureid
+      primaryNameAttribute: title
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/emailsignature
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}emailsignature_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}emailsignature_title"
+        displayName: Titolo firma
+        control: text
+        required: true
+        dataverse:
+          table: emailsignature
+          column: title
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}emailsignature_description"
+        displayName: Descrizione
+        control: memo
+        dataverse:
+          table: emailsignature
+          column: description
+          source: standard
+          type: memo
+          requiredLevel: None

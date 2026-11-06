@@ -1,0 +1,70 @@
+version: 1
+# Asset standard (tabella `salesorder`, source: standard). Vedi salesorder_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}salesorder_form"
+  displayName: Ordine
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: salesorder
+      schemaName: SalesOrder
+      displayName: Order
+      displayCollectionName: Orders
+      primaryIdAttribute: salesorderid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/salesorder
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}salesorder_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}salesorder_name"
+        displayName: Nome ordine
+        control: text
+        required: true
+        dataverse:
+          table: salesorder
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}salesorder_customerid"
+        displayName: Cliente
+        control: lookup
+        dataverse:
+          table: salesorder
+          column: customerid
+          source: standard
+          type: customer
+          requiredLevel: SystemRequired
+          targets: [account, contact]
+      - logicalName: "{{prefix}}salesorder_totalamount"
+        displayName: Totale ordine
+        control: money
+        readOnly: true
+        dataverse:
+          table: salesorder
+          column: totalamount
+          source: standard
+          type: money
+          requiredLevel: None
+      - logicalName: "{{prefix}}salesorder_datefulfilled"
+        displayName: Data evasione
+        control: datetime
+        dataverse:
+          table: salesorder
+          column: datefulfilled
+          source: standard
+          type: datetime
+          requiredLevel: None
+          format: DateOnly
+          behavior: DateOnly

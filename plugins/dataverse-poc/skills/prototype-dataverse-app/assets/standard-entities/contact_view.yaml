@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `contact`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi account_view.yaml.
+entity:
+  logicalName: "{{prefix}}contact_view"
+  displayName: Contatti
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: contact
+      schemaName: Contact
+      displayName: Contact
+      displayCollectionName: Contacts
+      primaryIdAttribute: contactid
+      primaryNameAttribute: fullname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/contact
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella condivisa dalla baseline Sales Hub e Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}contacts"
+  targetForm: "{{prefix}}contact_form"
+  primaryColumn: fullname

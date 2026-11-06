@@ -1,0 +1,52 @@
+version: 1
+# Asset standard (tabella `msdyn_iotalert`, source: standard). Vedi msdyn_iotalert_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}iotalert_form"
+  displayName: Avviso IoT
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: msdyn_iotalert
+      schemaName: msdyn_IoTAlert
+      displayName: IoT Alert
+      displayCollectionName: IoT Alerts
+      primaryIdAttribute: msdyn_iotalertid
+      primaryNameAttribute: msdyn_name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/msdyn_iotalert
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella del modulo Connected Field Service, presente nella baseline Customer Service Hub.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}iotalert_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}iotalert_msdyn_name"
+        displayName: Nome avviso
+        control: text
+        required: true
+        dataverse:
+          table: msdyn_iotalert
+          column: msdyn_name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}iotalert_msdyn_severity"
+        displayName: Gravita
+        control: choice
+        dataverse:
+          table: msdyn_iotalert
+          column: msdyn_severity
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Bassa }
+            - { value: 2, label: Media }
+            - { value: 3, label: Alta }

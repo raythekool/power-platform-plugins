@@ -1,0 +1,65 @@
+version: 1
+# Asset standard (tabella `list`, marketing list, source: standard). Vedi list_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}list_form"
+  displayName: Elenco marketing
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: list
+      schemaName: List
+      displayName: Marketing List
+      displayCollectionName: Marketing Lists
+      primaryIdAttribute: listid
+      primaryNameAttribute: listname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/list
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}list_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}list_listname"
+        displayName: Nome elenco
+        control: text
+        required: true
+        dataverse:
+          table: list
+          column: listname
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}list_type"
+        displayName: Tipo
+        control: choice
+        dataverse:
+          table: list
+          column: type
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 0, label: Statico }
+            - { value: 1, label: Dinamico }
+      - logicalName: "{{prefix}}list_createdfromcode"
+        displayName: Creato da
+        control: choice
+        readOnly: true
+        dataverse:
+          table: list
+          column: createdfromcode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Account }
+            - { value: 2, label: Contatto }
+            - { value: 4, label: Lead }

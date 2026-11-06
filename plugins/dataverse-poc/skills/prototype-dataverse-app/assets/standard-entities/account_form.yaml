@@ -1,0 +1,78 @@
+version: 1
+# Asset standard (tabella `account`, source: standard). Vedi account_view.yaml per le istruzioni d'uso.
+entity:
+  logicalName: "{{prefix}}account_form"
+  displayName: Account
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: account
+      schemaName: Account
+      displayName: Account
+      displayCollectionName: Account
+      primaryIdAttribute: accountid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/account
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella condivisa dalla baseline Sales Hub e Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}account_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}account_name"
+        displayName: Nome account
+        control: text
+        required: true
+        dataverse:
+          table: account
+          column: name
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/account#name
+          type: string
+          requiredLevel: SystemRequired
+      - logicalName: "{{prefix}}account_primarycontactid"
+        displayName: Contatto principale
+        control: lookup
+        dataverse:
+          table: account
+          column: primarycontactid
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/account#primarycontactid
+          type: lookup
+          requiredLevel: None
+          targets: [contact]
+      - logicalName: "{{prefix}}account_telephone1"
+        displayName: Telefono principale
+        control: text
+        dataverse:
+          table: account
+          column: telephone1
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}account_emailaddress1"
+        displayName: Email
+        control: text
+        dataverse:
+          table: account
+          column: emailaddress1
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}account_address1_city"
+        displayName: Citta
+        control: text
+        dataverse:
+          table: account
+          column: address1_city
+          source: standard
+          type: string
+          requiredLevel: None

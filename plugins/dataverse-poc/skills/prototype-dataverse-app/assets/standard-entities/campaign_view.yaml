@@ -1,0 +1,26 @@
+version: 1
+# Asset standard (tabella `campaign`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+# Nota: la voce sitemap "Mini-campagne" usa la stessa tabella (quick campaign): verificare su
+# Microsoft Learn se il progetto deve distinguerla dalla campagna piena prima di duplicare la view.
+entity:
+  logicalName: "{{prefix}}campaign_view"
+  displayName: Campagne
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: campaign
+      schemaName: Campaign
+      displayName: Campaign
+      displayCollectionName: Campaigns
+      primaryIdAttribute: campaignid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/campaign
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+  dataset: "{{prefix}}campaigns"
+  targetForm: "{{prefix}}campaign_form"
+  primaryColumn: name

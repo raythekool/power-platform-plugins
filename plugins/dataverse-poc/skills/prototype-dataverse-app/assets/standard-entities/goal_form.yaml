@@ -1,0 +1,50 @@
+version: 1
+# Asset standard (tabella `goal`, source: standard). Vedi goal_view.yaml per l'uso.
+# Nota: il campo target (importo o quantita) dipende dalla metrica dell'obiettivo (goal metric):
+# verificare su Microsoft Learn / ambiente target quale colonna target usare per il progetto.
+entity:
+  logicalName: "{{prefix}}goal_form"
+  displayName: Obiettivo
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: goal
+      schemaName: Goal
+      displayName: Goal
+      displayCollectionName: Goals
+      primaryIdAttribute: goalid
+      primaryNameAttribute: title
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/goal
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}goal_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}goal_title"
+        displayName: Titolo obiettivo
+        control: text
+        required: true
+        dataverse:
+          table: goal
+          column: title
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}goal_targetmoney"
+        displayName: Obiettivo (valore)
+        control: money
+        dataverse:
+          table: goal
+          column: targetmoney
+          source: standard
+          type: money
+          requiredLevel: None

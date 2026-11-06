@@ -1,0 +1,67 @@
+version: 1
+# Asset standard (tabella `product`, source: standard). Vedi product_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}product_form"
+  displayName: Prodotto
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: product
+      schemaName: Product
+      displayName: Product
+      displayCollectionName: Products
+      primaryIdAttribute: productid
+      primaryNameAttribute: name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/product
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}product_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}product_name"
+        displayName: Nome prodotto
+        control: text
+        required: true
+        dataverse:
+          table: product
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}product_productnumber"
+        displayName: Codice prodotto
+        control: text
+        dataverse:
+          table: product
+          column: productnumber
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}product_price"
+        displayName: Prezzo di listino
+        control: money
+        dataverse:
+          table: product
+          column: price
+          source: standard
+          type: money
+          requiredLevel: None
+      - logicalName: "{{prefix}}product_quantityonhand"
+        displayName: Quantita disponibile
+        control: decimal
+        readOnly: true
+        dataverse:
+          table: product
+          column: quantityonhand
+          source: standard
+          type: decimal
+          requiredLevel: None

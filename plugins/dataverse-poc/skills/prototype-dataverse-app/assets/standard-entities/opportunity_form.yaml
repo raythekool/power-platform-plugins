@@ -1,0 +1,84 @@
+version: 1
+# Asset standard (tabella `opportunity`, source: standard). Vedi opportunity_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}opportunity_form"
+  displayName: Opportunita
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: opportunity
+      schemaName: Opportunity
+      displayName: Opportunity
+      displayCollectionName: Opportunities
+      primaryIdAttribute: opportunityid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/opportunity
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}opportunity_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}opportunity_name"
+        displayName: Argomento
+        control: text
+        required: true
+        dataverse:
+          table: opportunity
+          column: name
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/opportunity#name
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}opportunity_customerid"
+        displayName: Cliente
+        control: lookup
+        dataverse:
+          table: opportunity
+          column: customerid
+          source: standard
+          type: customer
+          requiredLevel: None
+          targets: [account, contact]
+      - logicalName: "{{prefix}}opportunity_estimatedvalue"
+        displayName: Fatturato stimato
+        control: money
+        dataverse:
+          table: opportunity
+          column: estimatedvalue
+          source: standard
+          type: money
+          requiredLevel: None
+      - logicalName: "{{prefix}}opportunity_estimatedclosedate"
+        displayName: Data chiusura stimata
+        control: datetime
+        dataverse:
+          table: opportunity
+          column: estimatedclosedate
+          source: standard
+          type: datetime
+          requiredLevel: None
+          format: DateOnly
+          behavior: DateOnly
+      - logicalName: "{{prefix}}opportunity_salesstage"
+        displayName: Fase di vendita
+        control: choice
+        dataverse:
+          table: opportunity
+          column: salesstagecode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Qualifica }
+            - { value: 2, label: Sviluppo }
+            - { value: 3, label: Proposta }
+            - { value: 4, label: Chiusura }

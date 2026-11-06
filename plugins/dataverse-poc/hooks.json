@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node -e \"require(require('node:path').join(process.env.PLUGIN_ROOT.replaceAll(String.fromCharCode(92), '/'), 'scripts/poc-guard.cjs'))\" || exit 0",
+        "powershell": "if (Get-Command node -ErrorAction SilentlyContinue) { node -e \"require(require('node:path').join(process.env.PLUGIN_ROOT.replaceAll(String.fromCharCode(92), '/'), 'scripts/poc-guard.cjs'))\" }",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,203 @@
+<p align="center">
+  <img src="images/banner.svg" alt="LLM Wiki - code-first knowledge base for Dynamics 365 delivery" width="100%">
+</p>
+
+<p align="center">
+  <b>📖 Documentation that stays aligned with the code.</b><br>
+  A VS Code agent plugin for Dynamics 365 projects: Customer Engagement / Power Platform and Finance &amp; Operations.
+</p>
+
+<p align="center">
+  <a href="#-install">🚀 Install</a> ·
+  <a href="#-quick-start">⚡ Quick start</a> ·
+  <a href="guida-utente.md">🇮🇹 Guida utente</a> ·
+  <a href="governance.md">🛡️ Governance</a> ·
+  <a href="../../CONTRIBUTING.md">🤝 Contributing</a>
+</p>
+
+---
+
+## ✨ What you get
+
+|                                  |                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧬 **Code is the primary source** | As-built pages are generated from repositories (Azure Repos, GitHub, TFS / TFVC, local folders) and platform metadata. FDD and TDD describe the intent; when they disagree with the code the wiki flags `⚠️ Drift`.                                                                                                                                                                              |
+| 📐 **Standard formats**           | Templates for requirements (FDD), technical design (TDD), ADR, meeting minutes and code components give every project the same structure.                                                                                                                                                                                                                                                       |
+| 🛡️ **Governed content**           | Every page has an owner, sources and a lifecycle: `draft` -> `reviewed` -> `certified`. The agent writes drafts; people review and certify.                                                                                                                                                                                                                                                     |
+| 💸 **Low token cost**             | Deterministic PowerShell scripts do inventory, change detection, lint and publishing. The LLM reads their JSON and only the files that changed.                                                                                                                                                                                                                                                 |
+| 🌐 **Publish anywhere**           | Azure DevOps Wiki (project or code wiki) and GitHub Wiki, generated from the same Markdown.                                                                                                                                                                                                                                                                                                     |
+| 💬 **Ask the wiki**               | `/power-platform-llm-wiki:query` answers only from the wiki, with citations and the certification status of each source.                                                                                                                                                                                                                                                                        |
+| 🕸️ **Knowledge graph for AI**     | `Get-WikiGraph.ps1` links pages, requirements, F&O objects, Dataverse tables, components and work items (0 tokens). The agent asks it which pages to read, what an object impacts and how two things are connected; it also writes a knowledge map page, "Related pages" backlinks in the published wiki, and an AI pack (`graph.json`, `llms.txt`, `llms-full.txt`, interactive `graph.html`). |
+
+## 🧭 How it works
+
+<p align="center">
+  <img src="images/architecture.svg" alt="Sources are processed by the engine into the wiki, which is published to Azure DevOps Wiki, GitHub Wiki, Copilot and VS Code" width="100%">
+</p>
+
+## 🚀 Install
+
+The plugin is published in the [power-platform-plugins](../../README.md) marketplace (`raythekool/power-platform-plugins`) for **VS Code**, **GitHub Copilot CLI** and **Claude Code**. Pick the tool you use.
+
+### 🟦 VS Code (GitHub Copilot)
+
+1. In VS Code settings enable **Chat > Plugins: Enabled**.
+2. Add `raythekool/power-platform-plugins` to **Chat > Plugins: Marketplaces** (`chat.plugins.marketplaces`).
+3. In the Extensions view search `@agentPlugins power-platform-llm-wiki` and install.
+4. Select the **LLM Wiki** agent in the chat agent picker.
+
+### ⌨️ GitHub Copilot CLI
+
+```shell
+copilot plugin marketplace add raythekool/power-platform-plugins
+copilot plugin install power-platform-llm-wiki@power-platform-plugins
+```
+
+The same commands work in an interactive session as `/plugin marketplace add ...` and `/plugin install ...`. Check with `copilot plugin list`; to update, run `copilot plugin update power-platform-llm-wiki`.
+
+### 🟠 Claude Code
+
+One step (Claude Code 2.1.275 or later):
+
+```shell
+claude plugin install power-platform-llm-wiki --marketplace raythekool/power-platform-plugins
+```
+
+Or in two steps, from your shell or inside a session as `/plugin ...`:
+
+```shell
+claude plugin marketplace add raythekool/power-platform-plugins
+claude plugin install power-platform-llm-wiki@power-platform-plugins
+```
+
+Check with `claude plugin list`; to update, run `claude plugin update power-platform-llm-wiki@power-platform-plugins`.
+
+> [!IMPORTANT]
+> In every tool, type the **full command name**: `/power-platform-llm-wiki:init`, `:config`, `:update`, `:ingest` and `:query`. The short names (`/init`, `/update`, ...) belong to the tool itself (for example `/init` generates the project's own instructions file) and do not run this plugin. If the tool does not offer the full name, select the **LLM Wiki** agent and ask for the operation in words.
+
+> [!NOTE]
+> Requirements: 🐚 PowerShell 7 (`pwsh`) and 🌿 git. Optional, per source: Git Credential Manager (Azure Repos, Azure DevOps Wiki), `tf.exe` from Visual Studio (code in TFVC), `pacx` / `pac` (Dataverse), `gh` (GitHub), `markitdown` (Word, PowerPoint, Excel, PDF).
+
+## ⚡ Quick start
+
+<p align="center">
+  <img src="images/workflow.svg" alt="The six steps: /power-platform-llm-wiki:init, :update --source code, :ingest, :update --lint, :update --publish, :query" width="100%">
+</p>
+
+| Step | Command                                                                                                | Result                                                                                                                                                     |
+| ---- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1️⃣    | `/power-platform-llm-wiki:init`                                                                        | Wizard: project, profiles (`power-platform`, `dynamics-fno`, `generic`), sources, publish target, governance. Creates `llm-wiki/` and installs the engine. |
+| 2️⃣    | `/power-platform-llm-wiki:update --source code`                                                        | Clones/pulls the repositories, runs the inventory, writes `wiki/projects/` and `wiki/code/` with Mermaid diagrams.                                         |
+| 3️⃣    | drop the FDD in `llm-wiki/raw/analysis/`, then `/power-platform-llm-wiki:ingest raw/analysis/fdd.docx` | One requirement page per `REQ-...`, linked to the code that implements it.                                                                                 |
+| 4️⃣    | drop minutes or a transcript in `llm-wiki/raw/meetings/`, then `/power-platform-llm-wiki:ingest ...`   | Meeting synthesis: decisions, action items, risks, Q&A.                                                                                                    |
+| 5️⃣    | `/power-platform-llm-wiki:update --lint`                                                               | Deterministic health check: links, lifecycle, traceability, overdue actions, secrets.                                                                      |
+| 6️⃣    | `/power-platform-llm-wiki:update --publish`                                                            | Converts and pushes the wiki to Azure DevOps Wiki or GitHub Wiki.                                                                                          |
+| 7️⃣    | `/power-platform-llm-wiki:query "how is the credit check implemented?"`                                | Answer grounded in wiki pages, with links and certification status.                                                                                        |
+
+> [!TIP]
+> Other commands: `/power-platform-llm-wiki:update --source devops|dataverse|fno|github|all`, `/power-platform-llm-wiki:update --full` (incremental run of everything), `/power-platform-llm-wiki:update --sprint`, `/power-platform-llm-wiki:update --certify <page> --by <name>`, and `/power-platform-llm-wiki:config` (change settings, `--refresh-engine`, `--migrate`).
+
+## 🔎 Code-first: traceability and drift
+
+Requirements carry a `req_id`; code and design pages declare `implements: [REQ-...]`. The update skill links them, and the lint reports requirements with no implementation and components with no requirement.
+
+<p align="center">
+  <img src="images/traceability.svg" alt="A requirement implemented by a Dataverse plugin and an F&amp;O extension, with a drift warning when the code disagrees with the requirement" width="100%">
+</p>
+
+## 📁 What `/power-platform-llm-wiki:init` adds to a project
+
+```text
+<project>/
+├── .github/copilot-instructions.md        # LLM Wiki section (appended)
+├── .github/workflows/copilot-setup-steps.yml   # only with scheduled automation (GitHub host)
+├── .vscode/mcp.json                       # VS Code: Azure DevOps MCP (Entra ID sign-in, no PAT), MarkItDown
+├── .mcp.json                              # Copilot CLI / Claude Code: same servers (mcpServers)
+├── CLAUDE.md                              # Claude Code: @.github/copilot-instructions.md import
+└── llm-wiki/
+    ├── AGENTS.md                          # operating manual (managed)
+    ├── wiki.config.yml                    # project configuration
+    ├── .engine/                           # managed skills, scripts, templates, profiles
+    ├── .state/raw-manifest.json           # processed sources (incremental runs)
+    ├── raw/                               # sources and sync dumps
+    └── wiki/                              # the knowledge base
+        ├── index.md  overview.md  log.md
+        ├── requirements/  design/  code/  projects/  features/  delivery/
+        ├── meetings/
+        └── reference/{decisions,concepts,entities,sources,queries}/
+```
+
+The engine is copied into the project so that scheduled runs (Copilot cloud agent) work without the VS Code plugin. `/power-platform-llm-wiki:config --refresh-engine` updates it after a plugin upgrade.
+
+## 🧩 Profiles
+
+| Profile            | Sources                                                                                                                                  | Main `wiki/code/` pages                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| ☁️ `power-platform` | Plugins, PCF, web resources, unpacked solutions, cloud flows, pipelines; live Dataverse metadata via `pacx`                              | data model, plugins, PCF, web resources, flows, security, integrations, ALM |
+| 🏭 `dynamics-fno`   | Ax* metadata of custom packages: tables and extensions, classes with Chain of Command, forms, data entities, security, model descriptors | data model, extensions, classes, data entities, security, integrations, ALM |
+| 🔌 `generic`        | Any repository (Azure Functions, APIs, middleware)                                                                                       | architecture, one page per component, integrations, ALM                     |
+
+## 🛡️ Governance
+
+<p align="center">
+  <img src="images/lifecycle.svg" alt="Page lifecycle: draft written by the agent, reviewed by a named reviewer, certified by the customer" width="100%">
+</p>
+
+- 📝 **Lifecycle:** `draft` (agent) -> `reviewed` (`reviewed_by`) -> `certified` (`certified_by`, `certified_at`). Certification happens only on explicit request; certified pages receive a `Pending updates` section instead of being rewritten.
+- 🔗 **Traceability:** requirement pages carry `req_id`; code and design pages declare `implements: [REQ-...]`.
+- 🧾 **Provenance:** every page lists its `sources` (raw files, work items, `repo@sha:path`).
+- 🔒 **Data protection:** no secrets in pages (the lint blocks common credential patterns); with `pii_redaction` only participant names and roles are kept.
+
+Roles, cadence and indicators: [governance.md](governance.md).
+
+## 🤖 Automation
+
+- 🐙 **Host repository on GitHub:** create a Copilot cloud agent automation (repository -> Agents -> Automations) with the prompt provided by `/power-platform-llm-wiki:init`; it runs `/power-platform-llm-wiki:update --full` on a schedule and opens a pull request. `copilot-setup-steps.yml` prepares the tools.
+- 🔷 **Host repository on Azure DevOps:** run `/power-platform-llm-wiki:update --full` from VS Code (manually or with a VS Code automation using the same prompt).
+
+## 📚 Documentation
+
+| Document                                                                               | Audience                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🇮🇹 [guida-utente.md](guida-utente.md)                                         | Project teams: installation, setup, daily use, publishing, questions, FAQ                                                                                                                                |
+| 🧙 [wizard-configurazione.md](wizard-configurazione.md)                       | Step-by-step setup wizard (Italian): what to answer to `/power-platform-llm-wiki:init` and how to verify it. [Interactive web version](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/wizard.html) |
+| 🛡️ [governance.md](governance.md)                                             | Leads, reviewers, certifiers: roles, page lifecycle, certification, cadence, security                                                                                                                    |
+| 🔄 [migrazione-v2-v3.md](migrazione-v2-v3.md)                                 | Projects with a v2 wiki: what changes and how to migrate                                                                                                                                                 |
+| 🤝 [CONTRIBUTING.md](../../CONTRIBUTING.md)                                                   | Plugin maintainers: conventions, tests, release                                                                                                                                                          |
+| 📘 [AGENTS.md (operating manual)](../../plugins/power-platform-llm-wiki/references/AGENTS.md) | Installed in every project: wiki structure, page format, rules                                                                                                                                           |
+| 🌐 [publishing.md](../../plugins/power-platform-llm-wiki/references/publishing.md)            | Publishing to Azure DevOps Wiki and GitHub Wiki                                                                                                                                                          |
+
+## 🗂️ Where things are
+
+This plugin lives in the [power-platform-plugins](../../README.md) repository, next to the other Power Platform plugins.
+
+```text
+plugins/power-platform-llm-wiki/           # what gets installed
+├── plugin.json  .claude-plugin/plugin.json
+├── agents/llm-wiki.agent.md
+├── skills/{init,config,update,ingest,query}/SKILL.md
+├── scripts/                               # Install-Engine, Test-Prerequisites, Get-RawDelta, Get-CodeInventory, Get-WikiGraph, Test-WikiLint, Export-Wiki
+├── templates/                             # meeting, requirement, design, adr, code-component, source
+├── references/                            # AGENTS.md, publishing.md, tfvc.md, profiles/
+└── CHANGELOG.md  LICENSE  README.md
+docs/power-platform-llm-wiki/              # this guide, user guide, governance, migration, images
+scripts/power-platform-llm-wiki/           # Validate-Plugin.ps1 (release checks), Build-Site.ps1
+tests/power-platform-llm-wiki/             # fixtures (wiki, raw, CE + F&O repo) and Invoke-Tests.ps1
+site/power-platform-llm-wiki/              # bilingual (EN/IT) website
+```
+
+## 🛠️ Development
+
+From the repository root:
+
+```powershell
+pwsh ./scripts/power-platform-llm-wiki/Validate-Plugin.ps1 -Human   # structure, versions, legacy references, confidentiality, doc links
+pwsh ./tests/power-platform-llm-wiki/Invoke-Tests.ps1               # regression tests for the scripts
+pwsh ./scripts/power-platform-llm-wiki/Build-Site.ps1               # builds the website into _site/power-platform-llm-wiki/
+```
+
+🌍 The website is deployed to GitHub Pages under `/power-platform-llm-wiki/` by `.github/workflows/pages.yml`.
+
+Before a release see [CONTRIBUTING.md](../../CONTRIBUTING.md): bump the version in both `plugin.json` files and in both marketplace manifests, update the plugin `CHANGELOG.md`, and keep customer names, repositories and data out of the plugin.
+
+📜 Version history: [CHANGELOG.md](../../plugins/power-platform-llm-wiki/CHANGELOG.md).

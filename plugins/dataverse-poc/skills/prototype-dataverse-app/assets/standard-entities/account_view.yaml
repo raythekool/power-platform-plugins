@@ -1,0 +1,25 @@
+version: 1
+# Asset standard (tabella `account`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: copiare in config/entities/, sostituire {{prefix}} con naming.prefix del progetto e
+# aggiungere l'`application:` del proprio config/index.yaml (omesso qui perche l'asset e condiviso).
+entity:
+  logicalName: "{{prefix}}account_view"
+  displayName: Account
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: account
+      schemaName: Account
+      displayName: Account
+      displayCollectionName: Account
+      primaryIdAttribute: accountid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/account
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella condivisa dalla baseline Sales Hub e Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}accounts"
+  targetForm: "{{prefix}}account_form"
+  primaryColumn: name

@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `invoice`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}invoice_view"
+  displayName: Fatture
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: invoice
+      schemaName: Invoice
+      displayName: Invoice
+      displayCollectionName: Invoices
+      primaryIdAttribute: invoiceid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/invoice
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+  dataset: "{{prefix}}invoices"
+  targetForm: "{{prefix}}invoice_form"
+  primaryColumn: name

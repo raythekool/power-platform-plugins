@@ -1,0 +1,136 @@
+# Asset standard: site map Sales Hub (baseline out-of-the-box, verificata su ambiente
+# Dynamics 365 CE sandbox, settembre 2026). Fonte narrativa: ../../references/standard-apps.md
+#
+# Uso:
+#   1. Copiare il blocco `navigation:` sotto `config/index.yaml` (top-level se l'app rappresenta
+#      solo Sales Hub) oppure sotto `modelDrivenApps[].navigation` (se e una fra piu app selezionabili).
+#   2. Sostituire `{{prefix}}` con `naming.prefix` del progetto (es. ava_).
+#   3. Per ogni voce con `pageType: view`, creare la coppia view/form corrispondente in
+#      `../standard-entities/<table>_view.yaml` e `<table>_form.yaml` (gia pronte per le tabelle
+#      standard elencate qui) copiandole in `config/entities/` e rinominando i logicalName.
+#   4. `standard_*` nei logicalName delle voci sitemap sono placeholder: rinominarli con il
+#      prefisso del progetto per evitare collisioni fra POC diverse.
+
+navigation:
+  showHome: true
+  showRecent: true
+  showPinned: true
+  areas:
+    - logicalName: "{{prefix}}area_vendite"
+      displayName: Vendite
+      groups:
+        - displayName: Attivita personali
+          items:
+            - {
+                logicalName: "{{prefix}}sales_dashboard",
+                displayName: Dashboard,
+                pageType: dashboard,
+              }
+            - {
+                logicalName: "{{prefix}}activity_view",
+                displayName: Impegni,
+                pageType: view,
+                table: activitypointer,
+              }
+        - displayName: Clienti
+          items:
+            - {
+                logicalName: "{{prefix}}account_view",
+                displayName: Account,
+                pageType: view,
+                table: account,
+              }
+            - {
+                logicalName: "{{prefix}}contact_view",
+                displayName: Contatti,
+                pageType: view,
+                table: contact,
+              }
+        - displayName: Vendite
+          items:
+            - {
+                logicalName: "{{prefix}}lead_view",
+                displayName: Lead,
+                pageType: view,
+                table: lead,
+              }
+            - {
+                logicalName: "{{prefix}}opportunity_view",
+                displayName: Opportunita,
+                pageType: view,
+                table: opportunity,
+              }
+            - {
+                logicalName: "{{prefix}}competitor_view",
+                displayName: Concorrenti,
+                pageType: view,
+                table: competitor,
+              }
+        - displayName: Collaterale
+          items:
+            - {
+                logicalName: "{{prefix}}quote_view",
+                displayName: Offerte,
+                pageType: view,
+                table: quote,
+              }
+            - {
+                logicalName: "{{prefix}}salesorder_view",
+                displayName: Ordini,
+                pageType: view,
+                table: salesorder,
+              }
+            - {
+                logicalName: "{{prefix}}invoice_view",
+                displayName: Fatture,
+                pageType: view,
+                table: invoice,
+              }
+            - {
+                logicalName: "{{prefix}}product_view",
+                displayName: Prodotti,
+                pageType: view,
+                table: product,
+              }
+            - {
+                logicalName: "{{prefix}}salesliterature_view",
+                displayName: Documentazione di vendita,
+                pageType: view,
+                table: salesliterature,
+              }
+        - displayName: Marketing
+          items:
+            - {
+                logicalName: "{{prefix}}list_view",
+                displayName: Elenchi marketing,
+                pageType: view,
+                table: list,
+              }
+            - {
+                logicalName: "{{prefix}}campaign_view",
+                displayName: Campagne,
+                pageType: view,
+                table: campaign,
+              }
+        - displayName: Prestazioni
+          items:
+            - {
+                logicalName: "{{prefix}}goal_view",
+                displayName: Obiettivi,
+                pageType: view,
+                table: goal,
+              }
+        - displayName: Servizio
+          items:
+            - {
+                logicalName: "{{prefix}}case_view",
+                displayName: Casi,
+                pageType: view,
+                table: incident,
+              }
+
+# Note non incluse in questo asset perche non riconducibili a una singola tabella verificata:
+# - "Previsioni" (forecast): il nome tabella dipende dalla versione del modulo Forecasting
+#   installato. Verificare su Microsoft Learn / ambiente target prima di aggiungerla.
+# - "Mini-campagne": rappresentata dalla stessa tabella `campaign` (quick campaign); verificare
+#   su Learn se il progetto deve distinguerla dalla campagna piena prima di duplicare la voce.

@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `template`, email template, source: standard). Fonte: Microsoft Learn
+# entity reference. Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}template_view"
+  displayName: Modelli di messaggio e-mail
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: template
+      schemaName: Template
+      displayName: Email Template
+      displayCollectionName: Email Templates
+      primaryIdAttribute: templateid
+      primaryNameAttribute: title
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/template
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}templates"
+  targetForm: "{{prefix}}template_form"
+  primaryColumn: title

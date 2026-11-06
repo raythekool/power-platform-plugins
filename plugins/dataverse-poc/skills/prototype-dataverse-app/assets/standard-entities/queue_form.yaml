@@ -1,0 +1,69 @@
+version: 1
+# Asset standard (tabella `queue`, source: standard). Vedi queue_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}queue_form"
+  displayName: Coda
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: queue
+      schemaName: Queue
+      displayName: Queue
+      displayCollectionName: Queues
+      primaryIdAttribute: queueid
+      primaryNameAttribute: name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/queue
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}queue_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}queue_name"
+        displayName: Nome coda
+        control: text
+        required: true
+        dataverse:
+          table: queue
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}queue_emailaddress"
+        displayName: Indirizzo email
+        control: text
+        dataverse:
+          table: queue
+          column: emailaddress
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}queue_queuetypecode"
+        displayName: Tipo coda
+        control: choice
+        dataverse:
+          table: queue
+          column: queuetypecode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 0, label: Pubblica }
+            - { value: 1, label: Privata }
+      - logicalName: "{{prefix}}queue_description"
+        displayName: Descrizione
+        control: memo
+        dataverse:
+          table: queue
+          column: description
+          source: standard
+          type: memo
+          requiredLevel: None

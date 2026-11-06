@@ -1,0 +1,26 @@
+version: 1
+# Asset standard (tabella `socialprofile`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+# Nota: primaryNameAttribute e ownershipType riportati sono i piu comunemente documentati per
+# questa tabella meno usata: verificare su Microsoft Learn / ambiente target prima di un uso reale.
+entity:
+  logicalName: "{{prefix}}socialprofile_view"
+  displayName: Profili social
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: socialprofile
+      schemaName: SocialProfile
+      displayName: Social Profile
+      displayCollectionName: Social Profiles
+      primaryIdAttribute: socialprofileid
+      primaryNameAttribute: fullname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/socialprofile
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}socialprofiles"
+  targetForm: "{{prefix}}socialprofile_form"
+  primaryColumn: fullname

@@ -1,0 +1,71 @@
+version: 1
+# Asset standard (tabella `knowledgearticle`, source: standard). Vedi knowledgearticle_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}knowledgearticle_form"
+  displayName: Articolo Knowledge Base
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: knowledgearticle
+      schemaName: KnowledgeArticle
+      displayName: Knowledge Article
+      displayCollectionName: Knowledge Articles
+      primaryIdAttribute: knowledgearticleid
+      primaryNameAttribute: title
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/knowledgearticle
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}knowledgearticle_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}knowledgearticle_title"
+        displayName: Titolo
+        control: text
+        required: true
+        dataverse:
+          table: knowledgearticle
+          column: title
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}knowledgearticle_keywords"
+        displayName: Parole chiave
+        control: text
+        dataverse:
+          table: knowledgearticle
+          column: keywords
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}knowledgearticle_content"
+        displayName: Contenuto
+        control: memo
+        dataverse:
+          table: knowledgearticle
+          column: content
+          source: standard
+          type: memo
+          requiredLevel: None
+      - logicalName: "{{prefix}}knowledgearticle_statuscode"
+        displayName: Stato
+        control: choice
+        readOnly: true
+        dataverse:
+          table: knowledgearticle
+          column: statuscode
+          source: standard
+          type: choice
+          requiredLevel: SystemRequired
+          choice:
+            - { value: 1, label: Bozza }
+            - { value: 2, label: In revisione }
+            - { value: 3, label: Pubblicato }

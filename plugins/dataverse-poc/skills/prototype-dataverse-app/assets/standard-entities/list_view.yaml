@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `list`, marketing list, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}list_view"
+  displayName: Elenchi marketing
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: list
+      schemaName: List
+      displayName: Marketing List
+      displayCollectionName: Marketing Lists
+      primaryIdAttribute: listid
+      primaryNameAttribute: listname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/list
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+  dataset: "{{prefix}}lists"
+  targetForm: "{{prefix}}list_form"
+  primaryColumn: listname

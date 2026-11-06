@@ -1,0 +1,92 @@
+version: 1
+# Asset standard (tabella `incident`, source: standard). Vedi incident_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}case_form"
+  displayName: Caso
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: incident
+      schemaName: Incident
+      displayName: Case
+      displayCollectionName: Cases
+      primaryIdAttribute: incidentid
+      primaryNameAttribute: title
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/incident
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella condivisa dalla baseline Sales Hub e Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}case_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}case_title"
+        displayName: Titolo caso
+        control: text
+        required: true
+        dataverse:
+          table: incident
+          column: title
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/incident#title
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}case_customerid"
+        displayName: Cliente
+        control: lookup
+        dataverse:
+          table: incident
+          column: customerid
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/incident#customerid
+          type: customer
+          requiredLevel: SystemRequired
+          targets: [account, contact]
+      - logicalName: "{{prefix}}case_casetypecode"
+        displayName: Tipo di caso
+        control: choice
+        dataverse:
+          table: incident
+          column: casetypecode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Domanda }
+            - { value: 2, label: Problema }
+            - { value: 3, label: Richiesta }
+      - logicalName: "{{prefix}}case_prioritycode"
+        displayName: Priorita
+        control: choice
+        dataverse:
+          table: incident
+          column: prioritycode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Alta }
+            - { value: 2, label: Normale }
+            - { value: 3, label: Bassa }
+      - logicalName: "{{prefix}}case_statuscode"
+        displayName: Stato
+        control: choice
+        readOnly: true
+        dataverse:
+          table: incident
+          column: statuscode
+          source: standard
+          type: choice
+          requiredLevel: SystemRequired
+          choice:
+            - { value: 1, label: In corso }
+            - { value: 2, label: In attesa di dettagli }
+            - { value: 5, label: Risolto }
+            - { value: 6, label: Annullato }

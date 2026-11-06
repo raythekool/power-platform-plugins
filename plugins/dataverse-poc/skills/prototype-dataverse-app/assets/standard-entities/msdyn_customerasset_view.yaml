@@ -1,0 +1,26 @@
+version: 1
+# Asset standard (tabella `msdyn_customerasset`, source: standard, modulo Connected Field Service).
+# Fonte: Microsoft Learn entity reference. Uso: vedi ../standard-entities/account_view.yaml.
+# Nota: ownershipType riportato e il piu comune per questa tabella di modulo aggiuntivo:
+# verificare su Microsoft Learn / ambiente target se il modulo e installato prima di un uso reale.
+entity:
+  logicalName: "{{prefix}}customerasset_view"
+  displayName: Cespiti cliente
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: msdyn_customerasset
+      schemaName: msdyn_CustomerAsset
+      displayName: Customer Asset
+      displayCollectionName: Customer Assets
+      primaryIdAttribute: msdyn_customerassetid
+      primaryNameAttribute: msdyn_name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/msdyn_customerasset
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella del modulo Connected Field Service, presente nella baseline Customer Service Hub.
+  dataset: "{{prefix}}customerassets"
+  targetForm: "{{prefix}}customerasset_form"
+  primaryColumn: msdyn_name

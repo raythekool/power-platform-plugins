@@ -1,0 +1,112 @@
+# Asset standard: site map Customer Service Hub (baseline out-of-the-box, verificata su
+# ambiente Dynamics 365 CE sandbox, settembre 2026). Fonte narrativa: ../../references/standard-apps.md
+#
+# Uso: vedi le istruzioni in sales-hub.yaml (stesso pattern: sostituire {{prefix}}, abbinare
+# ogni view alla coppia view/form in ../standard-entities/).
+
+navigation:
+  showHome: true
+  showRecent: true
+  showPinned: true
+  areas:
+    - logicalName: "{{prefix}}area_servizio"
+      displayName: Servizio
+      groups:
+        - displayName: Attivita personali
+          items:
+            - {
+                logicalName: "{{prefix}}service_dashboard",
+                displayName: Dashboard,
+                pageType: dashboard,
+              }
+            - {
+                logicalName: "{{prefix}}activity_view",
+                displayName: Impegni,
+                pageType: view,
+                table: activitypointer,
+              }
+        - displayName: Clienti
+          items:
+            - {
+                logicalName: "{{prefix}}account_view",
+                displayName: Account,
+                pageType: view,
+                table: account,
+              }
+            - {
+                logicalName: "{{prefix}}contact_view",
+                displayName: Contatti,
+                pageType: view,
+                table: contact,
+              }
+            - {
+                logicalName: "{{prefix}}socialprofile_view",
+                displayName: Profili social,
+                pageType: view,
+                table: socialprofile,
+              }
+        - displayName: Servizio
+          items:
+            - {
+                logicalName: "{{prefix}}case_view",
+                displayName: Casi,
+                pageType: view,
+                table: incident,
+              }
+            - {
+                logicalName: "{{prefix}}queue_view",
+                displayName: Code,
+                pageType: view,
+                table: queue,
+              }
+        - displayName: Informazioni dettagliate
+          items:
+            - {
+                logicalName: "{{prefix}}service_analytics",
+                displayName: Analisi cronologica di Customer Service,
+                pageType: dashboard,
+              }
+            - {
+                logicalName: "{{prefix}}kb_analytics",
+                displayName: Analisi della Knowledge Base,
+                pageType: dashboard,
+              }
+        - displayName: Knowledge Base
+          items:
+            - {
+                logicalName: "{{prefix}}knowledgearticle_view",
+                displayName: Articoli della Knowledge Base,
+                pageType: view,
+                table: knowledgearticle,
+              }
+        - displayName: Cespiti cliente
+          items:
+            - {
+                logicalName: "{{prefix}}iotalert_view",
+                displayName: Avvisi IoT,
+                pageType: view,
+                table: msdyn_iotalert,
+              }
+            - {
+                logicalName: "{{prefix}}customerasset_view",
+                displayName: Cespiti cliente,
+                pageType: view,
+                table: msdyn_customerasset,
+              }
+        - displayName: Modelli
+          items:
+            - {
+                logicalName: "{{prefix}}template_view",
+                displayName: Modelli di messaggio e-mail,
+                pageType: view,
+                table: template,
+              }
+            - {
+                logicalName: "{{prefix}}emailsignature_view",
+                displayName: Firme e-mail,
+                pageType: view,
+                table: emailsignature,
+              }
+
+# Nota: "Ricerca nella Knowledge Base" nella sitemap reale e una pagina di ricerca, non una
+# view su tabella: non ha un asset entita corrispondente in ../standard-entities/.

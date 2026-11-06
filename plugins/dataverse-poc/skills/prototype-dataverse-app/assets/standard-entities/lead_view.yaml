@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `lead`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}lead_view"
+  displayName: Lead
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: lead
+      schemaName: Lead
+      displayName: Lead
+      displayCollectionName: Leads
+      primaryIdAttribute: leadid
+      primaryNameAttribute: subject
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/lead
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+  dataset: "{{prefix}}leads"
+  targetForm: "{{prefix}}lead_form"
+  primaryColumn: subject

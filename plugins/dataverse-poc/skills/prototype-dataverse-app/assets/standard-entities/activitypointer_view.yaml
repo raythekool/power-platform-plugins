@@ -1,0 +1,27 @@
+version: 1
+# Asset standard (tabella aggregata `activitypointer`, source: standard). Fonte: Microsoft Learn
+# entity reference. Solo view: activitypointer aggrega email/phonecall/appointment/task e non ha
+# un form proprio, ogni riga apre il form dell'attivita concreta (email, telefonata, ecc.).
+# Eccezione documentata alla regola generale "ogni view ha un targetForm": qui targetForm e null
+# di proposito, il renderer deve aprire il form del tipo di attivita specifico della riga.
+entity:
+  logicalName: "{{prefix}}activity_view"
+  displayName: Impegni
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: activitypointer
+      schemaName: ActivityPointer
+      displayName: Activity
+      displayCollectionName: Activities
+      primaryIdAttribute: activityid
+      primaryNameAttribute: subject
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/activitypointer
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Vista aggregata standard condivisa dalla baseline Sales Hub e Customer Service Hub.
+  dataset: "{{prefix}}activities"
+  targetForm: null
+  primaryColumn: subject

@@ -1,0 +1,85 @@
+version: 1
+# Asset standard (tabella `quote`, source: standard). Vedi quote_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}quote_form"
+  displayName: Offerta
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: quote
+      schemaName: Quote
+      displayName: Quote
+      displayCollectionName: Quotes
+      primaryIdAttribute: quoteid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/quote
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}quote_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}quote_name"
+        displayName: Nome offerta
+        control: text
+        required: true
+        dataverse:
+          table: quote
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}quote_customerid"
+        displayName: Cliente
+        control: lookup
+        dataverse:
+          table: quote
+          column: customerid
+          source: standard
+          type: customer
+          requiredLevel: SystemRequired
+          targets: [account, contact]
+      - logicalName: "{{prefix}}quote_totalamount"
+        displayName: Totale offerta
+        control: money
+        readOnly: true
+        dataverse:
+          table: quote
+          column: totalamount
+          source: standard
+          type: money
+          requiredLevel: None
+      - logicalName: "{{prefix}}quote_effectivefrom"
+        displayName: Valida dal
+        control: datetime
+        dataverse:
+          table: quote
+          column: effectivefrom
+          source: standard
+          type: datetime
+          requiredLevel: None
+          format: DateOnly
+          behavior: DateOnly
+      - logicalName: "{{prefix}}quote_statuscode"
+        displayName: Stato
+        control: choice
+        readOnly: true
+        dataverse:
+          table: quote
+          column: statuscode
+          source: standard
+          type: choice
+          requiredLevel: SystemRequired
+          choice:
+            - { value: 1, label: Bozza }
+            - { value: 2, label: Attiva }
+            - { value: 4, label: Vinta }
+            - { value: 5, label: Chiusa }

@@ -1,0 +1,26 @@
+version: 1
+# Asset standard (tabella `msdyn_iotalert`, source: standard, modulo Connected Field Service).
+# Fonte: Microsoft Learn entity reference. Uso: vedi ../standard-entities/account_view.yaml.
+# Nota: ownershipType riportato e il piu comune per questa tabella di modulo aggiuntivo:
+# verificare su Microsoft Learn / ambiente target se il modulo e installato prima di un uso reale.
+entity:
+  logicalName: "{{prefix}}iotalert_view"
+  displayName: Avvisi IoT
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: msdyn_iotalert
+      schemaName: msdyn_IoTAlert
+      displayName: IoT Alert
+      displayCollectionName: IoT Alerts
+      primaryIdAttribute: msdyn_iotalertid
+      primaryNameAttribute: msdyn_name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/msdyn_iotalert
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella del modulo Connected Field Service, presente nella baseline Customer Service Hub.
+  dataset: "{{prefix}}iotalerts"
+  targetForm: "{{prefix}}iotalert_form"
+  primaryColumn: msdyn_name

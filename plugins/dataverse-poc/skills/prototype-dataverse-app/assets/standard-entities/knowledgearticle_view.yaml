@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `knowledgearticle`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}knowledgearticle_view"
+  displayName: Articoli della Knowledge Base
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: knowledgearticle
+      schemaName: KnowledgeArticle
+      displayName: Knowledge Article
+      displayCollectionName: Knowledge Articles
+      primaryIdAttribute: knowledgearticleid
+      primaryNameAttribute: title
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/knowledgearticle
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+  dataset: "{{prefix}}knowledgearticles"
+  targetForm: "{{prefix}}knowledgearticle_form"
+  primaryColumn: title

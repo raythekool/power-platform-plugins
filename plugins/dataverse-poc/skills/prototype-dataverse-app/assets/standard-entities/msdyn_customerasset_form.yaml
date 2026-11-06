@@ -1,0 +1,58 @@
+version: 1
+# Asset standard (tabella `msdyn_customerasset`, source: standard). Vedi msdyn_customerasset_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}customerasset_form"
+  displayName: Cespite cliente
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: msdyn_customerasset
+      schemaName: msdyn_CustomerAsset
+      displayName: Customer Asset
+      displayCollectionName: Customer Assets
+      primaryIdAttribute: msdyn_customerassetid
+      primaryNameAttribute: msdyn_name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/msdyn_customerasset
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella del modulo Connected Field Service, presente nella baseline Customer Service Hub.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}customerasset_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}customerasset_msdyn_name"
+        displayName: Nome cespite
+        control: text
+        required: true
+        dataverse:
+          table: msdyn_customerasset
+          column: msdyn_name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}customerasset_account"
+        displayName: Account
+        control: lookup
+        dataverse:
+          table: msdyn_customerasset
+          column: msdyn_account
+          source: standard
+          type: lookup
+          requiredLevel: None
+          targets: [account]
+      - logicalName: "{{prefix}}customerasset_serialnumber"
+        displayName: Numero di serie
+        control: text
+        dataverse:
+          table: msdyn_customerasset
+          column: msdyn_serialnumber
+          source: standard
+          type: string
+          requiredLevel: None

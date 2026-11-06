@@ -1,0 +1,77 @@
+version: 1
+# Asset standard (tabella `contact`, source: standard). Vedi contact_view.yaml per le istruzioni d'uso.
+entity:
+  logicalName: "{{prefix}}contact_form"
+  displayName: Contatto
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: contact
+      schemaName: Contact
+      displayName: Contact
+      displayCollectionName: Contacts
+      primaryIdAttribute: contactid
+      primaryNameAttribute: fullname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/contact
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella condivisa dalla baseline Sales Hub e Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}contact_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}contact_firstname"
+        displayName: Nome
+        control: text
+        dataverse:
+          table: contact
+          column: firstname
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}contact_lastname"
+        displayName: Cognome
+        control: text
+        required: true
+        dataverse:
+          table: contact
+          column: lastname
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/contact#lastname
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}contact_parentcustomerid"
+        displayName: Account
+        control: lookup
+        dataverse:
+          table: contact
+          column: parentcustomerid
+          source: standard
+          type: customer
+          requiredLevel: None
+          targets: [account, contact]
+      - logicalName: "{{prefix}}contact_emailaddress1"
+        displayName: Email
+        control: text
+        dataverse:
+          table: contact
+          column: emailaddress1
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}contact_telephone1"
+        displayName: Telefono
+        control: text
+        dataverse:
+          table: contact
+          column: telephone1
+          source: standard
+          type: string
+          requiredLevel: None

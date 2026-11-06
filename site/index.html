@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Power Platform plugins</title>
+  <meta name="description" content="Agent plugins for Microsoft Power Platform, Dataverse and Dynamics 365 delivery, for VS Code (GitHub Copilot), Copilot CLI and Claude Code.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <main>
+    <h1>🧩 Power Platform plugins</h1>
+    <p class="lead">Agent plugins for Microsoft Power Platform, Dataverse and Dynamics 365 delivery. Add one marketplace to VS Code (GitHub Copilot), Copilot CLI or Claude Code, then install the plugins you need.</p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>🧪 dataverse-poc</h2>
+        <span class="tag">Dataverse POC · multi-agent · Italian</span>
+        <p>An orchestrator plans the POC and delegates to sub-agents. They build the HTML/YAML prototype, data model, demo data, forms, views, generative pages, PCF controls, web resources and code apps, then test and deploy.</p>
+        <div class="links">
+          <a href="https://github.com/raythekool/power-platform-plugins/blob/main/plugins/dataverse-poc/README.md">README</a>
+          <a href="https://github.com/raythekool/power-platform-plugins/blob/main/plugins/dataverse-poc/CHANGELOG.md">Changelog</a>
+        </div>
+      </section>
+      <section class="card">
+        <h2>📖 power-platform-llm-wiki</h2>
+        <span class="tag">Project knowledge base · D365 CE / Power Platform / F&amp;O</span>
+        <p>A code-first wiki that stays aligned with the code. It covers repositories, Dataverse and F&amp;O metadata, work items, meetings and FDD/TDD, and publishes to Azure DevOps Wiki or GitHub Wiki.</p>
+        <div class="links">
+          <a href="power-platform-llm-wiki/">Website</a>
+          <a href="power-platform-llm-wiki/wizard.html">Setup wizard</a>
+          <a href="https://github.com/raythekool/power-platform-plugins/blob/main/docs/power-platform-llm-wiki/README.md">Guide</a>
+        </div>
+      </section>
+    </div>
+
+    <h3>⌨️ Copilot CLI</h3>
+    <pre>copilot plugin marketplace add raythekool/power-platform-plugins
+copilot plugin install &lt;plugin&gt;@power-platform-plugins</pre>
+    <h3>🟠 Claude Code</h3>
+    <pre>claude plugin marketplace add raythekool/power-platform-plugins
+claude plugin install &lt;plugin&gt;@power-platform-plugins</pre>
+    <h3>🟦 VS Code</h3>
+    <p>Add <code>raythekool/power-platform-plugins</code> to <code>chat.plugins.marketplaces</code>, then search <code>@agentPlugins</code> in the Extensions view.</p>
+
+    <footer><a href="https://github.com/raythekool/power-platform-plugins">github.com/raythekool/power-platform-plugins</a> · MIT</footer>
+  </main>
+</body>
+</html>

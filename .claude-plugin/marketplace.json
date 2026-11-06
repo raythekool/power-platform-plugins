@@ -1,0 +1,24 @@
+{
+  "name": "power-platform-plugins",
+  "metadata": {
+    "description": "Agent plugins for Microsoft Power Platform, Dataverse and Dynamics 365 delivery: Dataverse POC orchestration and a code-first project wiki.",
+    "version": "1.0.0"
+  },
+  "owner": {
+    "name": "raythekool"
+  },
+  "plugins": [
+    {
+      "name": "dataverse-poc",
+      "source": "./plugins/dataverse-poc",
+      "description": "Multi-agent Dataverse POC: an orchestrator plans (model-driven or code app), opens stages with user confirmation and delegates to hidden sub-agents for HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Includes a PreToolUse guard on PAC/PACX commands.",
+      "version": "1.1.0"
+    },
+    {
+      "name": "power-platform-llm-wiki",
+      "source": "./plugins/power-platform-llm-wiki",
+      "description": "Code-first project knowledge base for Dynamics 365 delivery — single agent with five skills (init, config, update, ingest, query). Analyses code (Azure Repos, GitHub, local), Dataverse and F&O metadata, work items, meetings, FDD/TDD; publishes to Azure DevOps Wiki or GitHub Wiki.",
+      "version": "3.3.1"
+    }
+  ]
+}

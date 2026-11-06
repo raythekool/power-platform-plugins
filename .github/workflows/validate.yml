@@ -1,0 +1,43 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  marketplace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Marketplace manifests, versions, confidentiality
+        run: node scripts/validate-marketplace.mjs
+
+  dataverse-poc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Plugin structure and links
+        run: node scripts/dataverse-poc/validate-plugin.mjs
+      - name: Claude Code files in sync with agents/
+        run: node scripts/dataverse-poc/build-claude.mjs --check
+
+  power-platform-llm-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Plugin structure, docs and website
+        shell: pwsh
+        run: ./scripts/power-platform-llm-wiki/Validate-Plugin.ps1 -Human
+      - name: Script tests
+        shell: pwsh
+        run: ./tests/power-platform-llm-wiki/Invoke-Tests.ps1

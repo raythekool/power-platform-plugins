@@ -1,0 +1,57 @@
+version: 1
+# Asset standard (tabella `salesliterature`, source: standard). Vedi salesliterature_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}salesliterature_form"
+  displayName: Documento di vendita
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: salesliterature
+      schemaName: SalesLiterature
+      displayName: Sales Literature
+      displayCollectionName: Sales Literature
+      primaryIdAttribute: salesliteratureid
+      primaryNameAttribute: title
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/salesliterature
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}salesliterature_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}salesliterature_title"
+        displayName: Titolo
+        control: text
+        required: true
+        dataverse:
+          table: salesliterature
+          column: title
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}salesliterature_description"
+        displayName: Descrizione
+        control: memo
+        dataverse:
+          table: salesliterature
+          column: description
+          source: standard
+          type: memo
+          requiredLevel: None
+      - logicalName: "{{prefix}}salesliterature_keywords"
+        displayName: Parole chiave
+        control: text
+        dataverse:
+          table: salesliterature
+          column: keywords
+          source: standard
+          type: string
+          requiredLevel: None

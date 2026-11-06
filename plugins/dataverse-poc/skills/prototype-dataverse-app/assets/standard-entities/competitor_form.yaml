@@ -1,0 +1,57 @@
+version: 1
+# Asset standard (tabella `competitor`, source: standard). Vedi competitor_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}competitor_form"
+  displayName: Concorrente
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: competitor
+      schemaName: Competitor
+      displayName: Competitor
+      displayCollectionName: Competitors
+      primaryIdAttribute: competitorid
+      primaryNameAttribute: name
+      ownershipType: OrganizationOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/competitor
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}competitor_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}competitor_name"
+        displayName: Nome
+        control: text
+        required: true
+        dataverse:
+          table: competitor
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}competitor_website"
+        displayName: Sito web
+        control: text
+        dataverse:
+          table: competitor
+          column: websiteurl
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}competitor_strengths"
+        displayName: Punti di forza
+        control: memo
+        dataverse:
+          table: competitor
+          column: strengths
+          source: standard
+          type: memo
+          requiredLevel: None

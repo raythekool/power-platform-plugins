@@ -1,0 +1,70 @@
+version: 1
+# Asset standard (tabella `campaign`, source: standard). Vedi campaign_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}campaign_form"
+  displayName: Campagna
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: campaign
+      schemaName: Campaign
+      displayName: Campaign
+      displayCollectionName: Campaigns
+      primaryIdAttribute: campaignid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/campaign
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}campaign_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}campaign_name"
+        displayName: Nome campagna
+        control: text
+        required: true
+        dataverse:
+          table: campaign
+          column: name
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}campaign_typecode"
+        displayName: Tipo campagna
+        control: choice
+        dataverse:
+          table: campaign
+          column: typecode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Advertisement }
+            - { value: 2, label: Direct Marketing }
+            - { value: 3, label: Event }
+      - logicalName: "{{prefix}}campaign_budgetamount"
+        displayName: Budget
+        control: money
+        dataverse:
+          table: campaign
+          column: budgetamount
+          source: standard
+          type: money
+          requiredLevel: None
+      - logicalName: "{{prefix}}campaign_expectedresponse"
+        displayName: Risposta attesa (%)
+        control: decimal
+        dataverse:
+          table: campaign
+          column: expectedresponse
+          source: standard
+          type: decimal
+          requiredLevel: None

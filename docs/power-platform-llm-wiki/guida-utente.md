@@ -1,0 +1,163 @@
+## 📖 Guida utente
+
+Come usare **LLM Wiki** su un progetto Dynamics 365 (CE / Power Platform o Finance & Operations): installazione, primo setup, lavoro quotidiano, pubblicazione e consultazione.
+
+<p align="center">
+  <img src="images/workflow.svg" alt="I sei passi: /power-platform-llm-wiki:init, :update --source code, :ingest, :update --lint, :update --publish, :query" width="100%">
+</p>
+
+> [!TIP]
+> Hai poco tempo? Leggi solo [i sei passi qui sopra](#-3-riempire-la-wiki) e la sezione [Domande frequenti](#-domande-frequenti).
+
+### 👥 A chi serve
+
+| Ruolo                    | Cosa fa con la wiki                                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 🧑‍💼 Consulente funzionale  | Carica FDD, verbali e trascrizioni; verifica le pagine dei requisiti; risponde alle domande dei key user |
+| 🧑‍💻 Sviluppatore / tecnico | Lancia l'analisi del codice; verifica le pagine `code/` e la tracciabilità requisito -> codice           |
+| 🧭 Project manager / lead | Pubblica la wiki, controlla lint, azioni aperte e drift; organizza revisione e certificazione            |
+| 🤝 Key user / cliente     | Consulta la wiki pubblicata (Azure DevOps Wiki o Copilot) e certifica i contenuti                        |
+
+### 🧰 Prerequisiti
+
+- 🟦 VS Code con GitHub Copilot e l'impostazione **Chat > Plugins: Enabled** attiva.
+- 🐚 PowerShell 7 (`pwsh`) e 🌿 git.
+- In base alle fonti del progetto: Git Credential Manager (Azure Repos, Azure DevOps Wiki), `tf.exe` di Visual Studio (codice in TFS / TFVC), `pacx` / `pac` (Dataverse), `gh` (GitHub), `markitdown` (documenti Word, PowerPoint, Excel, PDF).
+- Non serve controllarli a mano: `/power-platform-llm-wiki:init` esegue un controllo in sola lettura (`Test-Prerequisites.ps1`) e ti mostra cosa c'è, cosa manca e come installarlo.
+
+### 📦 1. Installare il plugin
+
+1. Aggiungi questo repository a **Chat > Plugins: Marketplaces** (formato `owner/repo`).
+2. Nella vista Extensions cerca `@agentPlugins power-platform-llm-wiki` e installa.
+3. Nella chat seleziona l'agente **LLM Wiki**.
+
+Dal terminale, in alternativa a VS Code:
+
+```shell
+# GitHub Copilot CLI
+copilot plugin marketplace add raythekool/power-platform-plugins
+copilot plugin install power-platform-llm-wiki@power-platform-plugins
+
+# Claude Code
+claude plugin marketplace add raythekool/power-platform-plugins
+claude plugin install power-platform-llm-wiki@power-platform-plugins
+```
+
+> [!IMPORTANT]
+> Scrivi sempre il **nome completo** del comando: `/power-platform-llm-wiki:init`, `:config`, `:update`, `:ingest` e `:query` (in tutta la guida i comandi sono scritti così). I nomi brevi come `/init` o `/update` appartengono allo strumento (per esempio `/init` crea il file di istruzioni del progetto) e non avviano questo plugin. Se lo strumento non propone il nome completo, scegli l'agente **LLM Wiki** e chiedi l'operazione a parole.
+
+### 🧙 2. Primo setup (`/power-platform-llm-wiki:init`)
+
+> [!TIP]
+> Vuoi un percorso passo passo con esempi e verifiche? Segui il [wizard di configurazione](wizard-configurazione.md).
+
+Apri la cartella del repository di progetto (quello che ospiterà la wiki) e scrivi `/power-platform-llm-wiki:init`. Il wizard chiede:
+
+1. **Progetto**: nome, lingua dei contenuti (default italiano), profili (`power-platform`, `dynamics-fno`, `generic`) e strumenti del team (`vscode`, `copilot-cli`, `claude-code`), che decidono quali file di configurazione dell'agente vengono scritti.
+2. **Fonti** (tutte opzionali):
+    - 🧬 repository di codice (Azure Repos, GitHub, TFS / TFVC o cartella locale senza git) - consigliato, il codice è la fonte primaria. Per TFVC servono `tf.exe` e il percorso `$/...`; i dettagli sono nel [wizard di configurazione](wizard-configurazione.md#-passo-4---fonti);
+    - 📋 Azure DevOps Boards (organizzazione e progetto; accesso con il proprio account, nessun PAT);
+    - 🗄️ soluzioni Dataverse;
+    - 🏭 cartelle dei package F&O personalizzati;
+    - 🐙 attività GitHub, 📂 SharePoint.
+3. **Pubblicazione**: Azure DevOps Wiki (project o code wiki), GitHub Wiki o nessuna.
+4. **Governance**: redazione dei dati personali, soglia di "pagina non aggiornata", nomi dei certificatori.
+5. **Automazione**: solo per repository su GitHub (aggiornamento schedulato tramite Copilot cloud agent).
+
+Al termine il progetto contiene la cartella `llm-wiki/` (configurazione, motore, sorgenti, wiki) e le integrazioni per gli strumenti scelti: `.vscode/mcp.json` per VS Code, `.mcp.json` per Copilot CLI e Claude Code, `CLAUDE.md` per Claude Code. Fai commit di tutto tranne quanto escluso da `.gitignore`.
+
+### 🧱 3. Riempire la wiki
+
+| Cosa vuoi fare                 | Cosa fai                                                                                             | Cosa produce l'agente                                                                       |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 🧬 Documentare l'as-built       | `/power-platform-llm-wiki:update --source code`                                                      | `wiki/projects/` e `wiki/code/` con diagrammi Mermaid, a partire dall'inventario del codice |
+| 🏭 Metadati F&O                 | `/power-platform-llm-wiki:update --source fno`                                                       | Modello dati, estensioni (Chain of Command), data entity, sicurezza                         |
+| 🗄️ Metadati Dataverse           | `/power-platform-llm-wiki:update --source dataverse`                                                 | Modello dati, plugin, flow, sicurezza dall'ambiente                                         |
+| 📋 Work item                    | `/power-platform-llm-wiki:update --source devops`                                                    | `wiki/features/`, backlog, collegamenti a requisiti e codice                                |
+| 📄 FDD / analisi funzionale     | copia il file in `llm-wiki/raw/analysis/`, poi `/power-platform-llm-wiki:ingest raw/analysis/<file>` | Una pagina per requisito (`REQ-...`) con criteri di accettazione e collegamento al codice   |
+| 📐 TDD / specifica tecnica      | file in `llm-wiki/raw/specs/`, poi `/power-platform-llm-wiki:ingest ...`                             | Pagine `wiki/design/` confrontate con il codice                                             |
+| 🎙️ Verbale o trascrizione Teams | file in `llm-wiki/raw/meetings/`, poi `/power-platform-llm-wiki:ingest ...`                          | Verbale strutturato: domande e risposte, decisioni, action item, rischi                     |
+| ⚖️ Decisione architetturale     | file in `llm-wiki/raw/adrs/` o richiesta diretta                                                     | Pagina ADR collegata a requisiti e design                                                   |
+| 🔁 Tutto ciò che è cambiato     | `/power-platform-llm-wiki:update --full`                                                             | Sincronizza le fonti, elabora solo i file nuovi o modificati, lint finale                   |
+
+I documenti Word, PowerPoint, Excel e PDF vengono convertiti in Markdown automaticamente (con `markitdown`). L'agente elabora solo i file nuovi o cambiati, quindi `/power-platform-llm-wiki:update --full` si può lanciare spesso senza costi inutili.
+
+#### 🔎 Requisiti e codice: come si collegano
+
+<p align="center">
+  <img src="images/traceability.svg" alt="Un requisito implementato da un plugin Dataverse e da un'estensione F&amp;O; segnalazione di drift quando il codice non rispetta il requisito" width="100%">
+</p>
+
+Ogni requisito ha un ID (`REQ-...`); le pagine di codice dichiarano quali requisiti implementano. Se il codice fa qualcosa di diverso da quanto scritto nell'FDD l'agente non corregge né l'uno né l'altro: segnala `⚠️ Drift` su entrambe le pagine e il team decide.
+
+### ✅ 4. Controllare la qualità (`/power-platform-llm-wiki:update --lint`)
+
+Il lint è uno script deterministico (non consuma token) e segnala:
+
+- 🔴 **errori**: link interrotti, front matter mancante, pagine certificate senza certificatore, possibili segreti nel testo;
+- 🟠 **avvisi**: pagine orfane o non presenti nell'indice, azioni scadute, requisiti senza implementazione, pagine di codice senza diagramma, pagine senza TL;DR (il riassunto `>` subito dopo il titolo);
+- 🔵 **info**: pagine non aggiornate da troppo tempo, componenti di codice non tracciati a un requisito, pagine troppo lunghe per essere usate bene dagli assistenti AI.
+
+Nello stesso passaggio l'agente aggiorna la **mappa della conoscenza** (`wiki/reference/knowledge-map.md`, vedi [Usare la wiki con strumenti AI](#-8-usare-la-wiki-con-strumenti-ai)).
+
+> [!IMPORTANT]
+> Correggi gli errori prima di pubblicare. Le segnalazioni `⚠️ Drift` richiedono una decisione del team: aggiornare il documento o correggere il codice.
+
+### 🏅 5. Revisionare e certificare
+
+Le pagine nascono in stato `draft`. Quando una persona le ha verificate:
+
+- `/power-platform-llm-wiki:update --review llm-wiki/wiki/requirements/REQ-SAL-001-credit-check.md --by "Nome Cognome"`
+- `/power-platform-llm-wiki:update --certify llm-wiki/wiki/requirements/REQ-SAL-001-credit-check.md --by "Nome Cliente"`
+
+Il processo completo è descritto in [governance.md](governance.md).
+
+### 🌐 6. Pubblicare (`/power-platform-llm-wiki:update --publish`)
+
+L'agente converte la wiki nel formato del target (Azure DevOps Wiki o GitHub Wiki), mostra le modifiche e chiede conferma prima del push. Su Azure DevOps la struttura delle pagine, l'ordine e i link vengono generati automaticamente. In fondo a ogni pagina pubblicata compare la sezione **Pagine collegate**, con le pagine che puntano a quella (link, implementazioni, drift): chi legge, e Microsoft 365 Copilot, vede anche i collegamenti "all'indietro".
+
+> [!WARNING]
+> Non modificare a mano la wiki pubblicata: le modifiche vanno fatte nei sorgenti o nelle pagine di `llm-wiki/wiki/` e poi ripubblicate, altrimenti vengono sovrascritte.
+
+### 💬 7. Fare domande (`/power-platform-llm-wiki:query`)
+
+Esempi:
+
+- `/power-platform-llm-wiki:query "come è implementato il controllo fido?"`
+- `/power-platform-llm-wiki:query "cosa abbiamo deciso sulla wiki di progetto?"`
+- `/power-platform-llm-wiki:query "quali requisiti di vendita non hanno ancora un'implementazione?"`
+
+L'agente risponde solo con il contenuto della wiki, cita le pagine e indica se sono certificate. Se l'informazione manca risponde "Not documented yet" e propone come aggiungerla. La risposta può essere salvata come FAQ in `wiki/reference/queries/`.
+
+Chi non usa VS Code consulta la wiki pubblicata su Azure DevOps o tramite Microsoft 365 Copilot / Copilot Studio collegati alla wiki.
+
+### 🕸️ 8. Usare la wiki con strumenti AI
+
+La wiki è anche un **grafo della conoscenza**: pagine, requisiti, oggetti F&O, tabelle Dataverse, componenti di codice e work item sono collegati tra loro. Lo costruisce uno script (`Get-WikiGraph.ps1`) che non consuma token.
+
+| Cosa                              | A cosa serve                                                                                                                                                                                                                                                    |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Domande più precise ed economiche | `/power-platform-llm-wiki:query` chiede al grafo quali pagine leggere invece di sfogliare l'indice. Funzionano anche domande di impatto ("cosa tocca se cambio `AxTable:CustTable`?") e di collegamento ("come è collegato REQ-SAL-001 a NotifyCreditBlocked?") |
+| Mappa della conoscenza            | Pagina generata `wiki/reference/knowledge-map.md`: aree funzionali, pagine centrali, collegamenti tra aree, lacune (componenti non documentati, pagine senza TL;DR). Viene pubblicata con la wiki; non modificarla a mano                                       |
+| Pagine collegate                  | Nella wiki pubblicata ogni pagina elenca chi la cita o la implementa                                                                                                                                                                                            |
+| Pacchetto AI                      | In `llm-wiki/dist/ai/`: `graph.json` (per GraphRAG e altri strumenti), `llms.txt` e `llms-full.txt` (la wiki in formato adatto ai modelli), `graph.html` (mappa interattiva da aprire nel browser, senza installare nulla)                                      |
+
+Per aiutare il grafo:
+
+- inizia ogni pagina con un TL;DR (`> ...`) di una o due frasi;
+- scrivi gli identificativi in `codice inline`: `REQ-SAL-001`, `AxTable:CustTable`, `dv:account`, `US-128`;
+- l'agente aggiunge `related:` / `depends_on:` nel front matter solo per relazioni che nessun link esprime.
+
+Il pacchetto AI non va nella wiki pubblicata (Azure DevOps e GitHub mostrano solo pagine Markdown). Con `/power-platform-llm-wiki:config` puoi scegliere un'altra cartella in `graph.ai_export_path`, ad esempio il clone di un repository separato o una libreria SharePoint sincronizzata con OneDrive da usare come fonte di conoscenza di Copilot Studio. Tutte le opzioni sono nella sezione `graph:` di `wiki.config.yml`.
+
+### ❓ Domande frequenti
+
+**✏️ Posso modificare a mano le pagine della wiki?** Sì, in `llm-wiki/wiki/`. L'agente non sovrascrive i contenuti: segnala contraddizioni e, sulle pagine certificate, propone le modifiche in una sezione "Pending updates".
+
+**📌 Dove metto le regole specifiche del progetto?** In `llm-wiki/wiki.config.yml`, sezione `conventions`. Non modificare `llm-wiki/AGENTS.md` né `llm-wiki/.engine/`: vengono sovrascritti dagli aggiornamenti.
+
+**🔄 Ho aggiornato il plugin, cosa faccio?** `/power-platform-llm-wiki:config --refresh-engine`, poi `/power-platform-llm-wiki:update --lint`.
+
+**💸 Quanto costa in token?** Gli script fanno il lavoro meccanico; l'agente legge solo inventari e file cambiati. Ogni voce di `wiki/log.md` riporta i KB elaborati per tenere traccia dei consumi.
+
+**🔒 I dati del cliente sono al sicuro?** La wiki vive nel repository del progetto. Il lint blocca le credenziali più comuni; con `pii_redaction` attivo l'agente non copia dati personali oltre a nomi e ruoli dei partecipanti.

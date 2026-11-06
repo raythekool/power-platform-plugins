@@ -1,0 +1,81 @@
+version: 1
+# Asset standard (tabella `lead`, source: standard). Vedi lead_view.yaml per le istruzioni d'uso.
+entity:
+  logicalName: "{{prefix}}lead_form"
+  displayName: Lead
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: lead
+      schemaName: Lead
+      displayName: Lead
+      displayCollectionName: Leads
+      primaryIdAttribute: leadid
+      primaryNameAttribute: subject
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/lead
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}lead_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}lead_subject"
+        displayName: Argomento
+        control: text
+        required: true
+        dataverse:
+          table: lead
+          column: subject
+          source: standard
+          sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/lead#subject
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}lead_fullname"
+        displayName: Nome completo
+        control: text
+        dataverse:
+          table: lead
+          column: fullname
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}lead_companyname"
+        displayName: Azienda
+        control: text
+        dataverse:
+          table: lead
+          column: companyname
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}lead_emailaddress1"
+        displayName: Email
+        control: text
+        dataverse:
+          table: lead
+          column: emailaddress1
+          source: standard
+          type: string
+          requiredLevel: None
+      - logicalName: "{{prefix}}lead_leadsourcecode"
+        displayName: Origine lead
+        control: choice
+        dataverse:
+          table: lead
+          column: leadsourcecode
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Pubblicita }
+            - { value: 2, label: Dipendente referral }
+            - { value: 3, label: Sito web esterno }
+            - { value: 10, label: Altro }

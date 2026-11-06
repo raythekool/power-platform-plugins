@@ -1,0 +1,24 @@
+version: 1
+# Asset standard (tabella `opportunity`, source: standard). Fonte: Microsoft Learn entity reference.
+# Uso: vedi ../standard-entities/account_view.yaml.
+entity:
+  logicalName: "{{prefix}}opportunity_view"
+  displayName: Opportunita
+  pageType: view
+  dataverse:
+    table:
+      source: standard
+      logicalName: opportunity
+      schemaName: Opportunity
+      displayName: Opportunity
+      displayCollectionName: Opportunities
+      primaryIdAttribute: opportunityid
+      primaryNameAttribute: name
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/opportunity
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Sales Hub, gia verificata.
+  dataset: "{{prefix}}opportunities"
+  targetForm: "{{prefix}}opportunity_form"
+  primaryColumn: name

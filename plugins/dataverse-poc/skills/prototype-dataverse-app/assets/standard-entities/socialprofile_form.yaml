@@ -1,0 +1,52 @@
+version: 1
+# Asset standard (tabella `socialprofile`, source: standard). Vedi socialprofile_view.yaml per l'uso.
+entity:
+  logicalName: "{{prefix}}socialprofile_form"
+  displayName: Profilo social
+  pageType: form
+  dataverse:
+    table:
+      source: standard
+      logicalName: socialprofile
+      schemaName: SocialProfile
+      displayName: Social Profile
+      displayCollectionName: Social Profiles
+      primaryIdAttribute: socialprofileid
+      primaryNameAttribute: fullname
+      ownershipType: UserOwned
+      sourceUrl: https://learn.microsoft.com/dynamics365/developer/reference/entities/socialprofile
+      reuseDecision:
+        outcome: reuse-standard
+        reason: Tabella standard della baseline Customer Service Hub, gia verificata.
+tabs:
+  - logicalName: "{{prefix}}generale"
+    displayName: Generale
+sections:
+  - logicalName: "{{prefix}}socialprofile_dati_principali"
+    displayName: Dati principali
+    tab: "{{prefix}}generale"
+    layout: repeat(2, 1fr)
+    fields:
+      - logicalName: "{{prefix}}socialprofile_fullname"
+        displayName: Nome profilo
+        control: text
+        required: true
+        dataverse:
+          table: socialprofile
+          column: fullname
+          source: standard
+          type: string
+          requiredLevel: ApplicationRequired
+      - logicalName: "{{prefix}}socialprofile_community"
+        displayName: Community
+        control: choice
+        dataverse:
+          table: socialprofile
+          column: community
+          source: standard
+          type: choice
+          requiredLevel: None
+          choice:
+            - { value: 1, label: Facebook }
+            - { value: 2, label: Twitter }
+            - { value: 3, label: LinkedIn }
