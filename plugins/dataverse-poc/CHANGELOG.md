@@ -1,5 +1,11 @@
 ## Changelog
 
+### 1.3.0 — 2026-11-06
+
+- **VS Code: nel selettore degli agenti compare solo l'agente principale.** Dalla 1.2.0 VS Code mostrava anche i sotto-agenti. Il motivo: quando una cartella di plugin contiene `.claude-plugin/plugin.json`, VS Code usa il formato Claude. In quel formato carica `agents/` e anche `claude/agents/`, e le copie Claude dei sotto-agenti non erano nascoste. Ora anche le copie generate hanno `user-invocable: false`; Claude Code ignora il campo.
+- **Agente rinominato** da "Dataverse POC Orchestrator" a **"POC Dataverse"** (`agents/poc-dataverse.agent.md`). In Claude Code la skill passa da `/dataverse-poc:orchestrator` a **`/dataverse-poc:poc`**.
+- Anche `.claude-plugin/plugin.json` e `claude/hooks.json` sono generati da `build-claude.mjs`; il validator controlla `user-invocable: false` sui sotto-agenti Copilot e Claude.
+
 ### 1.2.0 — 2026-11-06
 
 - **Claude Code**: nuovo `.claude-plugin/plugin.json`. I 10 sotto-agenti sono in `claude/agents/` e l'orchestratore è la skill `/dataverse-poc:orchestrator`, perché in Claude Code solo la conversazione principale può delegare. Il hook `poc-guard` è in formato Claude (`claude/hooks.json`). I file Claude sono generati da `agents/` con `scripts/dataverse-poc/build-claude.mjs`: `<plugin-root>` diventa `${CLAUDE_PLUGIN_ROOT}`. Il formato Copilot non cambia.

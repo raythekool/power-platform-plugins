@@ -1,6 +1,7 @@
 ---
 name: poc-genpage
 description: "Sotto-agente POC: una generative page per invocazione. Scrive la pagina .tsx (React 17, Fluent UI V9) dal contratto dei componenti del prototipo, la compila, la carica in ambiente con PAC e la aggancia all'app. Use when: generative page, genux, pagina React in model-driven app, sostituire un componente simulato con una pagina reale."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-genpage.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

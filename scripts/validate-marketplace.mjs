@@ -1,6 +1,7 @@
 // Repository-level checks for the power-platform-plugins marketplace:
 // both marketplace manifests list the same plugins, each source resolves to a plugin whose
 // Copilot (plugin.json) and Claude Code (.claude-plugin/plugin.json) manifests agree on name and version,
+// a plugin without .claude-plugin/plugin.json is described for Claude Code by its .claude-plugin/marketplace.json entry,
 // each plugin ships README, CHANGELOG (with an entry for the current version) and LICENSE,
 // and distributed files contain no customer identifiers, e-mail addresses or environment GUIDs.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -50,6 +51,7 @@ for (const entry of markets[0]?.[1].plugins ?? []) {
     if (!existsSync(dir)) { errors.push(`${name}: source folder ${source} not found`); continue; }
 
     for (const manifest of ['plugin.json', '.claude-plugin/plugin.json']) {
+        if (manifest !== 'plugin.json' && !existsSync(join(dir, manifest))) continue; // Claude manifest may live in the entry
         const j = readJson(join(dir, manifest));
         if (!j) continue;
         if (j.name !== name) errors.push(`${name}: ${manifest} name "${j.name}" differs from marketplace`);

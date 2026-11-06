@@ -1,6 +1,7 @@
 ---
 name: poc-tester
 description: "Sotto-agente POC: verifica indipendente. Esegue validator, build e report di copertura del prototipo, smoke test nel browser su runtime/statico e sull'app model-driven in ambiente (form, viste, sitemap, generative page, PCF), controlla metadata Dataverse e console. Non corregge: riporta difetti con evidenze. Use when: test, verifica, smoke test, regressione, collaudo POC."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-tester.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

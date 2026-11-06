@@ -1,6 +1,7 @@
 ---
 name: poc-demo-data
 description: "Sotto-agente POC: dati demo sintetici. Crea e mantiene i dataset YAML del prototipo (anonimizzati, referenzialmente coerenti) e, in stage R, li carica in Dataverse con PACX data rispettando lookup e choice reali. Use when: seed, dati demo, record di esempio, anonimizzazione, coerenza referenziale."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-demo-data.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

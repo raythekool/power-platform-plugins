@@ -6,7 +6,7 @@ user-invocable: false
 
 # Realizzazione POC Dataverse — regole condivise
 
-Questa skill è il contratto comune fra l'agente `Dataverse POC Orchestrator` e i sotto-agenti nascosti `poc-*`. Ogni sotto-agente la legge **prima** di agire.
+Questa skill è il contratto comune fra l'agente `POC Dataverse` e i sotto-agenti nascosti `poc-*`. Ogni sotto-agente la legge **prima** di agire.
 
 ## 1. Stage gate
 

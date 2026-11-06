@@ -1,6 +1,7 @@
 ---
 name: poc-code-app
 description: "Sotto-agente POC: Power Apps code app reale (React + Vite, @microsoft/power-apps). Trasforma il prototipo appType code-app in un'app code-first collegata a Dataverse o connettori, la compila e la pubblica nell'ambiente DEV. Use when: code app, app React/Vite su Power Platform, pac code, add-dataverse, connettori in code app, realizzare un prototipo code-app."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-code-app.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

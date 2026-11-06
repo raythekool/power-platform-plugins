@@ -12,7 +12,7 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 
 | Componente | Tipo | Visibile all'utente | Ruolo |
 | --- | --- | --- | --- |
-| `Dataverse POC Orchestrator` | agente (Copilot) / skill `orchestrator` (Claude) | sì | Pianifica, apre gli stage con conferma, delega, verifica, aggiorna il piano |
+| `POC Dataverse` | agente (Copilot) / skill `poc` (Claude) | sì | Pianifica, apre gli stage con conferma, delega, verifica, aggiorna il piano |
 | `poc-prototype-builder` | agente | no | Prototipo HTML/YAML (model-driven o code app), componenti simulati, build |
 | `poc-datamodel` | agente | no | Standard vs custom (Microsoft Learn), contratto YAML; in stage R tabelle, colonne, choice, relazioni, chiavi con PACX |
 | `poc-demo-data` | agente | no | Dataset sintetici YAML; in stage R seed dei record |
@@ -48,7 +48,7 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 
 ```mermaid
 flowchart LR
-    U[Utente] --> O[Dataverse POC Orchestrator]
+    U[Utente] --> O[POC Dataverse]
     O -->|stage P| PB[poc-prototype-builder]
     O -->|stage P/R| DM[poc-datamodel]
     O --> DD[poc-demo-data]
@@ -102,7 +102,7 @@ Se un repository contiene già copie locali degli stessi agenti o skill (in `.gi
 
 | | VS Code / Copilot CLI | Claude Code |
 | --- | --- | --- |
-| Avvio | Selezionare l'agente **Dataverse POC Orchestrator** | Lanciare `/dataverse-poc:orchestrator <richiesta>` |
+| Avvio | Selezionare l'agente **POC Dataverse** | Lanciare `/dataverse-poc:poc <richiesta>` |
 | POC nuova | `init` o `/dataverse-poc-init` | `/dataverse-poc:dataverse-poc-init` |
 | Sotto-agenti | Nascosti (`user-invocable: false`), elencati in `agents:` dell'orchestratore | `dataverse-poc:poc-*`, invocati dall'orchestratore con lo strumento Agent |
 
@@ -110,7 +110,7 @@ Se un repository contiene già copie locali degli stessi agenti o skill (in `.gi
 2. Descrivere requisiti, POC esistente o cartella, e fin dove arrivare (prototipo, realizzazione DEV, rilascio).
 3. Rispondere alle domande su `appType` e prefisso. Prima dello stage R rispondere anche su ambiente e solution.
 
-In Claude Code l'orchestratore è una skill e non un agente, perché lì un sotto-agente non può avviare altri sotto-agenti. I file in `claude/` sono generati da `agents/` (vedi [CONTRIBUTING](https://github.com/raythekool/power-platform-plugins/blob/main/CONTRIBUTING.md)): non vanno modificati a mano.
+Nel selettore degli agenti compare solo **POC Dataverse**: i sotto-agenti hanno `user-invocable: false`. In Claude Code l'agente principale è una skill e non un agente, perché lì un sotto-agente non può avviare altri sotto-agenti. I file in `claude/` e `.claude-plugin/plugin.json` sono generati da `agents/` (vedi [CONTRIBUTING](https://github.com/raythekool/power-platform-plugins/blob/main/CONTRIBUTING.md)): non vanno modificati a mano.
 
 ### 🧰 Prerequisiti
 

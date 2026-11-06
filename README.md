@@ -17,7 +17,7 @@ One repository, one marketplace: add it once to **VS Code (GitHub Copilot)**, **
 
 | Plugin | Version | What it does | VS Code | Copilot CLI | Claude Code | Docs |
 | --- | --- | --- | :-: | :-: | :-: | --- |
-| 🧪 [`dataverse-poc`](plugins/dataverse-poc/README.md) | 1.2.0 | Multi-agent **Dataverse POC**: an orchestrator plans the POC (model-driven or code app) and delegates to sub-agents for the HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Deterministic scripts do the mechanical work: init, prototype pipeline, preflight and solution checks. A `PreToolUse` guard asks before risky PAC/PACX commands. Content in Italian. | ✅ | ✅ | ✅ | [README](plugins/dataverse-poc/README.md) · [Tutorial 🇮🇹](docs/dataverse-poc/tutorial-init.md) · [CHANGELOG](plugins/dataverse-poc/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/dataverse-poc/) |
+| 🧪 [`dataverse-poc`](plugins/dataverse-poc/README.md) | 1.3.0 | Multi-agent **Dataverse POC**: an orchestrator plans the POC (model-driven or code app) and delegates to sub-agents for the HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Deterministic scripts do the mechanical work: init, prototype pipeline, preflight and solution checks. A `PreToolUse` guard asks before risky PAC/PACX commands. Content in Italian. | ✅ | ✅ | ✅ | [README](plugins/dataverse-poc/README.md) · [Tutorial 🇮🇹](docs/dataverse-poc/tutorial-init.md) · [CHANGELOG](plugins/dataverse-poc/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/dataverse-poc/) |
 | 📖 [`power-platform-llm-wiki`](plugins/power-platform-llm-wiki/README.md) | 3.3.1 | **LLM Wiki**: a code-first project knowledge base for Dynamics 365 (CE / Power Platform and F&O). It analyses code, Dataverse and F&O metadata, work items, meetings and FDD/TDD, and publishes to Azure DevOps Wiki or GitHub Wiki. | ✅ | ✅ | ✅ | [Guide](docs/power-platform-llm-wiki/README.md) · [Guida utente 🇮🇹](docs/power-platform-llm-wiki/guida-utente.md) · [CHANGELOG](plugins/power-platform-llm-wiki/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/) |
 
 ## 🚀 Install
@@ -51,7 +51,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins
 The same commands work inside a session as `/plugin marketplace add ...` and `/plugin install ...`. Run `/plugin` to browse the marketplace. To update: `claude plugin update <plugin>@power-platform-plugins`.
 
 > [!IMPORTANT]
-> Plugin commands are namespaced: for example `/dataverse-poc:orchestrator` and `/power-platform-llm-wiki:init`. Each plugin README explains how to start it in each tool.
+> Plugin commands are namespaced: for example `/dataverse-poc:poc` and `/power-platform-llm-wiki:init`. Each plugin README explains how to start it in each tool.
 
 ## 🔁 Moving from the old marketplaces
 
@@ -75,7 +75,7 @@ Both plugins used to have a marketplace of their own. Those repositories are arc
 .github/plugin/marketplace.json     # marketplace for VS Code and Copilot CLI
 .claude-plugin/marketplace.json     # same marketplace for Claude Code (kept identical)
 plugins/<plugin>/                   # what gets installed: manifests, agents, skills, scripts, README, CHANGELOG, LICENSE
-├── plugin.json                     #   Copilot manifest
+├── plugin.json                     #   Copilot manifest (VS Code, Copilot CLI)
 └── .claude-plugin/plugin.json      #   Claude Code manifest
 docs/<plugin>/                      # extended documentation and images
 scripts/validate-marketplace.mjs    # repository-wide checks (both marketplaces, versions, confidentiality)

@@ -18,7 +18,7 @@ Procedura breve e quasi tutta a script. `<plugin-root>` e la cartella che contie
    - iniziativa e cliente per il nome del piano (`POC/Piano_<Iniziativa>_<Cliente>.md`), oppure nessun piano.
 3. **Scaffold**: `node <plugin-root>/scripts/poc-init.mjs --root <cartella> --app-type <tipo> --prefix <p_> --name "<nome>" [--hub <hub>] [--initiative <I> --client <C>] --json`. Lo script installa le dipendenze ed esegue `npm run check`.
 4. **Esito**: riportare all'utente cartella, piano, passi `ok`/`KO` e il comando per vedere il prototipo (`npm run serve` oppure il file `dist/<app>.html`). Se un passo e `KO`, mostrare il dettaglio e il rimedio (tipicamente: rete per `npm install`, Edge/Chrome per lo smoke test).
-5. **Prossimo passo**: proporre di descrivere requisiti e schermate all'agente **Dataverse POC Orchestrator**, che sostituira gli esempi dello scaffold.
+5. **Prossimo passo**: proporre di descrivere requisiti e schermate all'agente **POC Dataverse**, che sostituira gli esempi dello scaffold.
 
 ## Regole
 

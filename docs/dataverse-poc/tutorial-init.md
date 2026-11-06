@@ -55,7 +55,7 @@ claude plugin marketplace add raythekool/power-platform-plugins
 claude plugin install dataverse-poc@power-platform-plugins
 ```
 
-In Claude Code l'orchestratore si avvia con `/dataverse-poc:orchestrator` e l'init con `/dataverse-poc:dataverse-poc-init`. Il resto del tutorial vale uguale.
+In Claude Code l'agente **POC Dataverse** si avvia con `/dataverse-poc:poc` e l'init con `/dataverse-poc:dataverse-poc-init`. Il resto del tutorial vale uguale.
 
 **Cartella locale** (sviluppo del plugin): clonare il repository. In VS Code aggiungere in `settings.json` `"chat.pluginLocations": { "<percorso>/plugins/dataverse-poc": true }`; in Claude Code avviare `claude --plugin-dir <percorso>/plugins/dataverse-poc`.
 
@@ -91,7 +91,7 @@ Ogni riga `✖` obbligatoria riporta il comando di installazione. `--json` produ
 
 ## 4. Init dalla chat
 
-1. Apri la chat, scegli l'agente **Dataverse POC Orchestrator**.
+1. Apri la chat, scegli l'agente **POC Dataverse**.
 2. Scrivi, per esempio: `init: POC gestione ordini per Contoso`.
 3. L'orchestratore segue la skill `dataverse-poc-init`: verifica i requisiti e ti fa quattro domande in un colpo solo.
 

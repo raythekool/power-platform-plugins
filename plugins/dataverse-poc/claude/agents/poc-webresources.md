@@ -1,6 +1,7 @@
 ---
 name: poc-webresources
 description: "Sotto-agente POC: web resource e comandi. Scrive JavaScript di form (onLoad, onChange, onSave con Xrm.WebApi), risorse HTML/CSS, icone delle tabelle e comandi ribbon/command bar; li carica nella solution DEV con PACX. Use when: web resource, script di form, Xrm, ribbon, pulsante command bar, icone tabelle."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-webresources.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

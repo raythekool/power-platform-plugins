@@ -1,6 +1,7 @@
 ---
 name: poc-forms-views
 description: "Sotto-agente POC: UI model-driven reale. Crea e aggiorna form (tab, sezioni, campi, subgrid, event handler già esistenti), viste (FetchXML/LayoutXML), app module e sitemap in un ambiente DEV tramite AppMaker MCP e PACX, partendo dagli YAML del prototipo. Use when: form, viste, griglie, app model-driven, sitemap, navigazione, publish UI."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-forms-views.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

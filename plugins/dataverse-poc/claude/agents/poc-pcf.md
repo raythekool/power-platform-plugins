@@ -1,6 +1,7 @@
 ---
 name: poc-pcf
 description: "Sotto-agente POC: controlli PCF reali (field o dataset). Trasforma il contratto pcf simulato del prototipo in un ControlManifest, implementa il controllo, lo verifica con PCF Workbench e lo distribuisce nella solution DEV. Use when: PCF, code component, ControlManifest, pac pcf, sostituire un componente pcf simulato."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-pcf.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

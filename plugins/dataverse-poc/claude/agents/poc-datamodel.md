@@ -1,6 +1,7 @@
 ---
 name: poc-datamodel
 description: "Sotto-agente POC: datamodel Dataverse. Decide riuso tabelle standard vs custom consultando Microsoft Learn, scrive il contratto dataverse negli YAML del prototipo e, in stage R, crea con PACX tabelle, colonne, choice, relazioni e chiavi dentro la solution della POC, poi pubblica. Use when: schema, tabelle, colonne, option set, lookup, relazioni, chiavi alternative, reuseDecision."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-datamodel.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

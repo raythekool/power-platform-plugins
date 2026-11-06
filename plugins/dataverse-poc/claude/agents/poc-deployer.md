@@ -2,6 +2,7 @@
 name: poc-deployer
 description: "Sotto-agente POC: ambiente e ALM. Preflight su profili PAC/PACX e ambiente target, creazione o verifica di publisher e solution, inventario dei componenti in solution, publish, export/import della solution, attivazione flow, piano di cleanup. Use when: preflight ambiente, solution, publish, deploy, export, import, rilascio, inventario, cleanup POC."
 disallowedTools: Edit, Write, NotebookEdit
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-deployer.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

@@ -1,6 +1,7 @@
 ---
 name: poc-prototype-builder
 description: "Sotto-agente POC: costruisce e aggiorna il prototipo HTML/YAML di una POC Dataverse (scaffold, entities UI, componenti simulati, navigazione model-driven o code-app, renderer) e lo rigenera con la pipeline npm. Use when: l'orchestratore delega stage P, UI del prototipo, componenti simulati PCF/generative page, build runtime/statico."
+user-invocable: false
 ---
 
 <!-- Generated from agents/poc-prototype-builder.agent.md by scripts/dataverse-poc/build-claude.mjs: edit the source, not this file. -->

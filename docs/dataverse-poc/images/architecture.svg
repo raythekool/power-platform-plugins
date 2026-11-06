@@ -14,8 +14,8 @@
   <line x1="190" y1="255" x2="262" y2="255" stroke="#64748B" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
   <!-- orchestrator -->
   <rect x="265" y="190" width="250" height="130" rx="18" fill="url(#orch)"/>
-  <text x="390" y="238" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Dataverse POC</text>
-  <text x="390" y="262" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Orchestrator</text>
+  <text x="390" y="250" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">POC Dataverse</text>
+  
   <text x="390" y="292" text-anchor="middle" font-size="12" fill="#DBEAFE">piano · stage gate · brief · verifica</text>
   <!-- scripts layer -->
   <rect x="580" y="40" width="580" height="190" rx="18" fill="#E6F7F5" stroke="#9FDCD5"/>

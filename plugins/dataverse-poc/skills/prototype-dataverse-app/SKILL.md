@@ -1,12 +1,12 @@
 ---
 name: prototype-dataverse-app
-description: "Riferimenti e asset condivisi per i prototipi HTML/YAML di app Dataverse: tipi di app (model-driven vs code-app), schema YAML, contratto Dataverse di tabelle e colonne, componenti simulati (PCF, generative page), chrome Dynamics 365 CE (mda-shell), Sales Hub e Customer Service Hub standard, scaffold, procedure legacy-html e html-diretto. Use when: serve una regola o un asset del prototipo; per creare o aggiornare una POC usare l'agent Dataverse POC Orchestrator o le skill dataverse-poc-*."
+description: "Riferimenti e asset condivisi per i prototipi HTML/YAML di app Dataverse: tipi di app (model-driven vs code-app), schema YAML, contratto Dataverse di tabelle e colonne, componenti simulati (PCF, generative page), chrome Dynamics 365 CE (mda-shell), Sales Hub e Customer Service Hub standard, scaffold, procedure legacy-html e html-diretto. Use when: serve una regola o un asset del prototipo; per creare o aggiornare una POC usare l'agent POC Dataverse o le skill dataverse-poc-*."
 user-invocable: false
 ---
 
 # Prototipo di applicazione Dataverse — riferimenti condivisi
 
-Questa skill non è più un punto di ingresso: contiene le regole e gli asset comuni a cui rimandano le skill `dataverse-poc-*` e i sotto-agenti `poc-*`. Per creare o modificare una POC si passa dall'agent `Dataverse POC Orchestrator`.
+Questa skill non è più un punto di ingresso: contiene le regole e gli asset comuni a cui rimandano le skill `dataverse-poc-*` e i sotto-agenti `poc-*`. Per creare o modificare una POC si passa dall'agent `POC Dataverse`.
 
 | Fase | Skill |
 | --- | --- |
