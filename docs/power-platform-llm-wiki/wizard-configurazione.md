@@ -24,11 +24,11 @@ flowchart LR
 
 Il wizard funziona in tre ambienti. Scegli quello che usi: i passi seguenti indicano dove cambia qualcosa. Nella [versione web](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/wizard.html) basta cliccare la card dell'ambiente e le istruzioni si adattano da sole.
 
-| Ambiente                 | Installazione (passo 1)                              | Come avvii il wizard (passo 2)  |
-| ------------------------ | ---------------------------------------------------- | ------------------------------- |
-| 🟦 **VS Code**            | Impostazioni e vista Extensions                      | `/power-platform-llm-wiki:init` |
-| ⌨️ **GitHub Copilot CLI** | `copilot plugin marketplace add` e `plugin install`  | `/power-platform-llm-wiki:init` |
-| 🟠 **Claude Code**        | `claude plugin install ... --marketplace` (2.1.275+) | `/power-platform-llm-wiki:init` |
+| Ambiente                  | Installazione (passo 1)                                                                         | Come avvii il wizard (passo 2)  |
+| ------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- |
+| 🟦 **VS Code**             | Impostazioni e vista Extensions                                                                 | `/power-platform-llm-wiki:init` |
+| ⌨️ **GitHub Copilot CLI** | Copilot CLI (`winget`, `brew` o `npm`), poi `copilot plugin marketplace add` e `plugin install` | `/power-platform-llm-wiki:init` |
+| 🟠 **Claude Code**         | `claude plugin install ... --marketplace` (2.1.275+)                                            | `/power-platform-llm-wiki:init` |
 
 > [!NOTE]
 > Copilot CLI e Claude Code non leggono `.vscode/mcp.json`. Al [passo 3](#-passo-3---progetto-profili-e-strumenti) dici a `/power-platform-llm-wiki:init` quali strumenti usa il team: scriverà anche `.mcp.json` (letto da entrambi) e, per Claude Code, `CLAUDE.md`.
@@ -81,8 +81,7 @@ Servono sempre **PowerShell 7**, **git** e lo strumento che hai scelto (**VS Cod
 
 **⌨️ GitHub Copilot CLI**
 
-<details>
-<summary>Non hai ancora Copilot CLI? Installalo così</summary>
+**Non hai ancora Copilot CLI?** Installalo prima del plugin (se `copilot --version` risponde già, salta al blocco successivo).
 
 Ti servono un abbonamento **GitHub Copilot** attivo e il via libera dell'organizzazione: un amministratore può disattivare Copilot CLI nelle policy. Su Windows serve anche PowerShell 6 o successivo, già coperto da PowerShell 7 del [passo 0](#-passo-0---prerequisiti).
 
@@ -99,7 +98,7 @@ Ti servono un abbonamento **GitHub Copilot** attivo e il via libera dell'organiz
 
 ✅ **Verifica:** `copilot --version` risponde con un numero di versione. Altri metodi di installazione sono nella [documentazione di GitHub](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli).
 
-</details>
+Poi installa il plugin:
 
 ```shell
 copilot plugin marketplace add raythekool/power-platform-plugins

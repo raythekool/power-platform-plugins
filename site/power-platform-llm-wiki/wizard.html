@@ -306,7 +306,45 @@
               <h3>⌨️ Your setup in GitHub Copilot CLI</h3>
               <ol class="env-steps">
                 <li>
-                  <b>Install</b>
+                  <b>Install Copilot CLI</b>
+                  <div>
+                    Skip this if <code>copilot --version</code> already
+                    answers. You need an active GitHub Copilot subscription
+                    and an organization that allows Copilot CLI. Run the
+                    command for your system:
+                    <div class="code">
+                      <div class="code-bar">
+                        <span>Copilot CLI</span
+                        ><button
+                          type="button"
+                          class="copy"
+                          data-copy="#env-cli-setup"
+                        >
+                          <span lang="en">Copy</span
+                          ><span lang="it">Copia</span>
+                        </button>
+                      </div>
+                      <pre
+                        id="env-cli-setup"
+                      ><code># Windows
+winget install GitHub.Copilot
+# macOS or Linux
+brew install --cask copilot-cli
+# Any system with Node.js 22+
+npm install -g @github/copilot</code></pre>
+                    </div>
+                    Then open a new terminal, start <code>copilot</code> and,
+                    if asked, type <code>/login</code>. More options:
+                    <a
+                      href="https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli"
+                      target="_blank"
+                      rel="noopener"
+                      >GitHub documentation</a
+                    >.
+                  </div>
+                </li>
+                <li>
+                  <b>Install the plugin</b>
                   <div>
                     From a terminal:
                     <div class="code">
@@ -363,7 +401,45 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
               <h3>⌨️ Il tuo setup in GitHub Copilot CLI</h3>
               <ol class="env-steps">
                 <li>
-                  <b>Installa</b>
+                  <b>Installa Copilot CLI</b>
+                  <div>
+                    Salta questo punto se <code>copilot --version</code>
+                    risponde già. Servono un abbonamento GitHub Copilot attivo
+                    e un'organizzazione che consenta Copilot CLI. Esegui il
+                    comando del tuo sistema:
+                    <div class="code">
+                      <div class="code-bar">
+                        <span>Copilot CLI</span
+                        ><button
+                          type="button"
+                          class="copy"
+                          data-copy="#env-cli-setup-it"
+                        >
+                          <span lang="en">Copy</span
+                          ><span lang="it">Copia</span>
+                        </button>
+                      </div>
+                      <pre
+                        id="env-cli-setup-it"
+                      ><code># Windows
+winget install GitHub.Copilot
+# macOS o Linux
+brew install --cask copilot-cli
+# Qualsiasi sistema con Node.js 22+
+npm install -g @github/copilot</code></pre>
+                    </div>
+                    Poi apri un nuovo terminale, avvia <code>copilot</code> e,
+                    se richiesto, scrivi <code>/login</code>. Altre opzioni:
+                    <a
+                      href="https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli"
+                      target="_blank"
+                      rel="noopener"
+                      >documentazione di GitHub</a
+                    >.
+                  </div>
+                </li>
+                <li>
+                  <b>Installa il plugin</b>
                   <div>
                     Da un terminale:
                     <div class="code">
