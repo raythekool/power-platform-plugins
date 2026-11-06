@@ -97,7 +97,7 @@ Ogni riga `✖` obbligatoria riporta il comando di installazione. `--json` produ
 
 | Domanda | Come rispondere |
 | --- | --- |
-| `appType` | `model-driven` se la UI nasce da record, viste e moduli (o gli utenti conoscono gia Dynamics 365); `code-app` se serve un'interazione su misura (wizard, configuratore). Nel dubbio, model-driven |
+| `appType` | `model-driven` se la UI nasce da record, viste e moduli (o gli utenti conoscono gia Dynamics 365); `code-app` se serve un'interazione su misura (wizard, configuratore); `power-pages` se gli utenti sono esterni o anonimi (portale clienti, self-service): sito SPA in React, con il progetto generato da `poc-spa-scaffold.mjs`. Nel dubbio, model-driven |
 | Prefisso | 2-8 lettere minuscole + `_` (es. `ava_`): finira in tutti i logical name |
 | Nome app e cartella | Nome visibile (es. `Order Service`) e cartella (default `POC/OrderService`) |
 | Baseline (solo model-driven) | `sales-hub`, `customer-service-hub` o nessuna: la baseline aggiunge site map, viste e moduli standard con dati sintetici |

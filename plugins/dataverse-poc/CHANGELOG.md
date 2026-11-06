@@ -1,5 +1,26 @@
 ## Changelog
 
+### 1.4.0 — 2026-11-06
+
+- **POC di siti Power Pages SPA in React** (`appType: power-pages`):
+  - il prototipo YAML/HTML ha una shell da sito: menu in alto, home pubblica, pagine riservate, persona simulata (anonimo, autenticato, web role) e table permission in evidenza;
+  - il validator controlla che ogni ruolo che vede una tabella abbia una table permission con `read`, e `write` sui dettagli modificabili;
+  - lo smoke test percorre il sito con ogni persona.
+- **Nuovo script `poc-spa-scaffold.mjs`**: genera dagli stessi YAML un progetto React + Vite + TypeScript che funziona subito con dati mock. Contiene:
+  - route, colonne e tipi dei dati;
+  - adattatore Web API `/_api/` con token CSRF;
+  - `powerpages.config.json`;
+  - il contratto dell'ambiente: site setting `Webapi/*`, web role e table permission.
+  
+  Si rilancia dopo ogni modifica ai YAML senza sovrascrivere le pagine già scritte. Template in `skills/prototype-dataverse-app/assets/power-pages-spa/`.
+- Nuovo sotto-agente `poc-power-pages`, nuova skill `dataverse-poc-power-pages` e gotcha `gotcha-power-pages.md`: upload con `pac pages upload-code-site`, siti inattivi, Web API, sviluppo su mock.
+- **Nuova skill `dataverse-poc-plan-guide`**: direttive per qualsiasi agente che pianifica una POC Dataverse. Copre domande iniziali in un'unica richiesta, struttura obbligatoria del piano, ondate parallele per ownership, criteri di done verificabili da comando e anti-pattern, con un esempio compilato. L'orchestratore e la planner la seguono.
+- `poc-init.mjs`:
+  - accetta `--app-type power-pages`;
+  - il piano generato ha le sezioni `🧱 Modello dati`, `🌊 Ondate` (precompilate per appType) e `⚠️ Rischi e simulato`;
+  - con power-pages, la tabella `🎯 Target ambiente` ha in più `Sito Power Pages (nome)` e `URL sito`.
+- `poc-guard` chiede conferma anche prima di `pac pages upload-code-site`. `check-prereqs.mjs --stage R --app-type power-pages` richiede PAC 1.44 o successiva.
+
 ### 1.3.0 — 2026-11-06
 
 - **VS Code: nel selettore degli agenti compare solo l'agente principale.** Dalla 1.2.0 VS Code mostrava anche i sotto-agenti. Il motivo: quando una cartella di plugin contiene `.claude-plugin/plugin.json`, VS Code usa il formato Claude. In quel formato carica `agents/` e anche `claude/agents/`, e le copie Claude dei sotto-agenti non erano nascoste. Ora anche le copie generate hanno `user-invocable: false`; Claude Code ignora il campo.

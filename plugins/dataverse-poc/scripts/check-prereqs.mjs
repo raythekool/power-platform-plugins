@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Read-only check of the tools used by the dataverse-poc plugin. Never installs or changes anything.
-// Usage: node check-prereqs.mjs [--stage P|R] [--json]
+// Usage: node check-prereqs.mjs [--stage P|R] [--app-type power-pages] [--json]
 //   P (default): prototype stage — Node.js 18+, npm, Edge/Chrome for the smoke test.
 //   R: adds PAC CLI, PACX and their auth profiles (realization in a DEV environment).
+//   --app-type power-pages: PAC CLI 1.44+ (pac pages upload-code-site for SPA sites).
 // Exit code 0 when every required tool is available, 1 otherwise.
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
@@ -15,6 +16,7 @@ const stageArg = (args[args.indexOf('--stage') + 1] || 'P').toUpperCase();
 const stage = args.includes('--stage') ? stageArg : 'P';
 if (!['P', 'R'].includes(stage)) { console.error('--stage deve essere P o R'); process.exit(2); }
 const version = (text) => (String(text).match(/\d+\.\d+(?:\.\d+){0,2}/) || [null])[0];
+const powerPages = args.includes('--app-type') && args[args.indexOf('--app-type') + 1] === 'power-pages';
 
 function findBrowser() {
     const candidates = isWin
@@ -53,7 +55,7 @@ const specs = [
     { id: 'npm', name: 'npm', cmd: 'npm', args: ['--version'], stages: ['P', 'R'], install: 'incluso in Node.js' },
     { id: 'git', name: 'git', cmd: 'git', args: ['--version'], stages: [], install: 'winget install Git.Git oppure https://git-scm.com' },
     { id: 'dotnet', name: '.NET SDK', cmd: 'dotnet', args: ['--version'], stages: [], install: 'https://dotnet.microsoft.com/download (serve per installare pac/pacx come dotnet tool)' },
-    { id: 'pac', name: 'Power Platform CLI (pac)', cmd: 'pac', args: ['help'], stages: ['R'], install: 'dotnet tool install --global Microsoft.PowerApps.CLI.Tool' },
+    { id: 'pac', name: powerPages ? 'Power Platform CLI (pac) 1.44+' : 'Power Platform CLI (pac)', cmd: 'pac', args: ['help'], stages: ['R'], min: powerPages ? '1.44.0' : undefined, install: 'dotnet tool install --global Microsoft.PowerApps.CLI.Tool (aggiornare con dotnet tool update)' },
     { id: 'pacx', name: 'PACX', cmd: 'pacx', args: ['--version'], stages: ['R'], install: 'dotnet tool install --global Greg.Xrm.Command' },
     { id: 'code', name: 'VS Code', cmd: 'code', args: ['--version'], stages: [], install: 'https://code.visualstudio.com' },
     { id: 'copilot', name: 'GitHub Copilot CLI', cmd: 'copilot', args: ['--version'], stages: [], install: 'npm install -g @github/copilot' },

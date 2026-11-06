@@ -2,7 +2,7 @@
 
 Riferimento per rendere in HTML l'aspetto di una generative page o di un controllo PCF. Nulla di quanto descritto qui produce codice Power Platform reale: l'output resta `poc-runtime.html` e `dist/*.html`.
 
-Entrambi i tipi sono ammessi **solo con `appType: model-driven`**: sono componenti che vivono dentro un'app model-driven. Una code app non li ospita, perche la sua UI e gia scritta a mano. Vedi `tipi-di-app.md`.
+Entrambi i tipi sono ammessi **solo con `appType: model-driven`**: sono componenti che vivono dentro un'app model-driven. Una code app o un sito Power Pages SPA non li ospita, perche la sua UI e gia scritta a mano. Vedi `tipi-di-app.md`.
 
 ## Blocco `simulation`
 
@@ -70,6 +70,8 @@ Cosa non fare in ogni caso:
 
 - niente scaffolding Vite o React, niente `create-code-app`, niente connessioni o connection id;
 - non simulare autenticazione o profili utente reali: se serve mostrare un utente, usare un nome sintetico.
+
+Un sito **Power Pages SPA** (`appType: power-pages`) segue le stesse regole, con due differenze. Il renderer simula le persone (anonimo, autenticato, web role) e mostra le table permission. Il progetto React non si scrive a mano: lo genera `poc-spa-scaffold.mjs` dagli stessi YAML (vedi `dataverse-poc-power-pages`).
 
 ## Simulare un `pcf`
 

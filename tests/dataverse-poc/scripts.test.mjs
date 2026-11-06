@@ -2,7 +2,7 @@
 // The end-to-end scaffold test needs npm registry access (npm install in a temp POC); set SKIP_E2E=1 to skip it.
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
@@ -38,9 +38,11 @@ function zip(files) {
 }
 
 test('parseTarget reads the target table and ignores placeholders', () => {
-    const t = parseTarget(`# Piano\n\n## 🎯 Target ambiente\n\n| Chiave | Valore |\n| --- | --- |\n| URL ambiente | \`https://demo.crm4.dynamics.com\` |\n| Profilo PAC | da confermare |\n| Solution (unique name) | demosol |\n| Conferma utente stage R | sì, 2026-10-01 |\n\n## Altro\n| URL ambiente | https://wrong |\n`);
+    const t = parseTarget(`# Piano\n\n## 🎯 Target ambiente\n\n| Chiave | Valore |\n| --- | --- |\n| URL ambiente | \`https://demo.crm4.dynamics.com\` |\n| Profilo PAC | da confermare |\n| Solution (unique name) | demosol |\n| Sito Power Pages (nome) | Portale Demo |\n| URL sito | da confermare |\n| Conferma utente stage R | sì, 2026-10-01 |\n\n## Altro\n| URL ambiente | https://wrong |\n`);
     assert.equal(t.url, 'https://demo.crm4.dynamics.com');
     assert.equal(t.solution, 'demosol');
+    assert.equal(t.site, 'Portale Demo');
+    assert.equal(t.siteUrl, undefined);
     assert.equal(t.pacProfile, undefined);
     assert.match(t.confirmed, /^sì/);
 });
@@ -83,6 +85,8 @@ test('poc-guard asks before destructive or environment-changing PAC/PACX command
     assert.match(ask({ tool_name: 'run_in_terminal', tool_input: { command: 'pacx table delete --name ava_x' } }), /"ask"/);
     assert.match(ask({ toolName: 'bash', toolArgs: JSON.stringify({ command: 'pac auth select --index 2' }) }), /"ask"/);
     assert.match(ask({ tool_name: 'run_in_terminal', tool_input: { command: 'pac solution import --path s.zip' } }), /"ask"/);
+    assert.match(ask({ tool_name: 'run_in_terminal', tool_input: { command: 'pac pages upload-code-site --rootPath .' } }), /"ask"/);
+    assert.equal(ask({ tool_name: 'run_in_terminal', tool_input: { command: 'pac pages list' } }), '');
     assert.equal(ask({ tool_name: 'run_in_terminal', tool_input: { command: 'pac org who' } }), '');
     assert.equal(ask({ tool_name: 'edit', tool_input: { content: 'pacx table delete' } }), '');
 });
@@ -99,17 +103,59 @@ test('poc-init validates its arguments', () => {
     const r = node([join(scripts, 'poc-init.mjs'), '--root', join(tmpdir(), 'x'), '--prefix', 'ava_', '--name', 'X', '--json']);
     assert.equal(r.status, 2);
     assert.match(JSON.parse(r.stdout).error, /app-type/);
+    const hub = node([join(scripts, 'poc-init.mjs'), '--root', join(tmpdir(), 'x'), '--app-type', 'power-pages', '--hub', 'sales-hub', '--prefix', 'ava_', '--name', 'X', '--json']);
+    assert.equal(hub.status, 2);
+    assert.match(JSON.parse(hub.stdout).error, /hub/);
 });
+
+test('poc-spa-scaffold refuses a folder that is not a POC', () => {
+    const r = node([join(scripts, 'poc-spa-scaffold.mjs'), '--root', join(tmpdir(), 'not-a-poc'), '--json']);
+    assert.equal(r.status, 2);
+    assert.match(JSON.parse(r.stdout).error, /poc-model\.mjs/);
+});
+
+// Power Pages: React project generated from the YAML, regenerated parts vs project code, permission check in the validator.
+function checkPowerPages(root) {
+    const plan = readFileSync(join(root, '..', 'Piano_Test_powerpages.md'), 'utf8');
+    assert.match(plan, /## 🌊 Ondate[\s\S]*poc-power-pages/);
+    assert.match(plan, /\| Sito Power Pages \(nome\) \| da confermare \|/);
+    const scaffold = () => JSON.parse(node([join(scripts, 'poc-spa-scaffold.mjs'), '--root', root, '--json']).stdout);
+    const first = scaffold();
+    assert.equal(first.ok, true, JSON.stringify(first));
+    const spa = join(root, 'realization', 'power-pages');
+    for (const f of ['src/generated/screens.ts', 'src/generated/model.ts', 'src/generated/mock-data.json', 'src/data/webapi.ts', 'powerpages.config.json', '.gitignore']) {
+        assert.ok(existsSync(join(spa, f)), f);
+    }
+    const settings = JSON.parse(readFileSync(join(spa, 'power-pages', 'site-settings.json'), 'utf8'));
+    assert.ok(settings.some((s) => s.name === 'Webapi/tst_richiesta/enabled' && s.value === 'true'));
+    assert.match(settings.find((s) => s.name === 'Webapi/tst_richiesta/fields').value, /tst_titolo/);
+    assert.equal(JSON.parse(readFileSync(join(spa, 'powerpages.config.json'), 'utf8')).siteName, 'Test App');
+    // A second run keeps the project code and rewrites the generated files.
+    writeFileSync(join(spa, 'src', 'data', 'adapter.ts'), '// codice del progetto\n');
+    const second = scaffold();
+    assert.ok(second.kept.includes('src/data/adapter.ts'));
+    assert.ok(second.generated.includes('src/generated/screens.ts'));
+    assert.equal(readFileSync(join(spa, 'src', 'data', 'adapter.ts'), 'utf8'), '// codice del progetto\n');
+    // Without the table permission the screens of the role are no longer readable: the validator must fail.
+    const index = join(root, 'config', 'index.yaml');
+    const yaml = readFileSync(index, 'utf8');
+    writeFileSync(index, yaml.replace(/tablePermissions:[\s\S]*?roles: \[tst_cliente\]/, 'tablePermissions: []'));
+    const r = node([join(root, 'scripts', 'validate-poc-config.mjs'), '--json'], { cwd: root });
+    assert.equal(r.status, 1);
+    assert.match(r.stdout, /nessuna table permission con read su tst_richiesta per il ruolo tst_cliente/);
+    writeFileSync(index, yaml);
+}
 
 test('scaffold + Sales Hub baseline + pipeline check (end to end)', { skip: process.env.SKIP_E2E === '1', timeout: 300000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), 'poc-'));
-    for (const [appType, extra] of [['model-driven', ['--hub', 'sales-hub']], ['code-app', []]]) {
+    for (const [appType, extra] of [['model-driven', ['--hub', 'sales-hub']], ['code-app', []], ['power-pages', []]]) {
         const root = join(dir, appType);
         const r = node([join(scripts, 'poc-init.mjs'), '--root', root, '--app-type', appType, '--prefix', 'tst_', '--name', 'Test App', '--initiative', 'Test', '--client', appType.replace('-', ''), '--json', ...extra]);
         const out = JSON.parse(r.stdout);
         assert.equal(out.ok, true, JSON.stringify(out.steps));
         const coverage = JSON.parse(readFileSync(join(root, 'dist', 'requirements-coverage.json'), 'utf8'));
         assert.equal(coverage.filter((c) => c.status === 'scoperto').length, 0);
+        if (appType === 'power-pages') checkPowerPages(root);
         // A broken reference must make the validator fail.
         const index = join(root, 'config', 'index.yaml');
         writeFileSync(index, readFileSync(index, 'utf8').replace(/appType: \S+/, 'appType: canvas'));

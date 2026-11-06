@@ -1,0 +1,57 @@
+/* Stili di partenza del sito: sostituirli con il design system del cliente. */
+:root {
+  --brand: #0f6cbd;
+  --brand-dark: #115ea3;
+  --bg: #f7f8fa;
+  --surface: #fff;
+  --line: #e0e0e0;
+  --text: #242424;
+  --muted: #616161;
+  font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+body { margin: 0; }
+a { color: var(--brand); }
+.site { min-height: 100vh; display: flex; flex-direction: column; }
+.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 0 24px; min-height: 60px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { font-weight: 600; font-size: 17px; color: var(--text); text-decoration: none; }
+.top nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.top nav a { padding: 18px 12px 16px; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; }
+.top nav a.active { color: var(--brand-dark); font-weight: 600; border-bottom-color: var(--brand); }
+.grow { flex: 1; }
+.banner { padding: 6px 24px; background: #fff4ce; border-bottom: 1px solid #f2d78b; font-size: 13px; }
+main { flex: 1; width: 100%; max-width: 1120px; margin: 0 auto; padding: 24px; box-sizing: border-box; }
+footer { padding: 16px 24px; border-top: 1px solid var(--line); background: var(--surface); font-size: 12px; color: var(--muted); }
+.hero { padding: 40px 32px; margin-bottom: 20px; border-radius: 8px; background: linear-gradient(135deg, #0f6cbd, #5c2e91); color: #fff; }
+.hero h1 { margin: 0 0 8px; font-size: 30px; }
+.hero p { margin: 0; max-width: 640px; }
+.head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.head h1 { margin: 0; font-size: 24px; }
+button, .button, select, input, textarea { font: inherit; }
+button, .button { border: 1px solid #d1d1d1; background: var(--surface); border-radius: 6px; padding: 6px 14px; cursor: pointer; color: var(--text); text-decoration: none; }
+button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+button:disabled { opacity: 0.5; cursor: default; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.card h2 { margin: 0 0 12px; font-size: 16px; }
+.card.table { padding: 0; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover td { background: #f5f5f5; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; }
+.tile b { font-size: 22px; color: var(--brand-dark); }
+.tile span, .todo, .empty { color: var(--muted); }
+.tabs { display: flex; gap: 2px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.tabs button { border: 0; border-radius: 0; background: none; border-bottom: 2px solid transparent; }
+.tabs button.active { color: var(--brand-dark); font-weight: 600; border-bottom-color: var(--brand); }
+.fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px 24px; }
+.fields label { display: grid; gap: 4px; }
+.fields label.wide { grid-column: 1 / -1; }
+.fields label > span { font-size: 12px; color: var(--muted); }
+.fields input, .fields select, .fields textarea, .fields output { border: 1px solid #d1d1d1; border-radius: 6px; padding: 6px 10px; background: var(--surface); min-height: 20px; }
+.fields textarea { min-height: 80px; }
+.denied { max-width: 520px; margin: 48px auto; padding: 32px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.error { color: #b10e1c; }
+.message { color: #0e700e; }

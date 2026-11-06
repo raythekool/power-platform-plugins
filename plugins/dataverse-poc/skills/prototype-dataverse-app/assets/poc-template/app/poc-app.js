@@ -3,6 +3,7 @@
    disegna l'app senza codice di dominio: viste, moduli, dashboard e componenti dichiarati in YAML.
    - appType model-driven: compone MdaShell (mda-shell.js) per header, site map, schede.
    - appType code-app: shell applicativa propria, senza chrome Dynamics 365.
+   - appType power-pages: sito con menu in alto, persone simulate e table permission (config.powerPages).
    Estensioni di progetto: app/custom.js puo registrare renderer con
    PocApp.registerComponent('<type>', function (component, ctx, helpers) { return '<html>'; }).
    Non modificare per una singola POC: i miglioramenti vanno nella skill. */
@@ -528,13 +529,134 @@
         render();
     }
 
+    // ===========================================================================
+    // Power Pages SPA: sito con menu in alto, persone simulate (anonimo, autenticato,
+    // web role) e table permission dichiarate in config.powerPages
+    // ===========================================================================
+    function startPortal(root) {
+        var pp = cfg.powerPages || {};
+        var app = cfg.application || {};
+        var targets = {};
+        Object.keys(entities).forEach(function (ln) { var t = entities[ln].entity && entities[ln].entity.targetForm; if (t) targets[t] = ln; });
+        var navList = pp.navigation || (cfg.entities || []).map(function (e) { return e.logicalName; }).filter(function (ln) { return !targets[ln]; });
+        var personas = [{ logicalName: 'anonymous', displayName: 'Visitatore anonimo' }, { logicalName: 'authenticated', displayName: 'Utente autenticato' }]
+            .concat((pp.webRoles || []).map(function (r) { return { logicalName: r.logicalName, displayName: r.displayName }; }));
+        var signedIn = pp.demoPersona && pp.demoPersona !== 'anonymous' ? pp.demoPersona : (personas[2] || personas[1]).logicalName;
+        var state = { screen: (cfg.demoPath && cfg.demoPath[0]) || navList[0], key: null, formTab: {}, persona: pp.demoPersona || signedIn, personaMenu: false };
+
+        function personaName(ln) { var p = find(personas, function (x) { return x.logicalName === ln; }); return p ? p.displayName : ln; }
+        function canSee(ln) {
+            var a = (entities[ln] && entities[ln].entity && entities[ln].entity.access) || 'authenticated';
+            var list = Array.isArray(a) ? a : [a];
+            if (list.indexOf('anonymous') >= 0) return true;
+            if (state.persona === 'anonymous') return false;
+            return list.indexOf('authenticated') >= 0 || list.indexOf(state.persona) >= 0;
+        }
+        // Table permission della persona corrente sulla tabella della schermata (authenticated vale per ogni utente autenticato).
+        function perms(ln) {
+            var t = entities[ln] && entities[ln].entity && entities[ln].entity.dataverse && entities[ln].entity.dataverse.table;
+            if (!t) return [];
+            return (pp.tablePermissions || []).filter(function (p) {
+                var r = p.roles || [];
+                return p.table === t.logicalName && (r.indexOf(state.persona) >= 0 || (state.persona !== 'anonymous' && r.indexOf('authenticated') >= 0));
+            });
+        }
+        function can(ln, privilege) {
+            return Boolean(find(perms(ln), function (p) { return (p.privileges || []).indexOf(privilege) >= 0; }));
+        }
+        function permChips(ln) {
+            return perms(ln).map(function (p) {
+                return '<span class="pp-perm" title="Table permission">' + G.lock + ' ' + esc(p.displayName) + ' · scope ' + esc(p.scope) + ' · ' + esc((p.privileges || []).join(', ')) + '</span>';
+            }).join('');
+        }
+        function denied(ln) {
+            return '<div class="pp-denied"><h1>' + esc(entities[ln].entity.displayName) + '</h1><p>' +
+                (state.persona === 'anonymous' ? 'Accedi per continuare: la pagina è riservata agli utenti autenticati.' : 'La persona ' + esc(personaName(state.persona)) + ' non ha accesso a questa pagina.') + '</p>' +
+                (state.persona === 'anonymous' ? '<button class="ca-btn primary" data-persona-signin="1">Accedi</button>' : '') + '</div>';
+        }
+        function listScreen(ln) {
+            var ent = entities[ln].entity;
+            var meta = metaForDataset(ent.dataset);
+            var grid = !data[ent.dataset] ? notRendered('nessun dataset demo "' + esc(ent.dataset) + '"')
+                : can(ln, 'read') ? '<div class="ca-surface">' + table(records(ent.dataset), columns(ent.columns, ent.dataset, meta, ent.primaryColumn), ent.dataset, ent.targetForm || null, meta) + '</div>'
+                    : '<div class="ca-surface"><div class="grid-empty">Nessuna table permission con read: la Web API risponderebbe 403.</div></div>';
+            return '<div class="ca-head"><h1>' + esc(ent.displayName) + '</h1><span class="grow"></span>' +
+                (can(ln, 'create') ? '<button class="ca-btn primary">' + G.plus + ' Nuovo</button>' : '') + '</div>' +
+                '<div class="pp-perms">' + permChips(ln) + '</div>' +
+                (entities[ln].sections || []).map(function (s) { return renderSection(s, { screen: ln, record: null, key: null, ds: ent.dataset }); }).join('') + grid;
+        }
+        function detailScreen(ln, key) {
+            var doc = entities[ln];
+            var ctx = recordFor(ln, key);
+            var tabs = formTabs(doc);
+            var tabKey = ln + '|' + key;
+            var active = state.formTab[tabKey] || tabs[0].logicalName;
+            var back = targets[ln];
+            return '<div class="ca-head">' + (back ? '<button class="ca-btn" data-nav="' + esc(back) + '">' + G.back + ' ' + esc(entities[back].entity.displayName) + '</button>' : '') +
+                '<h1>' + esc(ctx.record ? recordLabel(ctx.ds, ctx.record) : doc.entity.displayName) + '</h1><span class="grow"></span>' +
+                (can(ln, 'write') ? '<button class="ca-btn primary">' + G.save + ' Salva</button>' : '') + '</div>' +
+                '<div class="pp-perms">' + permChips(ln) + '</div>' +
+                '<div class="ca-header-fields">' + headerFields(doc, ctx) + '</div>' +
+                '<div class="form-tabs">' + tabs.map(function (t) {
+                    return '<button class="' + (t.logicalName === active ? 'active' : '') + '" data-form-tab="' + esc(t.logicalName) + '" data-tab-key="' + esc(tabKey) + '">' + esc(t.displayName) + '</button>';
+                }).join('') + '</div>' +
+                sectionsOfTab(doc, tabs, active).map(function (s) { return renderSection(s, ctx); }).join('');
+        }
+        function screen() {
+            var doc = entities[state.screen];
+            if (!doc) return notRendered('pagina "' + esc(state.screen) + '" inesistente');
+            if (!canSee(state.screen)) return denied(state.screen);
+            if (targets[state.screen] || state.key !== null) return detailScreen(state.screen, state.key);
+            if (doc.entity.dataset) return listScreen(state.screen);
+            var hero = doc.entity.hero || {};
+            return '<div class="pp-hero"><h1>' + esc(hero.title || doc.entity.displayName) + '</h1>' + (hero.text ? '<p>' + esc(hero.text) + '</p>' : '') + '</div>' +
+                (doc.sections || []).map(function (s) { return renderSection(s, { screen: state.screen, record: null, key: null }); }).join('');
+        }
+        function render() {
+            var current = targets[state.screen] || state.screen;
+            root.innerHTML = '<div class="ca-app pp-app"><header class="pp-top"><span class="ca-logo"></span><span class="ca-name">' + esc(app.displayName) + '</span>' +
+                '<nav class="pp-nav">' + navList.map(function (ln) {
+                    return entities[ln] ? '<button class="pp-nav-item' + (ln === current ? ' active' : '') + '" data-nav="' + esc(ln) + '">' + esc(entities[ln].entity.displayName) + '</button>' : '';
+                }).join('') + '</nav><span class="grow"></span>' +
+                '<span class="pp-persona-anchor"><button class="pp-persona" data-persona-menu="1">' + esc(personaName(state.persona)) + ' ' + G.chevron + '</button>' +
+                (state.personaMenu ? '<div class="pp-menu"><div class="pp-menu-label">Simula la persona</div>' + personas.map(function (p) {
+                    return '<button class="' + (p.logicalName === state.persona ? 'active' : '') + '" data-persona-select="' + esc(p.logicalName) + '">' + esc(p.displayName) + '</button>';
+                }).join('') + '</div>' : '') + '</span></header>' +
+                (cfg.showPrototypeBanner === false ? '' : '<div class="ca-banner"><span class="badge sim">Prototipo</span> <strong>Non è software funzionante.</strong> Sito Power Pages simulato: dati sintetici, persone e table permission dichiarate nel YAML.</div>') +
+                '<main class="pp-main">' + screen() + '</main><footer class="pp-footer">' + esc(app.displayName) + ' · sito Power Pages (SPA)</footer></div>';
+        }
+        document.addEventListener('click', function (event) {
+            var t = event.target;
+            var menu = t.closest('[data-persona-menu]');
+            var persona = t.closest('[data-persona-select]');
+            var signin = t.closest('[data-persona-signin]');
+            var formTab = t.closest('[data-form-tab]');
+            var nav = t.closest('[data-nav]');
+            var open = t.closest('[data-open]');
+            var menuWasOpen = state.personaMenu;
+            if (menu) { state.personaMenu = !state.personaMenu; render(); return; }
+            state.personaMenu = false;
+            if (!persona && !signin && !formTab && !nav && !open) { if (menuWasOpen) render(); return; }
+            if (persona) state.persona = persona.getAttribute('data-persona-select');
+            else if (signin) state.persona = signedIn;
+            else if (formTab) state.formTab[formTab.getAttribute('data-tab-key')] = formTab.getAttribute('data-form-tab');
+            else if (nav) { state.screen = nav.getAttribute('data-nav'); state.key = null; }
+            else if (open) { event.preventDefault(); state.screen = open.getAttribute('data-open'); state.key = open.getAttribute('data-key'); }
+            window.scrollTo(0, 0);
+            render();
+        });
+        render();
+    }
+
     global.PocApp = {
         registerComponent: function (type, fn) { custom[type] = fn; },
         model: M
     };
     function start() {
         var root = document.getElementById('app') || document.body;
-        if (isMD) startModelDriven(root); else startCodeApp(root);
+        if (isMD) startModelDriven(root);
+        else if (cfg.appType === 'power-pages') startPortal(root);
+        else startCodeApp(root);
     }
     // custom.js (caricato dopo) puo registrare renderer prima del primo render.
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

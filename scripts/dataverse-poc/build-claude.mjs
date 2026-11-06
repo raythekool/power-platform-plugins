@@ -103,7 +103,7 @@ const copilot = JSON.parse(readFileSync(join(plugin, 'plugin.json'), 'utf8'));
 const manifest = {
     name: copilot.name,
     version: copilot.version,
-    description: 'Multi-agent Dataverse POC: the poc skill (agent POC Dataverse) plans the POC (model-driven or code app), opens stages with user confirmation and delegates to sub-agents for HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, tests and deploy. Deterministic scripts do the mechanical work; a PreToolUse guard asks before risky PAC/PACX commands.',
+    description: 'Multi-agent Dataverse POC: the poc skill (agent POC Dataverse) plans the POC (model-driven, code app or Power Pages SPA site), opens stages with user confirmation and delegates to sub-agents for HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, React Power Pages site, tests and deploy. Deterministic scripts do the mechanical work; a PreToolUse guard asks before risky PAC/PACX commands.',
     author: copilot.author,
     repository: 'https://github.com/raythekool/power-platform-plugins',
     license: 'MIT',

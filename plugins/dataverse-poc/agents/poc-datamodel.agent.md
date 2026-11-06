@@ -26,5 +26,5 @@ Sei lo specialista del **modello dati** Dataverse di una POC. Ricevi un brief e 
 1. **Design** (stage P e R): per ogni concetto dati, decisione standard / standard esteso / custom con URL Learn; tipi, required level, option set `{value,label}`, lookup target, formati.
 2. Aggiorna gli YAML e lancia `npm run validate:config -- --json` nella cartella POC.
 3. **Realizzazione** (solo stage R): preflight (`node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `<plugin-root>` = cartella padre di `agents/`); crea in ordine choice globali → tabelle → colonne → relazioni/lookup → chiavi; sempre nella solution del brief.
-4. Rileggi i metadata reali (PACX `exportMetadata` o AppMaker `metadata_list_table_columns`) e allinea negli YAML i logical name effettivi (es. suffisso `code` delle choice, valori `7139500xx`).
+4. Rileggi i metadata reali (PACX `exportMetadata` o AppMaker `metadata_list_table_columns`) e allinea negli YAML i logical name effettivi (es. suffisso `code` delle choice, valori `7139500xx`). Con `appType: power-pages` allinea anche `entitySetName`, il nome della Web API.
 5. `pacx publish all` e report standard con l'elenco: standard riusato, standard esteso, custom nuovo.

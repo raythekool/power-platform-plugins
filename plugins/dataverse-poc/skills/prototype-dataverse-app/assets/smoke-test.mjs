@@ -51,17 +51,22 @@ async function testPage(browser, file) {
         await page.waitForTimeout(50);
     };
 
+    // Scope = app model-driven x area x persona Power Pages (ogni dimensione vale [null] se assente).
     const scopes = [];
     for (const app of await listOptions('[data-app-menu]', '[data-app-select]')) {
         await select('[data-app-menu]', 'data-app-select', app);
-        for (const area of await listOptions('[data-area-menu]', '[data-area-select]')) scopes.push({ app, area });
+        for (const area of await listOptions('[data-area-menu]', '[data-area-select]')) {
+            for (const persona of await listOptions('[data-persona-menu]', '[data-persona-select]')) scopes.push({ app, area, persona });
+        }
     }
-    const enter = async ({ app, area }) => {
+    const enter = async ({ app, area, persona }) => {
         await select('[data-app-menu]', 'data-app-select', app);
         await select('[data-area-menu]', 'data-area-select', area);
+        await select('[data-persona-menu]', 'data-persona-select', persona);
     };
 
     const screens = new Set();
+    const visited = new Set();
     let simFrames = 0;
     let recordTarget = null;
 
@@ -69,7 +74,9 @@ async function testPage(browser, file) {
         await enter(scope);
         const navs = await page.evaluate(() => [...new Set([...document.querySelectorAll('[data-nav]')].map((e) => e.getAttribute('data-nav')))]);
         for (const nav of navs) {
-            if (screens.has(nav)) continue;
+            const key = `${scope.persona ?? ''}|${nav}`;
+            if (visited.has(key)) continue;
+            visited.add(key);
             await click(page, `[data-nav="${nav}"]`);
             await page.waitForTimeout(80);
             const info = await page.evaluate(() => ({

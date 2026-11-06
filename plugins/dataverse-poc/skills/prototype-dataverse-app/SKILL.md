@@ -1,6 +1,6 @@
 ---
 name: prototype-dataverse-app
-description: "Riferimenti e asset condivisi per i prototipi HTML/YAML di app Dataverse: tipi di app (model-driven vs code-app), schema YAML, contratto Dataverse di tabelle e colonne, componenti simulati (PCF, generative page), chrome Dynamics 365 CE (mda-shell), Sales Hub e Customer Service Hub standard, scaffold, procedure legacy-html e html-diretto. Use when: serve una regola o un asset del prototipo; per creare o aggiornare una POC usare l'agent POC Dataverse o le skill dataverse-poc-*."
+description: "Riferimenti e asset condivisi per i prototipi HTML/YAML di app Dataverse: tipi di app (model-driven, code-app, power-pages), schema YAML, contratto Dataverse di tabelle e colonne, componenti simulati (PCF, generative page), chrome Dynamics 365 CE (mda-shell), Sales Hub e Customer Service Hub standard, scaffold, procedure legacy-html e html-diretto. Use when: serve una regola o un asset del prototipo; per creare o aggiornare una POC usare l'agent POC Dataverse o le skill dataverse-poc-*."
 user-invocable: false
 ---
 
@@ -15,20 +15,22 @@ Questa skill non è più un punto di ingresso: contiene le regole e gli asset co
 | Riuso standard/custom e metadata Dataverse | `dataverse-poc-schema` |
 | UI model-driven, chrome D365, generative page e PCF simulati | `dataverse-poc-model-driven` |
 | UI code app custom | `dataverse-poc-code-app` |
+| Sito Power Pages SPA (persone, web role, table permission, progetto React) | `dataverse-poc-power-pages` |
+| Struttura del piano, ondate, criteri di done | `dataverse-poc-plan-guide` |
 | Scaffold, validator, build, smoke test e report | `dataverse-poc-pipeline` |
 | Realizzazione in ambiente, contratto multi-agente | `dataverse-poc-realization` |
 
 ## Principi
 
 - L'HTML è solo una shell di presentazione: tutto ciò che è configurabile vive in YAML, in quattro layer: entità (UI + contratto Dataverse) in `config/entities/`, dati demo in `config/data/`, componenti in `config/components/`, artefatti generati (`poc-runtime.html`, `dist/*.html`).
-- Prima decisione: `appType` (`model-driven` o `code-app`), da dichiarare in `config/index.yaml` e mai da dedurre. Generative page e PCF sono componenti di una model-driven, non tipi di app.
+- Prima decisione: `appType` (`model-driven`, `code-app` o `power-pages`), da dichiarare in `config/index.yaml` e mai da dedurre. Generative page e PCF sono componenti di una model-driven, non tipi di app.
 - Nomi tecnici con il prefisso `naming.prefix`, minuscoli e underscore; il testo visibile usa sempre `displayName`. I logical name della POC non attestano l'esistenza di tabelle reali: quelli reali stanno nei blocchi `dataverse`.
 - Riuso prima di creazione: prima di proporre una tabella o colonna custom, verificare su Microsoft Learn lo standard candidato e documentare `reuseDecision`.
 - I componenti Power Platform si **simulano**, sempre con contrassegno visibile, dati sintetici e interazioni apparenti; `pcf.enabled: false` finché non esiste un bundle reale.
 
 | `type` componente | Cosa rappresenta | `appType` |
 | --- | --- | --- |
-| `kpi`, `bpf`, `timeline`, `subgrid` | Riquadro di sintesi, business process flow, cronologia, elenco correlato | entrambi |
+| `kpi`, `bpf`, `timeline`, `subgrid` | Riquadro di sintesi, business process flow, cronologia, elenco correlato | tutti |
 | `generative-page` | Pagina generativa dentro una model-driven | solo `model-driven` |
 | `pcf` | Controllo che sostituirà un campo o una griglia | solo `model-driven` |
 
@@ -54,3 +56,4 @@ Generata da `scripts/poc-init.mjs` del plugin: dettaglio in [scaffold.md](refere
 - `assets/mda-shell.css`, `assets/mda-shell.js`: shell model-driven composta dal renderer, copiata solo con `appType: model-driven`.
 - `assets/standard-navigation/`, `assets/standard-entities/`: blocco `navigation` e coppie view/form per Sales Hub e Customer Service Hub; si applicano con `scripts/poc-add-standard.mjs`, che sostituisce `{{prefix}}` e genera i dati sintetici.
 - `assets/smoke-test.mjs`: smoke test Playwright per `npm run test:smoke`.
+- `assets/power-pages-spa/`: template React + Vite del sito Power Pages, copiato e completato da `scripts/poc-spa-scaffold.mjs`.
