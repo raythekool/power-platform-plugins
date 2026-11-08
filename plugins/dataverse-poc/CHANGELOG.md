@@ -1,5 +1,22 @@
 ## Changelog
 
+### 2.0.0 — 2026-11-08
+
+#### Breaking
+
+- Le POC model-driven usano la sessione singola per default: dopo l'aggiornamento della shell, una configurazione senza `customerServiceWorkspace: true` non mostra piu le schede di sessione. Le schede interne dei form restano disponibili.
+- Customer Service Hub non abilita automaticamente la multisessione, che resta riservata alle POC Customer Service Workspace richieste esplicitamente.
+
+#### Migrazione
+
+- Per conservare le schede in una POC Customer Service Workspace esistente, impostare `customerServiceWorkspace: true` in `config/index.yaml`, eseguire `node <plugin-root>/scripts/poc-init.mjs --root <poc-root> --update` e rigenerare con `npm run check`.
+- Per una nuova POC Customer Service Workspace richiesta esplicitamente, aggiungere `--customer-service-workspace` a `poc-init.mjs`. Per le altre POC non serve alcuna configurazione aggiuntiva.
+
+#### Aggiunto
+
+- Validator e smoke test verificano il contratto di sessione; la shell conserva le schede del workspace quando si passa a un'altra app e le ripristina al ritorno.
+- Le istruzioni per la realizzazione e il collaudo dell'app reale prevedono la verifica di `NavigationType` e dello stato multisessione.
+
 ### 1.4.0 — 2026-11-06
 
 - **POC di siti Power Pages SPA in React** (`appType: power-pages`):
