@@ -1,0 +1,59 @@
+2026-11-08 15:54:43.735 +01:00 [DBG] Hosting starting
+2026-11-08 15:54:43.950 +01:00 [INF] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport reading messages.
+2026-11-08 15:54:43.973 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '0'.
+2026-11-08 15:54:44.063 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) read JsonRpcRequest message from channel.
+2026-11-08 15:54:44.069 +01:00 [WRN] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) received request for method 'server/discover', but no handler is available.
+2026-11-08 15:54:44.070 +01:00 [WRN] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) method 'server/discover' request handler failed.
+ModelContextProtocol.McpException: Method 'server/discover' is not available.
+   at ModelContextProtocol.McpSession.HandleRequest(JsonRpcRequest request, CancellationToken cancellationToken)
+   at ModelContextProtocol.McpSession.HandleMessageAsync(JsonRpcMessage message, CancellationToken cancellationToken)
+   at ModelContextProtocol.McpSession.<>c__DisplayClass23_1.<<ProcessMessagesAsync>g__ProcessMessageAsync|1>d.MoveNext()
+2026-11-08 15:54:44.071 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-08 15:54:44.084 +01:00 [INF] Hosting environment: Production
+2026-11-08 15:54:44.084 +01:00 [INF] Content root path: C:\Users\marco.dodaro\source\repos\power-platform-plugins
+2026-11-08 15:54:44.084 +01:00 [DBG] Hosting started
+2026-11-08 15:54:44.085 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) sending message.
+2026-11-08 15:54:44.097 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '1'.
+2026-11-08 15:54:44.097 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) read JsonRpcRequest message from channel.
+2026-11-08 15:54:44.098 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) method 'initialize' request handler called.
+2026-11-08 15:54:44.105 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'initialize' request handler completed.
+2026-11-08 15:54:44.106 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) sending message.
+2026-11-08 15:54:44.112 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '(no id)'.
+2026-11-08 15:54:44.112 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '2'.
+2026-11-08 15:54:44.114 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) read JsonRpcNotification message from channel.
+2026-11-08 15:54:44.114 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) read JsonRpcRequest message from channel.
+2026-11-08 15:54:44.114 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler called.
+2026-11-08 15:54:44.139 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler completed.
+2026-11-08 15:54:44.139 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) sending message.
+2026-11-08 15:56:21.425 +01:00 [DBG] Hosting starting
+2026-11-08 15:56:21.673 +01:00 [INF] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport reading messages.
+2026-11-08 15:56:21.701 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '0'.
+2026-11-08 15:56:21.802 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) read JsonRpcRequest message from channel.
+2026-11-08 15:56:21.815 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-08 15:56:21.816 +01:00 [INF] Hosting environment: Production
+2026-11-08 15:56:21.816 +01:00 [INF] Content root path: C:\Users\marco.dodaro\source\repos\power-platform-plugins
+2026-11-08 15:56:21.816 +01:00 [WRN] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) received request for method 'server/discover', but no handler is available.
+2026-11-08 15:56:21.816 +01:00 [DBG] Hosting started
+2026-11-08 15:56:21.818 +01:00 [WRN] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) method 'server/discover' request handler failed.
+ModelContextProtocol.McpException: Method 'server/discover' is not available.
+   at ModelContextProtocol.McpSession.HandleRequest(JsonRpcRequest request, CancellationToken cancellationToken)
+   at ModelContextProtocol.McpSession.HandleMessageAsync(JsonRpcMessage message, CancellationToken cancellationToken)
+   at ModelContextProtocol.McpSession.<>c__DisplayClass23_1.<<ProcessMessagesAsync>g__ProcessMessageAsync|1>d.MoveNext()
+2026-11-08 15:56:21.840 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) sending message.
+2026-11-08 15:56:21.854 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '1'.
+2026-11-08 15:56:21.855 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) read JsonRpcRequest message from channel.
+2026-11-08 15:56:21.855 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22) method 'initialize' request handler called.
+2026-11-08 15:56:21.861 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'initialize' request handler completed.
+2026-11-08 15:56:21.861 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) sending message.
+2026-11-08 15:56:21.866 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '(no id)'.
+2026-11-08 15:56:21.866 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) read JsonRpcNotification message from channel.
+2026-11-08 15:56:21.866 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '2'.
+2026-11-08 15:56:21.866 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) read JsonRpcRequest message from channel.
+2026-11-08 15:56:21.866 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler called.
+2026-11-08 15:56:21.877 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler completed.
+2026-11-08 15:56:21.877 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) sending message.
+2026-11-08 15:56:30.165 +01:00 [DBG] Server (stream) (Greg.Xrm.Mcp.AppMaker) transport received message with ID '3'.
+2026-11-08 15:56:30.165 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) read JsonRpcRequest message from channel.
+2026-11-08 15:56:30.166 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler called.
+2026-11-08 15:56:30.167 +01:00 [INF] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) method 'tools/list' request handler completed.
+2026-11-08 15:56:30.167 +01:00 [DBG] Server (Greg.Xrm.Mcp.AppMaker 1.2026.1.22), Client (copilot-cli 1.0.103-unstable.r41379698026.g3219c66) sending message.

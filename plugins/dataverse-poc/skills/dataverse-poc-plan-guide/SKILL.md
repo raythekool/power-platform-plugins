@@ -20,6 +20,7 @@ Raccogli in **un'unica domanda a scelta multipla** tutto ciò che manca. Non chi
 | Stage finale | sempre | P (prototipo), R (ambiente DEV), D (rilascio) |
 | Lingua e LCID | sempre | default italiano, `1040` |
 | Baseline Sales Hub / Customer Service Hub | solo model-driven | evita di riprogettare la site map |
+| Customer Service Workspace | solo model-driven | chiedere esplicitamente; in assenza di richiesta usare sessione singola, anche con Customer Service Hub |
 | Persone e web role | solo power-pages | chi è anonimo, chi accede e con quali ruoli |
 | URL ambiente, solution, profili PAC/PACX | solo se lo stage finale è R o D | si confermano prima dello stage R, non all'inizio |
 
@@ -32,7 +33,7 @@ File: `POC/Piano_<Iniziativa>_<Cliente>.md`. Lo crea già `poc-init.mjs` con `--
 1. Titolo, poi un blockquote di contesto di 1-2 righe (obiettivo della demo, appType, prefisso, cartella).
 2. `## 📑 Indice`.
 3. `## 🎯 Target ambiente`: tabella `Chiave | Valore` con le chiavi esatte di `poc-init.mjs`, lette da `poc-preflight.mjs`. Valori ignoti: `da confermare`. `Conferma utente stage R`: `no` finché l'utente non conferma.
-4. `## 🧭 Decisioni`: `Decisione | Valore | Fonte`. Fonte = utente, requisito o Microsoft Learn.
+4. `## 🧭 Decisioni`: `Decisione | Valore | Fonte`. Per model-driven registrare anche l'esperienza standard o Customer Service Workspace e la richiesta esplicita quando pertinente. Fonte = utente, requisito, default o Microsoft Learn.
 5. `## 🖥️ Schermate`: `Schermata | Tipo | Dataset | Requisiti`, più `Accesso` per power-pages.
 6. `## 🧱 Modello dati`: per tabella, scelta fra standard, standard esteso o custom, con il link Learn della verifica.
 7. `## 🌊 Ondate`: vedi sezione 4.

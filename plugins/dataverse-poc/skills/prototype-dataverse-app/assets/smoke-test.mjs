@@ -35,6 +35,20 @@ async function testPage(browser, file) {
     await page.goto(pathToFileURL(join(distDir, file)).href);
     await page.waitForSelector('[data-nav]', { timeout: 10000 }).catch(() => {});
 
+    const layout = await page.evaluate(() => {
+        const config = window.POC_MODEL?.config;
+        if (config?.appType !== 'model-driven') return null;
+        return {
+            workspace: config.customerServiceWorkspace === true,
+            mainApp: config.application?.logicalName,
+            strip: Boolean(document.querySelector('.tabstrip')),
+            height: getComputedStyle(document.documentElement).getPropertyValue('--tabstrip-h').trim(),
+        };
+    });
+    if (layout && (layout.strip !== layout.workspace || layout.height !== (layout.workspace ? '40px' : '0px'))) {
+        failures.push(`${file}: layout di sessione iniziale non coerente con customerServiceWorkspace`);
+    }
+
     const listOptions = (menu, option) => page.evaluate(async ([m, o]) => {
         const button = document.querySelector(m);
         if (!button) return [null];
@@ -100,8 +114,20 @@ async function testPage(browser, file) {
         await click(page, `[data-nav="${recordTarget.nav}"]`);
         await click(page, 'tr[data-open]');
         await page.waitForTimeout(80);
-        const form = await page.evaluate(() => ({ ok: Boolean(document.querySelector('.form-tabs, [data-form-tab]')), sims: document.querySelectorAll('.sim-frame').length }));
+        const form = await page.evaluate(() => ({
+            ok: Boolean(document.querySelector('.form-tabs, [data-form-tab]')),
+            sims: document.querySelectorAll('.sim-frame').length,
+            strip: Boolean(document.querySelector('.tabstrip')),
+            tabs: document.querySelectorAll('.tabstrip .tab').length,
+            height: getComputedStyle(document.documentElement).getPropertyValue('--tabstrip-h').trim(),
+        }));
         if (!form.ok) failures.push(`${file}: il record aperto da "${recordTarget.nav}" non mostra un modulo`);
+        if (layout) {
+            const workspace = layout.workspace && (!recordTarget.app || recordTarget.app === layout.mainApp);
+            if (form.strip !== workspace || form.height !== (workspace ? '40px' : '0px') || (workspace && form.tabs < 2)) {
+                failures.push(`${file}: layout di sessione non coerente dopo l'apertura del record`);
+            }
+        }
         simFrames += form.sims;
     } else {
         warnings.push(`${file}: nessuna vista con righe cliccabili`);

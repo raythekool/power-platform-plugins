@@ -11,10 +11,11 @@ node <plugin-root>/scripts/poc-init.mjs --root POC/OrderService --app-type model
 | `--app-type` | Obbligatoria, `model-driven`, `code-app` o `power-pages`: va chiesta all'utente |
 | `--prefix`, `--name` | Obbligatorie: prefisso dei logical name e nome visibile dell'app |
 | `--hub sales-hub\|customer-service-hub` | Solo model-driven: aggiunge la baseline standard con dati sintetici (`poc-add-standard.mjs`) |
+| `--customer-service-workspace` | Solo model-driven e solo su richiesta esplicita: abilita le schede di sessione; altrimenti sessione singola |
 | `--initiative` + `--client`, oppure `--plan <file>` | Crea il documento di piano con la tabella `🎯 Target ambiente` |
 | `--no-sample` | Niente schermate di esempio (`Richieste`) |
 | `--no-install`, `--no-check` | Salta `npm install` o il primo `npm run check` |
-| `--update` | POC esistente: aggiorna solo script, renderer e script npm |
+| `--update` | POC esistente: aggiorna solo script, renderer e script npm; il flag workspace va impostato nel YAML |
 | `--force` | Scrive in una cartella non vuota |
 
 ## Struttura generata

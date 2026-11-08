@@ -23,9 +23,15 @@
     }
 
     // --- stato --------------------------------------------------------------
-    // Una sola scheda all'avvio, come la sessione Home di un'app model-driven.
     function createState(cfg) {
+        if (cfg.customerServiceWorkspace !== undefined && typeof cfg.customerServiceWorkspace !== 'boolean') {
+            throw new Error('customerServiceWorkspace deve essere true o false');
+        }
         return {
+            customerServiceWorkspace: cfg.customerServiceWorkspace === true,
+            workspaceEnabled: cfg.customerServiceWorkspace === true,
+            workspaceAppLogicalName: cfg.application.logicalName,
+            workspaceSession: null,
             tabs: [{ screen: cfg.demoPath[0], key: null }],
             active: 0,
             sitemapOpen: true,
@@ -50,9 +56,15 @@
         state.viewMenuOpen = false;
     }
 
-    // Learn: aprire un record da una vista apre una nuova scheda (max 10),
-    // riusando quella esistente se il record e gia aperto.
     function openRecord(state, screen, key) {
+        if (!state.customerServiceWorkspace) {
+            state.tabs = [{ screen: screen, key: key }];
+            state.active = 0;
+            state.viewMenuOpen = false;
+            pushRecent(state, screen, key);
+            return;
+        }
+
         var existing = -1;
         state.tabs.forEach(function (t, i) { if (t.screen === screen && t.key === key) existing = i; });
         if (existing >= 0) { state.active = existing; return; }
@@ -95,6 +107,16 @@
     }
 
     function selectApp(state, logicalName) {
+        var workspace = state.workspaceEnabled && logicalName === state.workspaceAppLogicalName;
+        if (state.customerServiceWorkspace && !workspace) {
+            state.workspaceSession = { tabs: state.tabs, active: state.active };
+            state.tabs = [activeTab(state)];
+            state.active = 0;
+        } else if (!state.customerServiceWorkspace && workspace && state.workspaceSession) {
+            state.tabs = state.workspaceSession.tabs;
+            state.active = state.workspaceSession.active;
+        }
+        state.customerServiceWorkspace = workspace;
         state.appLogicalName = logicalName;
         state.appMenuOpen = false;
     }
@@ -154,6 +176,11 @@
 
     // titleForTab(tab) -> string; pageTypeForTab(tab) -> 'dashboard'|'view'|'form'|'custom-page'
     function renderTabstrip(state, titleForTab, pageTypeForTab) {
+        if (document.documentElement) {
+            document.documentElement.style.setProperty('--tabstrip-h', state.customerServiceWorkspace ? '40px' : '0px');
+        }
+        if (!state.customerServiceWorkspace) return '';
+
         var html = '<div class="tabstrip">';
         state.tabs.forEach(function (tab, index) {
             var type = pageTypeForTab(tab);

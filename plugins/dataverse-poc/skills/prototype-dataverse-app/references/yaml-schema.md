@@ -21,6 +21,7 @@ naming:
 application:
   logicalName: ava_order_service
   displayName: Order Service
+customerServiceWorkspace: false # opzionale, solo model-driven; true solo su richiesta esplicita
 modelDrivenApps:               # opzionale, solo appType: model-driven
   - logicalName: ava_order_service
     displayName: Order Service
@@ -66,6 +67,8 @@ showPrototypeBanner: true      # facoltativo, default true: nasconde l'avviso di
 
 `appType` e obbligatorio e non ha default: determina quali altre chiavi sono ammesse e quali tipi di
 componente sono validi. Criteri di scelta e conseguenze sono in `tipi-di-app.md`.
+
+`customerServiceWorkspace` e un booleano opzionale per le sole POC model-driven: `false` o assente usa una sessione singola; `true` abilita le schede di sessione solo per una POC Customer Service Workspace richiesta esplicitamente. Il flag riguarda `application`; le altre app nel selettore, incluse le baseline Sales Hub e Customer Service Hub, restano a sessione singola.
 
 `pageType`, `navigation` e `demoPath` valgono solo con `appType: model-driven`, dove si applicano le
 regole di validazione descritte in `dynamics-365-chrome.md` (un `form` non compare mai in
@@ -309,6 +312,7 @@ Il renderer dello scaffold disegna la POC solo da queste chiavi; non serve scriv
 | Dove | Chiave | Effetto |
 | --- | --- | --- |
 | `config/index.yaml` | `demoUser.initials` | Iniziali dell'utente nell'header (default `MD`/`DU`) |
+| `config/index.yaml` (model-driven) | `customerServiceWorkspace: true` | Schede di sessione solo per Customer Service Workspace; assente o `false` usa la navigazione standard |
 | `config/index.yaml` (code-app) | `codeApp.navigation: [logicalName]` | Ordine delle voci di menu; default: entita che non sono `targetForm` di un'altra |
 | `config/index.yaml` (power-pages) | `powerPages.navigation`, `powerPages.demoPersona`, `webRoles`, `tablePermissions` | Menu in alto, selettore della persona, pagine riservate, privilegi (`Nuovo` con create, `Salva` con write) |
 | `entity` (power-pages) | `access`, `hero: {title, text}` | Chi vede la pagina; intestazione della home o di una pagina informativa |
@@ -342,6 +346,7 @@ Le opzioni choice si leggono da `dataverse.choice.options`, `dataverse.choice` (
 I validator della POC devono segnalare almeno:
 
 - `appType` mancante o fuori da `{model-driven, code-app, power-pages}`;
+- `customerServiceWorkspace` non booleano o presente con `appType` diverso da `model-driven`;
 - con `appType: code-app` o `power-pages`, presenza di `pageType`, di un blocco `navigation`, o di componenti con `type: generative-page` o `type: pcf`;
 - con `appType: power-pages`: web role o table permission non conformi al prefisso, `scope` o `privileges` fuori enum, ruoli inesistenti in `access` o `roles`, schermata con tabella vista da un ruolo senza table permission `read`, dettaglio modificabile senza `write` (avviso: permesso mai usato, `entitySetName` assente);
 - schermata record senza `entity.dataverse.table`, salvo che sia dichiaratamente una pagina puramente informativa senza tabella principale;

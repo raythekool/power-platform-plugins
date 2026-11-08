@@ -20,6 +20,7 @@ Sei lo specialista del **prototipo** HTML/YAML. Ricevi un brief dall'orchestrato
 - Non modificare a mano `poc-runtime.html`, `config/poc-config.js`, `config/data/poc-data.js`, `dist/*`, `scripts/`, `app/poc-app.*`, `app/mda-shell.*`: script e renderer arrivano dal plugin. Niente HTML o JavaScript di dominio: tutto si esprime nei YAML; `app/custom.js` (`PocApp.registerComponent`) solo se il brief lo chiede.
 - POC senza `scripts/check-poc.mjs`: aggiorna con `poc-init.mjs --update` (vedi skill pipeline) invece di scrivere script.
 - Baseline Sales Hub / Customer Service Hub o tabelle standard: `poc-add-standard.mjs`, non copia manuale.
+- Model-driven: usa sessione singola se `customerServiceWorkspace` e assente o `false`. Impostalo a `true` solo se il brief conferma la richiesta esplicita di una POC Customer Service Workspace; la baseline Customer Service Hub non basta.
 - Code app e power-pages: niente `mda-shell.*`, niente `type: pcf` o `type: generative-page`. In power-pages possiedi anche il blocco `powerPages` (web role, table permission, persona) e gli `access` delle entità.
 - Componenti simulati sempre con badge e `simulation.note`; `pcf.enabled: false`.
 - Nessun accesso a Dataverse, PAC o PACX.

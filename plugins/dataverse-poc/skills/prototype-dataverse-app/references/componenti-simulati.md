@@ -61,7 +61,7 @@ Una code app **non e un componente simulato**: e un `appType`, cioe il prototipo
 Con `appType: code-app` le schermate della POC sono le schermate dell'app, disegnate direttamente:
 
 - shell applicativa autonoma: barra superiore con nome app, navigazione laterale o a tab, area contenuto;
-- niente `assets/mda-shell.*`: imporrebbero una site map e delle schede di sessione che l'app reale non avra;
+- niente `assets/mda-shell.*`: imporrebbero la chrome model-driven che l'app reale non avra;
 - niente PCF e niente generative page al suo interno: la UI custom si scrive direttamente come schermata;
 - stato di caricamento o stato vuoto solo se sono parte del messaggio da dimostrare;
 - il banner di prototipo resta l'avviso principale, perche qui non ci sono componenti simulati a portare il proprio badge.

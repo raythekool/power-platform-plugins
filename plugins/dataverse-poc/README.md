@@ -24,7 +24,7 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 | `poc-power-pages` | agente | no | Sito Power Pages SPA (React/Vite) per POC `appType: power-pages`: scaffold dai YAML, pagine su mock, Web API, web role, table permission, upload |
 | `poc-tester` | agente | no | Verifica indipendente: validator, smoke test Playwright, metadata, browser |
 | `poc-deployer` | agente | no | Preflight ambiente, solution, publish, export/import, inventario cleanup |
-| `dataverse-poc-init` | skill | `/` | Setup di una POC nuova: requisiti, quattro domande, scaffold, piano, primo check |
+| `dataverse-poc-init` | skill | `/` | Setup di una POC nuova: requisiti, domande iniziali, scaffold, piano, primo check |
 | `dataverse-poc-planner` | skill | `/` | appType, scope, schermate, percorso demo |
 | `dataverse-poc-plan-guide` | skill | `/` | Direttive per qualsiasi agente che pianifica una POC: domande, struttura del piano, ondate, criteri di done |
 | `dataverse-poc-schema` | skill | `/` | Contratto Dataverse di tabelle e colonne |
@@ -73,6 +73,8 @@ flowchart LR
 | D — Rilascio | Export/import verso altri ambienti | Conferma per ogni rilascio |
 
 L'orchestratore tiene lo stato in un **documento di piano** (`POC/Piano_<Iniziativa>_<Cliente>.md`) con la tabella `🎯 Target ambiente`. Ogni sotto-agente riceve un brief autosufficiente e restituisce un report standard (`COMPLETATO` / `PARZIALE` / `BLOCCATO`). Il contratto completo è in [dataverse-poc-realization](skills/dataverse-poc-realization/SKILL.md).
+
+Le POC model-driven usano la sessione singola per default. Le schede di sessione sono abilitate solo per una POC Customer Service Workspace richiesta esplicitamente; la baseline Customer Service Hub non le abilita.
 
 ### 🚀 Installazione
 

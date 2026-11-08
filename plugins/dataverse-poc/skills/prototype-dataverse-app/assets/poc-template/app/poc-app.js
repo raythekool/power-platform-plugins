@@ -1,7 +1,7 @@
 /* poc-app.js — renderer generico dei prototipi Dataverse (skill prototype-dataverse-app).
    Legge window.POC_MODEL (generato da scripts/prepare-runtime-poc.mjs o build-static-poc.mjs) e
    disegna l'app senza codice di dominio: viste, moduli, dashboard e componenti dichiarati in YAML.
-   - appType model-driven: compone MdaShell (mda-shell.js) per header, site map, schede.
+   - appType model-driven: compone MdaShell per header, site map e, solo per Customer Service Workspace, schede di sessione.
    - appType code-app: shell applicativa propria, senza chrome Dynamics 365.
    - appType power-pages: sito con menu in alto, persone simulate e table permission (config.powerPages).
    Estensioni di progetto: app/custom.js puo registrare renderer con

@@ -93,7 +93,7 @@ Ogni riga `✖` obbligatoria riporta il comando di installazione. `--json` produ
 
 1. Apri la chat, scegli l'agente **POC Dataverse**.
 2. Scrivi, per esempio: `init: POC gestione ordini per Contoso`.
-3. L'orchestratore segue la skill `dataverse-poc-init`: verifica i requisiti e ti fa quattro domande in un colpo solo.
+3. L'orchestratore segue la skill `dataverse-poc-init`: verifica i requisiti e raccoglie le decisioni iniziali in un colpo solo.
 
 | Domanda | Come rispondere |
 | --- | --- |
@@ -101,6 +101,7 @@ Ogni riga `✖` obbligatoria riporta il comando di installazione. `--json` produ
 | Prefisso | 2-8 lettere minuscole + `_` (es. `ava_`): finira in tutti i logical name |
 | Nome app e cartella | Nome visibile (es. `Order Service`) e cartella (default `POC/OrderService`) |
 | Baseline (solo model-driven) | `sales-hub`, `customer-service-hub` o nessuna: la baseline aggiunge site map, viste e moduli standard con dati sintetici |
+| Customer Service Workspace (solo model-driven) | Richiedilo esplicitamente solo se servono le sessioni a schede; altrimenti si usa la sessione singola, anche con Customer Service Hub |
 | Iniziativa e cliente | Per il nome del piano `POC/Piano_<Iniziativa>_<Cliente>.md` |
 
 4. L'orchestratore lancia `poc-init.mjs`, che crea la POC, installa le dipendenze ed esegue `npm run check`. Ricevi cartella, piano ed esito di ogni passo.
@@ -124,6 +125,7 @@ node <plugin-root>/scripts/poc-init.mjs `
 | Opzione | Effetto |
 | --- | --- |
 | `--hub sales-hub\|customer-service-hub` | Baseline standard (solo model-driven) |
+| `--customer-service-workspace` | Abilita le schede di sessione solo per una POC Customer Service Workspace esplicitamente richiesta |
 | `--plan <file>` | Percorso esplicito del piano, in alternativa a `--initiative` + `--client` |
 | `--no-sample` | Niente schermate di esempio |
 | `--no-install`, `--no-check` | Salta `npm install` o il primo check |
@@ -132,6 +134,8 @@ node <plugin-root>/scripts/poc-init.mjs `
 | `--json` | Esito strutturato |
 
 La baseline si puo aggiungere anche dopo: `node <plugin-root>/scripts/poc-add-standard.mjs --root POC/OrderService --hub customer-service-hub` (diventa una seconda app nel selettore) oppure `--tables account,contact`.
+
+Aggiornando una POC esistente, la shell usa la sessione singola quando `customerServiceWorkspace` e assente o `false`. Se la POC rappresenta esplicitamente Customer Service Workspace, imposta `customerServiceWorkspace: true` in `config/index.yaml` e rigenera il prototipo.
 
 ## 6. Cosa e stato creato
 

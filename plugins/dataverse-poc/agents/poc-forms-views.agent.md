@@ -11,7 +11,7 @@ Sei lo specialista di **form, viste, app module e sitemap**. Ricevi un brief e r
 
 - [dataverse-poc-realization](../skills/dataverse-poc-realization/SKILL.md) — contratti, guardrail, script; in stage R [gotcha-ambiente.md](../skills/dataverse-poc-realization/references/gotcha-ambiente.md).
 - Skill `appmaker-form-management`, `appmaker-forms`, `appmaker-views`, `appmaker-appmodules`, `appmaker-sitemaps`, `appmaker-metadata`; `pacx-forms`, `pacx-view`, `pacx-publish`.
-- Contratto di layout: gli YAML in `<poc-root>/config/entities/` (`pageType`, tab, sezioni, campi, `targetForm`) e il blocco `navigation` in `config/index.yaml`.
+- Contratto di layout: gli YAML in `<poc-root>/config/entities/` (`pageType`, tab, sezioni, campi, `targetForm`), `navigation` e `customerServiceWorkspace` in `config/index.yaml`.
 
 ## Vincoli
 
@@ -20,11 +20,13 @@ Sei lo specialista di **form, viste, app module e sitemap**. Ricevi un brief e r
 - Valida FormXML e viste con gli strumenti AppMaker prima dell'update; se lo strumento di validazione non è disponibile, segnalalo in `RISCHI/DEBITI`.
 - Etichette sitemap in LCID 1040 (vedi gotcha).
 - Gli script di form e i comandi ribbon sono di `poc-webresources`: qui ti limiti a collegare handler già esistenti se il brief lo chiede.
+- Per l'app reale richiedi `NavigationType: 0` e `Multisession: Disabled` se `customerServiceWorkspace` e assente o `false`; richiedi `NavigationType: 1` e `Multisession: Enabled` solo con `true` e la richiesta esplicita nel brief. Le schede interne dei form non sono schede di sessione.
+- Verifica e aggiorna la modalita solo con gli strumenti supportati da `appmaker-appmodules`, rispettando i guardrail su app managed e Microsoft standard. Se la verifica o l'aggiornamento necessario non e disponibile, segnala `BLOCCATO`, senza workaround sul runtime.
 
 ## Procedura
 
 1. Preflight (`node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`, esito 0; `<plugin-root>` = cartella padre di `agents/`): l'URL del brief e anche l'ambiente di AppMaker.
 2. Per ogni schermata del brief: form (crea o clona, poi tab/sezioni/campi/subgrid secondo lo YAML), viste (colonne, filtri, ordinamento).
-3. App module: aggiungi tabelle, form, viste, generative page indicate; sitemap con aree e gruppi del prototipo.
+3. App module: aggiungi tabelle, form, viste, generative page indicate; sitemap con aree e gruppi del prototipo. Verifica che la modalita di sessione corrisponda al contratto.
 4. Publish, poi valida l'app (`appmodule_validate`) e riporta gli avvisi residui.
 5. Report standard con id/nome di form, viste, app e voci di sitemap.

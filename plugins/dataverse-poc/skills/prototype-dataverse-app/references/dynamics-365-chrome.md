@@ -179,11 +179,14 @@ qualunque sia il valore di `showPrototypeBanner`. Una demo non deve mai poter es
 scambiata per software funzionante, nemmeno con il banner di pagina spento — per questo
 i due meccanismi sono indipendenti e il secondo non e mai configurabile.
 
-## Sessioni e schede (stile Copilot Service workspace)
+## Sessioni e schede
 
-Le app D365 CE moderne (in particolare Customer Service Workspace) non sostituiscono la
-pagina: aprono **sessioni** con **schede**. Il comportamento da riprodurre, documentato in
-[Copilot Service workspace overview](https://learn.microsoft.com/dynamics365/customer-service/implement/csw-overview):
+Per default una POC model-driven usa una **sessione singola**: l'apertura di un record sostituisce la pagina corrente, senza barra delle schede di sessione. Le schede interne dei form sono distinte e restano disponibili.
+
+Solo quando l'utente richiede esplicitamente una POC Customer Service Workspace, impostare `customerServiceWorkspace: true` in `config/index.yaml` oppure usare `--customer-service-workspace` nello scaffold.
+Il flag riguarda l'applicazione principale: le altre app selezionabili restano a sessione singola e, tornando al workspace, le sue schede vengono ripristinate. La baseline Customer Service Hub non implica questa scelta.
+
+Per il workspace, riprodurre il comportamento documentato in [Copilot Service workspace overview](https://learn.microsoft.com/dynamics365/customer-service/implement/csw-overview):
 
 | Azione | Risultato |
 | --- | --- |
@@ -198,9 +201,9 @@ state.tabs = [{ screen: 'ava_mywork_dashboard', key: null }];
 state.active = 0;
 ```
 
-`openInCurrentTab(screen)` sostituisce la scheda a fuoco; `openRecord(screen, key)` cerca
-prima una scheda gia aperta su quel record e solo se non esiste ne apre una nuova. Ogni
-apertura di record alimenta anche la lista **Recenti** della site map.
+`openInCurrentTab(screen)` sostituisce la pagina a fuoco. In modalita workspace, `openRecord(screen, key)` riusa una scheda gia aperta o ne crea una nuova; in modalita standard sostituisce la pagina corrente. In entrambe le modalita l'apertura di un nuovo record alimenta **Recenti**.
+
+Per le POC esistenti, `poc-init.mjs --update` non modifica la configurazione: se `customerServiceWorkspace` e assente, la shell aggiornata usa la sessione singola. Per conservare le schede in una POC Customer Service Workspace esplicitamente richiesta, aggiungere `customerServiceWorkspace: true` e rigenerare la POC.
 
 ## Vista elenco
 

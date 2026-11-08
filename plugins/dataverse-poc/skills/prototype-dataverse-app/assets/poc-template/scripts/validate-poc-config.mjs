@@ -21,6 +21,10 @@ const md = appType === 'model-driven';
 const legacy = config.mode === 'legacy-html';
 if (!APP_TYPES.includes(appType)) errors.push(`config/index.yaml: appType mancante o non valido (${appType ?? 'assente'}): ammessi ${APP_TYPES.join(', ')}`);
 if (!MODES.includes(config.mode)) errors.push(`config/index.yaml: mode mancante o non valido (${config.mode ?? 'assente'})`);
+if (config.customerServiceWorkspace !== undefined) {
+    if (!md) errors.push('config/index.yaml: customerServiceWorkspace e ammesso solo con appType model-driven');
+    if (typeof config.customerServiceWorkspace !== 'boolean') errors.push('config/index.yaml: customerServiceWorkspace deve essere true o false');
+}
 const prefix = config.naming?.prefix;
 if (!prefix || !/^[a-z][a-z0-9]*_$/.test(prefix)) errors.push(`config/index.yaml: naming.prefix mancante o non valido (atteso es. ava_)`);
 const namePattern = new RegExp(`^${prefix ?? ''}[a-z0-9_]+$`);

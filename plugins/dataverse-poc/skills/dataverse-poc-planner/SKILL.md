@@ -24,11 +24,13 @@ Non scrive renderer e non genera artefatti statici: produce le decisioni che le 
 6. Se la richiesta e "una Sales Hub standard" o "una Customer Service Hub standard" (non un'app custom), verificare prima `../prototype-dataverse-app/references/standard-apps.md`: contiene il sitemap out-of-the-box gia mappato alle tabelle Dataverse standard. La baseline si applica a script con `poc-init.mjs --hub` o `poc-add-standard.mjs`, senza ricopiare YAML a mano.
 7. Passare alla skill Dataverse schema prima di creare tabelle custom o campi custom.
 
+Per una model-driven, chiedere esplicitamente se la POC rappresenta Customer Service Workspace. Solo in tal caso, con conferma dell'utente, abilitare `customerServiceWorkspace: true`; il default e la sessione singola, anche con la baseline Customer Service Hub.
+
 ## Output Atteso
 
 - `appType` scelto e motivazione.
 - Inventario schermate.
 - Percorso demo.
 - Decisioni aperte da chiedere all'utente.
-- Parametri per lo scaffold (`--app-type`, `--prefix`, `--name`, `--root`, `--hub`) se la POC non esiste ancora.
+- Parametri per lo scaffold (`--app-type`, `--prefix`, `--name`, `--root`, `--hub`, `--customer-service-workspace` se richiesto) se la POC non esiste ancora.
 - Indicazione della skill successiva: init, schema Dataverse, model-driven POC, code-app POC, power-pages POC o legacy extraction.

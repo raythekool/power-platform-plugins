@@ -7,7 +7,7 @@ description: "Crea o aggiorna una POC Dataverse model-driven. Use when: appType 
 
 ## Scopo
 
-Questa skill genera o aggiorna prototipi `appType: model-driven`: site map, dashboard, viste, form, schede di sessione, componenti simulati, generative page e PCF inseriti in punti specifici.
+Questa skill genera o aggiorna prototipi `appType: model-driven`: site map, dashboard, viste, form, componenti simulati, generative page e PCF inseriti in punti specifici. Le schede di sessione sono previste solo per una POC Customer Service Workspace richiesta esplicitamente.
 
 La shell Dynamics 365 CE (`mda-shell.*`) e il renderer generico arrivano dallo scaffold (`dataverse-poc-init` / `poc-init.mjs`). `<plugin-root>` e la cartella con `plugin.json`, due livelli sopra questa skill.
 
@@ -24,6 +24,7 @@ La shell Dynamics 365 CE (`mda-shell.*`) e il renderer generico arrivano dallo s
 ## Regole
 
 - Non usare questa skill per `appType: code-app`.
+- Usare la navigazione a sessione singola se `customerServiceWorkspace` e `false` o assente. Impostarlo a `true` solo su richiesta esplicita di una POC Customer Service Workspace, mai per inferenza dalla baseline Customer Service Hub; le schede interne dei form restano invariate.
 - Non creare generative page o PCF reali.
 - Non modificare artefatti generati a mano.
 - Lasciare sempre visibili i badge di simulazione sui componenti.

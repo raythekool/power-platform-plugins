@@ -3,7 +3,7 @@
 // optional plan document and Sales Hub / Customer Service Hub baseline. Replaces the hand-written scaffold.
 //
 // node poc-init.mjs --root <dir> --app-type model-driven|code-app|power-pages --prefix ava_ --name "Order Service"
-//   [--hub sales-hub|customer-service-hub] [--plan <file.md> | --initiative X --client Y]
+//   [--hub sales-hub|customer-service-hub] [--customer-service-workspace] [--plan <file.md> | --initiative X --client Y]
 //   [--lcid 1040] [--no-sample] [--no-install] [--no-check] [--force] [--json]
 // node poc-init.mjs --root <dir> --update   aggiorna solo scripts/, app/poc-app.*, app/mda-shell.* e gli script npm
 //   di una POC esistente (config/ non viene toccata).
@@ -44,6 +44,11 @@ const json = args.flags.has('json');
 const fail = (msg) => { if (json) console.log(JSON.stringify({ ok: false, error: msg })); else console.error(`ERRORE  ${msg}`); process.exit(2); };
 
 const update = args.flags.has('update');
+const workspace = args.flags.has('customer-service-workspace');
+if (args['customer-service-workspace'] !== undefined || process.argv.some((a) => a.startsWith('--customer-service-workspace='))) {
+    fail('--customer-service-workspace e un flag senza valore');
+}
+if (update && workspace) fail('--update non modifica config/: impostare customerServiceWorkspace nel file config/index.yaml');
 if (update) {
     if (!args.root) fail('--root obbligatorio');
     const root = resolve(args.root);
@@ -74,6 +79,7 @@ if (!prefix || !/^[a-z][a-z0-9]{1,7}_$/.test(prefix)) fail('--prefix obbligatori
 if (!name) fail('--name obbligatorio (nome visibile dell\'applicazione)');
 if (args.hub && appType !== 'model-driven') fail('--hub e ammesso solo con --app-type model-driven');
 if (args.hub && !['sales-hub', 'customer-service-hub'].includes(args.hub)) fail('--hub: sales-hub o customer-service-hub');
+if (workspace && appType !== 'model-driven') fail('--customer-service-workspace e ammesso solo con --app-type model-driven');
 
 const root = resolve(args.root);
 if (existsSync(root) && readdirSync(root).length && !args.flags.has('force')) fail(`${root} non e vuota: usare --force per scrivere comunque (i file esistenti vengono sovrascritti)`);
@@ -174,7 +180,7 @@ naming:
 application:
   logicalName: ${appName}
   displayName: ${q(name)}
-showPrototypeBanner: true
+${md ? `customerServiceWorkspace: ${workspace}\n` : ''}showPrototypeBanner: true
 ${entitiesIndex}${navigation}`);
 
 // --- sample entities, data, components -----------------------------------------------------------
@@ -414,7 +420,7 @@ npm run serve          # runtime su http://127.0.0.1:8080/poc-runtime.html
 
 L'HTML autosufficiente da consegnare e in \`dist/${appName}.html\`; la copertura dei requisiti in \`dist/requirements-coverage.md\`.
 
-## Dove si modifica
+${md ? `La navigazione model-driven e a sessione singola per default. Solo per una POC Customer Service Workspace richiesta esplicitamente, impostare \`customerServiceWorkspace: true\` in \`config/index.yaml\`.\n\n` : ''}## Dove si modifica
 
 | Cosa | Dove |
 | --- | --- |
@@ -505,7 +511,7 @@ ${pp ? '| URL sito | da confermare |\n' : ''}| LCID etichette | ${args.lcid ?? '
 | appType | ${appType} | utente |
 | Prefisso | ${p} | utente |
 | Modalita | requirements | scaffold |
-${args.hub ? `| Baseline | ${args.hub} | utente |\n` : ''}
+${md ? `| Esperienza model-driven | ${workspace ? 'Customer Service Workspace (multisessione)' : 'Standard (sessione singola)'} | ${workspace ? 'utente' : 'default'} |\n` : ''}${args.hub ? `| Baseline | ${args.hub} | utente |\n` : ''}
 ## 🖥️ Schermate
 
 | Schermata | Tipo | Dataset | ${pp ? 'Accesso | ' : ''}Requisiti |
@@ -562,9 +568,9 @@ if (!args.flags.has('no-check') && !args.flags.has('no-install')) {
 
 const ok = steps.every((s) => s.ok);
 if (json) {
-    console.log(JSON.stringify({ ok, root, appType, prefix: p, application: appName, plan: planPath ?? null, written, steps }));
+    console.log(JSON.stringify({ ok, root, appType, ...(md ? { customerServiceWorkspace: workspace } : {}), prefix: p, application: appName, plan: planPath ?? null, written, steps }));
 } else {
-    console.log(`POC creata in ${root} (${appType}, prefisso ${p}, app ${appName})`);
+    console.log(`POC creata in ${root} (${appType}${md ? `, ${workspace ? 'Customer Service Workspace' : 'sessione singola'}` : ''}, prefisso ${p}, app ${appName})`);
     if (planPath) console.log(`Piano: ${planPath}`);
     for (const s of steps) console.log(`${s.ok ? 'OK ' : 'KO '} ${s.step}${s.detail ? `  ${s.detail}` : ''}`);
     console.log(ok ? `\nProssimi passi: cd "${root}" && npm run serve, poi sostituire gli esempi in config/.` : '\nCorreggere gli errori sopra e rieseguire npm run check nella cartella della POC.');

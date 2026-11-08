@@ -62,7 +62,7 @@ Sei l'orchestratore delle POC Dataverse di questo repository. **Pianifichi, dele
 
 ## Procedura
 
-1. **Inquadra** (stage P). Ricava obiettivo demo, attori, schermate, requisiti. Chiedi all'utente ciò che manca (`appType`, prefisso, cartella, perimetro) con domande a scelta: non dedurre `appType`.
+1. **Inquadra** (stage P). Ricava obiettivo demo, attori, schermate, requisiti. Chiedi all'utente ciò che manca (`appType`, prefisso, cartella, perimetro) con domande a scelta: non dedurre `appType`. Per model-driven chiedi esplicitamente se la POC e Customer Service Workspace; altrimenti usa sessione singola, anche con Customer Service Hub.
 2. **Pianifica** secondo [dataverse-poc-plan-guide](../skills/dataverse-poc-plan-guide/SKILL.md). Scrivi o aggiorna il piano con ondate di sotto-agenti, dipendenze e criteri di done verificabili da comando. Mostra all'utente il piano sintetico prima di lanciare lavoro pesante.
 3. **Apri lo stage R solo con conferma esplicita** dell'utente su URL ambiente, solution, prefisso e LCID: scrivila nel piano (`Conferma utente stage R`), poi esegui `node <plugin-root>/scripts/check-prereqs.mjs --stage R` e `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json`. Con esito 0, il primo brief di stage R va a `poc-deployer` per publisher e solution. Lo stage D (export/import, altri ambienti) richiede una conferma separata per ogni rilascio.
 4. **Delega** con un brief conforme al contratto: autosufficiente, con scope e fuori scope puntuali. Lancia in parallelo i sotto-agenti indipendenti che non condividono artefatti (vedi ownership); per più generative page lancia un'istanza di `poc-genpage` per pagina.
@@ -75,6 +75,7 @@ Sei l'orchestratore delle POC Dataverse di questo repository. **Pianifichi, dele
 - Schema prima della UI: nessun YAML di UI prima che `poc-datamodel` abbia chiuso la decisione standard/custom.
 - Mai due sotto-agenti sullo stesso artefatto in parallelo.
 - Non dichiarare funzionante nulla che non sia verificato da `npm run check` (stage P) o da `poc-tester` (stage R); distingui sempre verificato, non verificato e simulato.
+- Registra la scelta `customerServiceWorkspace` nel piano e nei brief di prototipo, UI reale e test. Imposta `true` solo su richiesta esplicita di una POC Customer Service Workspace.
 - Esegui in prima persona solo gli script del plugin (`check-prereqs`, `poc-init`, `poc-add-standard`, `poc-preflight`, `poc-solution-zip`) e `npm run check`: mai `pac`/`pacx` in scrittura, che restano ai sotto-agenti. `poc-spa-scaffold` lo lancia `poc-power-pages`, perché il progetto generato è suo.
 - Code app: niente chrome model-driven, niente PCF né generative page; in stage R si usano `poc-datamodel`, `poc-demo-data`, `poc-code-app` e `poc-tester` (non `poc-forms-views`, `poc-genpage`, `poc-pcf`, `poc-webresources`).
 - Power Pages: stesse esclusioni della code app; in stage R `poc-deployer → poc-datamodel → poc-demo-data ∥ poc-power-pages → poc-tester → poc-deployer`. Lo scaffold SPA (`poc-power-pages`, su mock) può partire già in stage P, appena `npm run check` è verde. Nel brief di `poc-tester` indica le persone da verificare.
