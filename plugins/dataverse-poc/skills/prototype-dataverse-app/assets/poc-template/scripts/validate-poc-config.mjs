@@ -323,4 +323,25 @@ if (appType === 'power-pages') {
     for (const p of perms) if (!p.used) warnings.push(`powerPages.tablePermissions ${p.logicalName}: non usata da nessuna schermata`);
 }
 
+// Shared local simulation (references/simulazione-condivisa.md): optional, stage P only.
+if (config.simulation !== undefined) {
+    const sim = config.simulation;
+    if (!sim || typeof sim !== 'object' || Array.isArray(sim)) errors.push('config/index.yaml: simulation deve essere un oggetto');
+    else {
+        const known = ['port', 'portal'];
+        for (const k of Object.keys(sim)) if (!known.includes(k)) warnings.push(`config/index.yaml: simulation.${k} sconosciuto (ammessi ${known.join(', ')})`);
+        if (sim.port !== undefined && !(Number.isInteger(sim.port) && sim.port >= 1024 && sim.port <= 65535)) errors.push(`config/index.yaml: simulation.port non valido (${sim.port}): intero 1024-65535`);
+        if (sim.portal !== undefined) {
+            const p = sim.portal;
+            if (!p || typeof p !== 'object') errors.push('config/index.yaml: simulation.portal deve essere un oggetto');
+            else {
+                if (!['plugin-spa', 'external'].includes(p.kind)) errors.push(`config/index.yaml: simulation.portal.kind non valido (${p.kind ?? 'assente'}): plugin-spa o external`);
+                if (p.kind === 'external' && !p.path) errors.push('config/index.yaml: simulation.portal.path obbligatorio con kind external');
+                for (const k of ['path', 'dist']) if (p[k] !== undefined && (typeof p[k] !== 'string' || !p[k].trim())) errors.push(`config/index.yaml: simulation.portal.${k} deve essere un percorso`);
+            }
+        }
+    }
+    if (!model.datasets.length) errors.push('config/index.yaml: simulation richiede dataset demo in config/data');
+}
+
 report('validate:config', errors, warnings, { entities: entityByName.size, components: locals.size, definitions: definitions.size });

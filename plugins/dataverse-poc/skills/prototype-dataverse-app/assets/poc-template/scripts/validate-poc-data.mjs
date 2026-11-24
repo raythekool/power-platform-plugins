@@ -1,5 +1,6 @@
 // Validates the demo datasets: manifest, keys, referential integrity, synthetic-data heuristics.
 // Usage: node scripts/validate-poc-data.mjs [--json]
+import { collectRelationships, lookupValues, realDataKinds, REAL_DATA_MESSAGES } from './lib/poc-data-rules.mjs';
 import { loadModel, report } from './lib/poc-model.mjs';
 
 const model = loadModel();
@@ -8,12 +9,6 @@ const warnings = [];
 const prefix = model.config.naming?.prefix ?? '';
 const legacy = model.config.mode === 'legacy-html';
 const namePattern = new RegExp(`^${prefix}[a-z0-9_]+$`);
-
-// Emails must use reserved/demo domains; IBAN and Italian tax codes never belong in a POC.
-const DEMO_DOMAINS = /@([a-z0-9-]+\.)*(example\.(com|org|net)|[a-z0-9-]+\.(test|example|invalid|local)|contoso\.com|fabrikam\.com|adventure-works\.com|northwind(traders)?\.com|demo\.[a-z]+)$/i;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const IBAN = /\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/;
-const CODICE_FISCALE = /\b[A-Z]{6}\d{2}[A-EHLMPR-T]\d{2}[A-Z]\d{3}[A-Z]\b/i;
 
 const datasets = new Map();
 for (const { ref, file, doc } of model.datasets) {
@@ -36,30 +31,21 @@ for (const { ref, file, doc } of model.datasets) {
         else if (keys.has(String(k))) errors.push(`${file}: chiave duplicata ${k}`);
         else keys.add(String(k));
         for (const [field, value] of Object.entries(r)) {
-            if (typeof value !== 'string') continue;
-            if (EMAIL.test(value) && !DEMO_DOMAINS.test(value)) warnings.push(`${file}: ${k}.${field} email "${value}" non su dominio demo (example.com, contoso.com, *.test)`);
-            if (IBAN.test(value) && /iban/i.test(field)) warnings.push(`${file}: ${k}.${field} sembra un IBAN reale`);
-            if (CODICE_FISCALE.test(value)) warnings.push(`${file}: ${k}.${field} sembra un codice fiscale reale`);
+            for (const kind of realDataKinds(field, value)) warnings.push(`${file}: ${k}.${field} ${REAL_DATA_MESSAGES[kind](value)}`);
         }
     });
     if (records.length && records.length < 3) warnings.push(`${file}: solo ${records.length} record, per una demo ne servono 5-15`);
     datasets.set(ln, { file, keys, records, doc });
 }
 
-// Relationships: _schema.yaml `relationships` plus per-dataset `relations`, both as { field, references }.
-const relationships = [
-    ...(model.dataSchema.relationships ?? []).map((r) => ({ ...r, where: 'config/data/_schema.yaml' })),
-    ...[...datasets.entries()].flatMap(([ln, d]) => (d.doc.relations ?? []).map((r) => ({ dataset: ln, ...r, where: d.file }))),
-];
+const relationships = collectRelationships(model.dataSchema, datasets);
 for (const rel of relationships) {
     const from = datasets.get(rel.dataset);
     const to = datasets.get(rel.references);
     if (!from) { errors.push(`${rel.where}: relazione su dataset inesistente "${rel.dataset}"`); continue; }
     if (!to) { errors.push(`${rel.where}: relazione ${rel.dataset}.${rel.field} verso dataset inesistente "${rel.references}"`); continue; }
     for (const r of from.records) {
-        const values = Array.isArray(r[rel.field]) ? r[rel.field] : [r[rel.field]];
-        for (const v of values) {
-            if (v === undefined || v === null || v === '') continue;
+        for (const v of lookupValues(r[rel.field])) {
             if (!to.keys.has(String(v))) errors.push(`${from.file}: ${r[from.doc.keyField]}.${rel.field} = "${v}" non esiste in ${rel.references}`);
         }
     }
