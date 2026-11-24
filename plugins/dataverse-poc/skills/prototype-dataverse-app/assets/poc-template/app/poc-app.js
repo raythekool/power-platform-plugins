@@ -521,8 +521,12 @@
                 (stale ? '<div class="message-bar warning" style="margin-top:12px">Il record è stato modificato in un\'altra finestra: al salvataggio potrai ricaricarlo o sovrascriverlo.</div>' : '');
             return MS.commandBar([{ label: 'Salva', glyph: G.save, action: edit ? 'save' : null }, { label: 'Salva e chiudi', action: edit ? 'save-close' : null },
                 { label: 'Nuovo', glyph: G.plus, action: edit ? 'new' : null, target: tab.screen }, '|',
-                { label: 'Aggiorna', glyph: G.refresh, action: simOn() ? 'refresh' : null }, { label: 'Assegna', glyph: G.assign }, { label: 'Elimina', glyph: G.del }, '|', { label: 'Flusso', glyph: G.flow }]) +
+                { label: 'Aggiorna', glyph: G.refresh, action: simOn() ? 'refresh' : null }, { label: 'Assegna', glyph: G.assign },
+                { label: 'Elimina', glyph: G.del, action: edit && !isNew ? 'delete' : null }, '|', { label: 'Flusso', glyph: G.flow }]) +
                 bars +
+                (simOn() && !isNew && tab.key !== null && tab.key !== undefined && !ctx.record
+                    ? '<div class="message-bar warning" style="margin-top:12px" data-sim-message>Il record ' + esc(tab.key) + ' non esiste più: è stato eliminato o la simulazione è stata ripristinata.</div>'
+                    : '') +
                 '<div class="form-head"><div class="crumb">' + (view ? '<a data-nav="' + esc(view) + '">' + esc(entities[view].entity.displayName) + '</a> › ' : '') + esc(ent.displayName) + '</div>' +
                 '<div class="row"><h1>' + esc(ctx.record ? recordLabel(ctx.ds, ctx.record) : 'Nuovo record: ' + ent.displayName) + '</h1>' +
                 '<div class="head-fields">' + headerFields(doc, ctx) + '</div></div>' +
@@ -635,6 +639,24 @@
             if (!simOn()) return;
             if (action === 'refresh') { global.PocSim.reload(); return; }
             if (action === 'save' || action === 'save-close') { save(action === 'save-close'); return; }
+            if (action === 'delete') {
+                var tab = MS.activeTab(state);
+                var key = activeTabKey();
+                var ds = datasetForScreen(tab.screen);
+                global.PocSim.remove(ds, tab.key).then(function (done) {
+                    if (!done) return;
+                    delete drafts[key];
+                    var view = viewForForm(tab.screen);
+                    state.tabs[state.active] = view ? { screen: view, key: null } : tab;
+                    state.recent = state.recent.filter(function (r) { return String(r.key) !== String(tab.key); });
+                    applySimData({ type: 'change', dataset: ds, key: tab.key, op: 'delete' });
+                }).catch(function (err) {
+                    var details = err.body && err.body.usedBy ? ': ' + err.body.usedBy.join(', ') : '';
+                    simMsg[key] = { level: 'error', text: (err.message || 'Eliminazione non riuscita') + details };
+                    render();
+                });
+                return;
+            }
             if (action === 'new' && target) {
                 delete drafts[target + '|' + NEW_KEY];
                 delete simMsg[target + '|' + NEW_KEY];

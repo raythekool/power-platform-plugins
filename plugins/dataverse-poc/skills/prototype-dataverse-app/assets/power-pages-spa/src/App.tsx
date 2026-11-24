@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { canSee, currentRoles, currentUser, isMock, RolesContext, signInUrl, useRoles } from './auth/user';
+import { data, source } from './data/adapter';
 import { demoPersona, home, navigation, personas, screens, site } from './generated/screens';
 import DetailPage from './pages/DetailPage';
 import HomePage from './pages/HomePage';
@@ -35,7 +36,7 @@ export default function App() {
   const user = currentUser();
   return (
     <RolesContext.Provider value={roles}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
         <div className="site">
           <header className="top">
             <Link to="/" className="brand">{site.name}</Link>
@@ -55,7 +56,12 @@ export default function App() {
               <a className="button" href={signInUrl}>Accedi</a>
             )}
           </header>
-          {isMock && <div className="banner">Dati mock dai dataset YAML della POC. Nella build il sito legge la Web API di Power Pages.</div>}
+          {source === 'sim' ? (
+            <div className="banner sim" role="status">
+              Simulazione locale: dati sintetici, nessun Dataverse. Le modifiche sono condivise con il back-office della POC.
+              <button type="button" onClick={() => { if (window.confirm('Ripristinare i dati iniziali in tutte le finestre?')) data.reset?.(); }}>Ripristina</button>
+            </div>
+          ) : isMock && <div className="banner">Dati mock dai dataset YAML della POC. Nella build il sito legge la Web API di Power Pages.</div>}
           <main>
             <Routes>
               <Route path="/" element={<ScreenRoute ln={home} />} />

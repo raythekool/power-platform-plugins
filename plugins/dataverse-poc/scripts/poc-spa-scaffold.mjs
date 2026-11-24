@@ -46,9 +46,13 @@ if (v.status !== 0) {
 const { loadModel } = await import(pathToFileURL(modelLib).href);
 const model = loadModel();
 const cfg = model.config;
-if (cfg.appType !== 'power-pages') fail(`appType ${cfg.appType}: lo scaffold SPA vale solo per le POC power-pages`);
+// Portale della simulazione condivisa (references/simulazione-condivisa.md) su una POC model-driven:
+// solo le view di simulation.portal.screens e i loro form, con web role e permessi di powerPages.
+const simPortal = cfg.simulation?.portal;
+const forSimulation = cfg.appType === 'model-driven' && simPortal?.kind === 'plugin-spa';
+if (cfg.appType !== 'power-pages' && !forSimulation) fail(`appType ${cfg.appType}: lo scaffold SPA vale per le POC power-pages o, in model-driven, con simulation.portal.kind plugin-spa`);
 
-const out = resolve(root, args.out ?? join('realization', 'power-pages'));
+const out = resolve(root, args.out ?? simPortal?.path ?? join('realization', 'power-pages'));
 const prefix = cfg.naming?.prefix ?? '';
 const pp = cfg.powerPages ?? {};
 const warnings = [];
@@ -57,6 +61,11 @@ const warnings = [];
 const clean = (o) => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
 const datasets = Object.fromEntries(model.datasets.map((d) => [d.doc.logicalName ?? d.ref.logicalName, d.doc]));
 const entities = new Map(model.entities.map((e) => [e.doc.entity.logicalName, e.doc]));
+if (forSimulation) {
+    const keep = new Set();
+    for (const ln of simPortal.screens ?? []) { keep.add(ln); const t = entities.get(ln)?.entity.targetForm; if (t) keep.add(t); }
+    for (const ln of [...entities.keys()]) if (!keep.has(ln)) entities.delete(ln);
+}
 const locals = new Map(model.components.map((c) => [c.doc.logicalName, c.doc]));
 const definitions = new Map(model.definitions.map((c) => [c.doc.logicalName, c.doc]));
 const parents = {};
@@ -260,7 +269,9 @@ for (const src of walk(template)) {
 const steps = [];
 if (args.flags.has('build')) {
     const npm = (cmdArgs) => spawnSync(isWin ? 'npm.cmd' : 'npm', cmdArgs, { cwd: out, encoding: 'utf8', shell: isWin });
-    for (const [name, cmdArgs] of [['npm install', ['install', '--no-audit', '--no-fund', '--loglevel=error']], ['npm run build', ['run', 'build']]]) {
+    // Con la simulazione condivisa si compila la build servita su /portal/ (dati da /_sim), non quella Web API.
+    const build = simPortal?.kind === 'plugin-spa' ? 'build:sim' : 'build';
+    for (const [name, cmdArgs] of [['npm install', ['install', '--no-audit', '--no-fund', '--loglevel=error']], [`npm run ${build}`, ['run', build]]]) {
         const r = npm(cmdArgs);
         steps.push({ step: name, ok: r.status === 0, detail: r.status === 0 ? '' : (r.stderr || r.stdout).trim().split('\n').slice(-5).join(' ') });
         if (r.status !== 0) break;
@@ -277,6 +288,8 @@ if (json) {
     if (kept.length) console.log(`Conservati (gia presenti): ${kept.length} file`);
     warnings.forEach((w) => console.warn(`AVVISO  ${w}`));
     for (const s of steps) console.log(`${s.ok ? 'OK ' : 'KO '} ${s.step}${s.detail ? `  ${s.detail}` : ''}`);
-    console.log(`\nProssimi passi: cd "${out}" && npm install && npm run dev`);
+    console.log(simPortal?.kind === 'plugin-spa'
+        ? `\nProssimi passi: cd "${out}" && npm install && npm run build:sim, poi nella POC npm run sim (portale su /portal/)`
+        : `\nProssimi passi: cd "${out}" && npm install && npm run dev`);
 }
 process.exit(ok ? 0 : 1);

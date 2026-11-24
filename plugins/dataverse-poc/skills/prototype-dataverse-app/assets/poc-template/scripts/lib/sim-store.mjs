@@ -236,6 +236,24 @@ export function createSimStore({ stateDir, seed, poc = '' }) {
             return clone(created);
         },
 
+        // Elimina solo se nessun record lo usa in un lookup (stesse relazioni di validate-poc-data).
+        remove(ln, key, ifMatch, clientId) {
+            const d = dataset(ln);
+            const r = find(d, key);
+            if (!r) throw new SimError(404, 'not_found', `Record "${key}" inesistente in ${ln}.`);
+            if (ifMatch === undefined || ifMatch === null || ifMatch === '') throw new SimError(428, 'precondition_required', 'Manca If-Match con la _rev del record.');
+            if (Number(ifMatch) !== r._rev) throw new SimError(409, 'conflict', 'Record modificato in un\'altra finestra.', { current: clone(r) });
+            const usedBy = [];
+            for (const rel of seed.relationships) {
+                if (rel.references !== ln) continue;
+                const from = state.datasets[rel.dataset];
+                for (const x of from?.records ?? []) if (lookupValues(x[rel.field]).some((v) => String(v) === String(key))) usedBy.push(`${rel.dataset}/${x[from.keyField]}`);
+            }
+            if (usedBy.length) throw new SimError(409, 'referenced', `Record "${key}" usato da altri record: eliminarli o cambiarli prima.`, { usedBy });
+            d.records.splice(d.records.indexOf(r), 1);
+            commit('delete', ln, key, clientId);
+        },
+
         reset() {
             const saved = backup(status === 'ok' ? 'state' : 'state-corrupt');
             state = seedState(seed, (state?.rev ?? 0) + 1);

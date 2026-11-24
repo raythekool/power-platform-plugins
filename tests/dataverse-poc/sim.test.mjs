@@ -93,6 +93,26 @@ test('store: seed, update with revisions, conflicts, validation, create', () => 
     assert.equal(again.get('ava_prenotazioni', 'PRE-011').sito, 'SITO-001');
 });
 
+test('store: delete checks revision and lookups that still use the record', () => {
+    const dir = tempDir();
+    const store = createSimStore({ stateDir: join(dir, '.sim'), seed: seed() });
+    const events = [];
+    store.onEvent((e) => events.push(e));
+    assert.equal(code(() => store.remove('ava_prenotazioni', 'PRE-009', '')), '428 precondition_required');
+    assert.equal(code(() => store.remove('ava_prenotazioni', 'PRE-009', '7')), '409 conflict');
+    assert.equal(code(() => store.remove('ava_prenotazioni', 'PRE-404', '1')), '404 not_found');
+    try { store.remove('ava_siti', 'SITO-002', '1'); assert.fail('referenced'); } catch (e) {
+        assert.equal(e.code, 'referenced');
+        assert.deepEqual(e.extra.usedBy, ['ava_prenotazioni/PRE-009', 'ava_prenotazioni/PRE-010']);
+    }
+    store.remove('ava_prenotazioni', 'PRE-009', '1', 'win-a');
+    assert.deepEqual(events.at(-1), { type: 'change', rev: 2, op: 'delete', dataset: 'ava_prenotazioni', key: 'PRE-009', clientId: 'win-a' });
+    assert.equal(code(() => store.get('ava_prenotazioni', 'PRE-009')), '404 not_found');
+    store.remove('ava_prenotazioni', 'PRE-010', '1');
+    store.remove('ava_siti', 'SITO-002', '1');
+    assert.equal(store.list('ava_siti').records.length, 1);
+});
+
 test('store: reset backs up, keeps rev monotonic and keeps the last 5 backups', () => {
     const dir = tempDir();
     const store = createSimStore({ stateDir: join(dir, '.sim'), seed: seed() });
@@ -230,7 +250,10 @@ test('http: API contract, conflicts and SSE fan-out', async () => {
     assert.equal((await write(base, 'POST', '/_sim/api/data/ava_prenotazioni', { codice: 'PRE-001' })).status, 409);
     assert.equal((await fetch(`${base}/_sim/api/data/ava_prenotazioni`, { method: 'POST', headers: { 'X-Sim-Client': 't' }, body: '{}' })).status, 415);
     assert.equal((await fetch(`${base}/_sim/api/data/ava_prenotazioni`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status, 400);
-    assert.equal((await fetch(`${base}/_sim/api/data/ava_prenotazioni/PRE-001`, { method: 'DELETE' })).status, 405);
+    assert.equal((await fetch(`${base}/_sim/api/data/ava_prenotazioni/PRE-009`, { method: 'DELETE', headers: { 'If-Match': '"1"' } })).status, 400);
+    assert.equal((await fetch(`${base}/_sim/api/data/ava_prenotazioni/PRE-009`, { method: 'DELETE', headers: { 'If-Match': '"1"', 'X-Sim-Client': 't' } })).status, 204);
+    assert.equal((await fetch(`${base}/_sim/api/data/ava_siti/SITO-001`, { method: 'DELETE', headers: { 'If-Match': '"1"', 'X-Sim-Client': 't' } })).status, 409);
+    assert.equal((await fetch(`${base}/_sim/api/data`, { method: 'DELETE' })).status, 405);
     const bad = await fetch(`${base}/_sim/api/data/ava_prenotazioni`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Sim-Client': 't' }, body: '{not json' });
     assert.equal(bad.status, 422);
 });

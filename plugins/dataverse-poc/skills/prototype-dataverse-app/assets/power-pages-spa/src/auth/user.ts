@@ -19,7 +19,8 @@ declare global {
   }
 }
 
-export const isMock = import.meta.env.VITE_DATA_SOURCE === 'mock';
+// Persona scelta nell'header con dati mock e con la simulazione condivisa (npm run sim nella POC).
+export const isMock = import.meta.env.VITE_DATA_SOURCE === 'mock' || import.meta.env.VITE_DATA_SOURCE === 'sim';
 export const signInUrl = '/SignIn';
 
 export function currentUser(): PortalUser | null {

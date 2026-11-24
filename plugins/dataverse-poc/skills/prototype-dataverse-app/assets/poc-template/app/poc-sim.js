@@ -55,6 +55,11 @@
         d.records.push(clean);
         return clean;
     }
+    function drop(ln, key) {
+        var d = datasets[ln];
+        d.records = d.records.filter(function (r) { return String(r[d.keyField]) !== String(key); });
+        if (revs[ln]) delete revs[ln][String(key)];
+    }
     function emit(event) { listeners.forEach(function (fn) { try { fn(event); } catch (e) { console.error(e); } }); }
 
     function loadAll() {
@@ -148,6 +153,13 @@
             var ev = JSON.parse(e.data);
             if (ev.clientId === clientId) { lastRev = Math.max(lastRev, ev.rev); banner(); return; }
             if (!datasets[ev.dataset]) return;
+            if (ev.op === 'delete') {
+                drop(ev.dataset, ev.key);
+                lastRev = Math.max(lastRev, ev.rev);
+                banner();
+                emit({ type: 'change', dataset: ev.dataset, key: ev.key, op: ev.op });
+                return;
+            }
             request('GET', '/_sim/api/data/' + encodeURIComponent(ev.dataset) + '/' + encodeURIComponent(ev.key)).then(function (rec) {
                 upsert(ev.dataset, rec);
                 lastRev = Math.max(lastRev, ev.rev);
@@ -189,6 +201,16 @@
         },
         create: function (ln, record) {
             return request('POST', '/_sim/api/data/' + encodeURIComponent(ln), record).then(function (rec) { return upsert(ln, rec); });
+        },
+        // Chiede conferma ed elimina; 409 referenced se altri record lo usano nei lookup.
+        remove: function (ln, key) {
+            return dialog('Eliminare il record?', 'Il record ' + key + ' viene eliminato in tutte le finestre. Ripristina riporta i dati iniziali.',
+                [{ label: 'Annulla', value: 'no' }, { label: 'Elimina', value: 'yes', primary: true }])
+                .then(function (choice) {
+                    if (choice !== 'yes') return false;
+                    return request('DELETE', '/_sim/api/data/' + encodeURIComponent(ln) + '/' + encodeURIComponent(key), undefined, { 'If-Match': '"' + api.revOf(ln, key) + '"' })
+                        .then(function () { drop(ln, key); return true; });
+                });
         },
         // Conflitto 409: aggiorna il record locale con quello del server e chiede cosa fare.
         resolveConflict: function (ln, err) {

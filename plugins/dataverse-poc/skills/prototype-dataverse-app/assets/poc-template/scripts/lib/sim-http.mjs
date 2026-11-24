@@ -105,10 +105,17 @@ export function createSimServer({ pocDir, store, portalDir = null }) {
             throw new SimError(405, 'method_not_allowed', 'Metodo non ammesso.');
         }
         if (method === 'GET') { const r = store.get(ln, key); return json(res, 200, r, { ETag: `"${r._rev}"` }); }
+        const ifMatch = (req.headers['if-match'] ?? '').replace(/^W\//, '').replace(/"/g, '').trim();
         if (method === 'PATCH') {
-            const ifMatch = (req.headers['if-match'] ?? '').replace(/^W\//, '').replace(/"/g, '').trim();
             const r = store.patch(ln, key, ifMatch, body, clientId);
             return json(res, 200, r, { ETag: `"${r._rev}"` });
+        }
+        if (method === 'DELETE') {
+            // Come le altre scritture: header custom obbligatorio, cosi un altro sito non puo chiamarla senza preflight.
+            if (!clientId) throw new SimError(400, 'client_required', 'Manca l\'header X-Sim-Client.');
+            store.remove(ln, key, ifMatch, clientId);
+            res.writeHead(204, { 'Cache-Control': 'no-store' }).end();
+            return;
         }
         throw new SimError(405, 'method_not_allowed', 'Metodo non ammesso.');
     }

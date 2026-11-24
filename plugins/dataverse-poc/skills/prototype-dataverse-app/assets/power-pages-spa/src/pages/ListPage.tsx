@@ -4,6 +4,7 @@ import { can, useRoles } from '../auth/user';
 import { data, type Row } from '../data/adapter';
 import { fmt } from '../data/format';
 import { screens, type Screen } from '../generated/screens';
+import { NEW_KEY } from './DetailPage';
 import Sections from './Sections';
 
 export default function ListPage({ screen }: { screen: Screen }) {
@@ -12,7 +13,10 @@ export default function ListPage({ screen }: { screen: Screen }) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    data.list(screen).then(setRows, (e) => setError(String(e)));
+    const load = () => data.list(screen).then(setRows, (e) => setError(String(e)));
+    load();
+    // Simulazione condivisa: la lista si aggiorna con le modifiche fatte altrove (altre finestre, back-office).
+    return data.subscribe?.((event) => { if (event.type === 'reset' || event.dataset === screen.dataset) load(); });
   }, [screen]);
   const target = screen.target ? screens[screen.target] : undefined;
   const primaryColumn = screen.columns.find((c) => c.key === screen.primaryField) ?? screen.columns[0];
@@ -22,7 +26,9 @@ export default function ListPage({ screen }: { screen: Screen }) {
       <div className="head">
         <h1>{screen.displayName}</h1>
         <span className="grow" />
-        {can(screen.privileges, roles, 'create') && <button className="primary">Nuovo</button>}
+        {can(screen.privileges, roles, 'create') && (
+          <button className="primary" onClick={() => target && data.create && navigate(`${target.path}/${NEW_KEY}`)}>Nuovo</button>
+        )}
       </div>
       <Sections sections={screen.sections} rows={rows ?? []} />
       {error ? (

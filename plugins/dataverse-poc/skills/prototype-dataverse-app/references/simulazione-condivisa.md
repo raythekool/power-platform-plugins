@@ -15,9 +15,14 @@ simulation:
     kind: plugin-spa               # plugin-spa (realization/power-pages) | external (SPA esistente)
     path: realization/power-pages  # cartella dell'SPA, relativa alla POC
     dist: dist-sim                 # build servita su /portal/ (relativa a path)
+    screens: [ava_richiesta_view]  # solo plugin-spa su POC model-driven: view esposte nel portale (piu i loro form)
 ```
 
 `appType` resta un valore solo: la simulazione non crea un'app ibrida.
+
+Con `kind: plugin-spa` su una POC model-driven servono anche:
+- `simulation.portal.screens`, con le view da esporre nel portale;
+- il blocco `powerPages` (`webRoles`, `tablePermissions`, `navigation`), validato come in una POC power-pages ma solo sulle schermate del portale.
 
 ### Avvio
 
@@ -49,8 +54,8 @@ Il server ascolta solo su `127.0.0.1`, non fa chiamate in uscita, non serve `.si
 
 Tutte le risposte sono JSON. Gli errori hanno la forma `{ "error": "<codice>", "message": "<testo in italiano>", ... }`.
 
-Le richieste che scrivono (`PATCH`, `POST`) devono avere:
-- `Content-Type: application/json`;
+Le richieste che scrivono (`PATCH`, `POST`, `DELETE`) devono avere:
+- `Content-Type: application/json`, tranne `DELETE`, che non ha body;
 - l'header `X-Sim-Client: <id>`, con l'id della finestra che scrive. Gli eventi lo riportano, così una finestra riconosce le proprie modifiche.
 
 Un sito esterno non può inviare questi header senza preflight CORS, che il server non concede. Così le richieste cross-site sono bloccate.
@@ -63,6 +68,7 @@ Un sito esterno non può inviare questi header senza preflight CORS, che il serv
 | `GET /_sim/api/data/<ln>/<key>` | il record, con header `ETag: "<_rev>"` |
 | `PATCH /_sim/api/data/<ln>/<key>` | Richiede `If-Match: "<_rev>"`. Il body contiene solo le colonne da cambiare. Restituisce `200` con il record aggiornato |
 | `POST /_sim/api/data/<ln>` | Crea un record e restituisce `201` con il record. Se manca la chiave, la genera dal pattern esistente (`PRE-010` → `PRE-011`) |
+| `DELETE /_sim/api/data/<ln>/<key>` | Richiede `If-Match: "<_rev>"`. Restituisce `204` |
 | `POST /_sim/reset` | Riparte dal seed e restituisce `{ rev, backup }` |
 | `GET /_sim/events` | Server-Sent Events: `change` `{ rev, op, dataset, key, clientId }`, `reset` `{ rev }`, più un commento di heartbeat ogni 15 s |
 
@@ -73,6 +79,8 @@ Un sito esterno non può inviare questi header senza preflight CORS, che il serv
 | `404` | `not_found` | Dataset o chiave inesistente |
 | `409` | `conflict` | `_rev` superata; il body contiene `current`, il record attuale |
 | `409` | `duplicate_key` | Chiave già presente in creazione |
+| `409` | `referenced` | Eliminazione di un record usato da altri lookup; il body contiene `usedBy` |
+| `400` | `client_required` | Manca `X-Sim-Client` |
 | `415` | `unsupported_media_type` | Manca `Content-Type: application/json` |
 | `422` | `invalid` | Body non valido, con `details: [...]` |
 | `428` | `precondition_required` | Manca `If-Match` |
@@ -106,10 +114,23 @@ Sono le stesse regole di `validate-poc-data.mjs`, che però in scrittura bloccan
 
 - **Model-driven:**
   - nei moduli, i campi non `readOnly` con una colonna nel dataset diventano modificabili;
-  - "Salva" e "Salva e chiudi" scrivono, "Nuovo" (vista o modulo) crea, "Aggiorna" ricarica;
-  - "Elimina" resta decorativo.
+  - "Salva" e "Salva e chiudi" scrivono, "Nuovo" (vista o modulo) crea, "Elimina" elimina dopo conferma, "Aggiorna" ricarica.
 - **Code app e power-pages:** restano in sola lettura, ma si aggiornano con le modifiche fatte altrove.
 - **`app/custom.js`:** riceve i cambi con `PocApp.onDataChanged(fn)`. I dati aggiornati sono in `PocApp.model.data`.
+
+### Portale del plugin (`kind: plugin-spa`)
+
+`poc-spa-scaffold.mjs` genera l'SPA in `simulation.portal.path`. Con `--build` compila `build:sim`.
+
+| Comando nell'SPA | Effetto |
+| --- | --- |
+| `npm run build:sim` | Build in `dist-sim/` con base `/portal/`, servita da `npm run sim` |
+| `npm run dev:sim` | Vite con proxy di `/_sim` verso la POC (`SIM_PORT`, default 8090) |
+| `npm run dev` / `build` | Invariati: mock in sviluppo, Web API nella build di produzione, che non contiene il codice della simulazione |
+
+Liste e dettagli si aggiornano con le modifiche fatte altrove. Il dettaglio avvisa se il record cambia durante la modifica e al conflitto chiede se sovrascrivere. "Nuovo" crea il record (privilege `create`). La persona si sceglie nell'header come con il mock.
+
+Le pagine sono codice del progetto: in una SPA già generata il modo `sim` arriva solo rigenerando i file del template (`--force`) o portando a mano `src/data/sim.ts` e i cambi di `adapter.ts`, `App.tsx`, `pages/*`, `vite.config.ts` e `package.json`.
 
 ### Portali esterni (`kind: external`)
 
