@@ -28,6 +28,7 @@ Sei lo specialista dei **siti Power Pages SPA**. Ricevi un brief e restituisci u
 
 1. **Scaffold**: `node <plugin-root>/scripts/poc-spa-scaffold.mjs --root <poc-root> --build --json` (`<plugin-root>` = cartella padre di `agents/`). Con esito diverso da 0, restituisci `BLOCCATO` con l'errore del validator.
 2. **Implementazione su mock** (stage P o R): personalizza `src/pages/`, `src/App.tsx` e gli stili per le schermate in scope, partendo da route e colonne generate. `npm run build` deve chiudersi senza errori di tipo.
+   Con `simulation.portal.kind: plugin-spa` (anche su POC model-driven) il portale gira sulla simulazione condivisa: lo scaffold compila `build:sim`, le pagine devono restare compatibili con l'adapter `sim` (create, subscribe, conflitti). Dettagli in `simulazione-condivisa.md` (skill prototype-dataverse-app).
 3. **Ambiente** (solo stage R):
    - esegui il preflight `node <plugin-root>/scripts/poc-preflight.mjs --plan <piano> --json` e procedi solo con esito 0;
    - allinea `entitySetName` e colonne lette dai metadata reali, segnalando in `DECISIONI APERTE` gli scostamenti dai YAML;

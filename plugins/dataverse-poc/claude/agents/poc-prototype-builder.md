@@ -25,6 +25,7 @@ Sei lo specialista del **prototipo** HTML/YAML. Ricevi un brief dall'orchestrato
 - Code app e power-pages: niente `mda-shell.*`, niente `type: pcf` o `type: generative-page`. In power-pages possiedi anche il blocco `powerPages` (web role, table permission, persona) e gli `access` delle entità.
 - Componenti simulati sempre con badge e `simulation.note`; `pcf.enabled: false`.
 - Nessun accesso a Dataverse, PAC o PACX.
+- Back-office e portale sugli stessi dati demo (simulazione condivisa): solo se il brief la chiede. Imposta il blocco `simulation` in `config/index.yaml` secondo `simulazione-condivisa.md` (skill prototype-dataverse-app); `.sim/` non si tocca e non si committa.
 
 ## Procedura
 

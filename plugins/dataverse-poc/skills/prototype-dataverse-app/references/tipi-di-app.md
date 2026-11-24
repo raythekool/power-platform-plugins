@@ -79,6 +79,9 @@ mantenere, e ammette generative page e PCF per i punti in cui serve UI custom.
 Una scelta ibrida legittima: model-driven come contenitore, piu una generative page o un PCF nei
 2-3 punti che richiedono una UI non standard. Va dichiarata come tale, non lasciata implicita.
 
+Back-office e portale sugli stessi dati non sono un'app ibrida: `appType` resta uno e il portale
+si aggiunge in stage P con la simulazione condivisa (`simulation.portal`, vedi `simulazione-condivisa.md`).
+
 ## Conseguenze sul prototipo
 
 Quello che cambia concretamente dopo la scelta:

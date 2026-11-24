@@ -65,7 +65,7 @@ Due sotto-agenti non lavorano in parallelo sullo stesso artefatto.
 | `poc-pcf` | `<poc-root>/realization/pcf/<Control>/` | PCF e relativi componenti di solution |
 | `poc-webresources` | `<poc-root>/realization/webresources/` | web resource, comandi ribbon |
 | `poc-code-app` | `<poc-root>/realization/code-app/` | code app pubblicata |
-| `poc-power-pages` | `<poc-root>/realization/power-pages/` (escluse `src/generated/` e `power-pages/`, rigenerate dai YAML) | sito Power Pages, site setting `Webapi/*`, web role, table permission |
+| `poc-power-pages` | `<poc-root>/realization/power-pages/` o `simulation.portal.path` (escluse `src/generated/` e `power-pages/`, rigenerate dai YAML) | sito Power Pages, site setting `Webapi/*`, web role, table permission |
 | `poc-tester` | `<poc-root>/realization/test-reports/` | sola lettura |
 | `poc-deployer` | `<poc-root>/realization/solutions/` (zip esportati, se richiesti) | solution, publish, import/export, flow |
 
@@ -74,6 +74,8 @@ Ordine di dipendenza tipico in stage R (model-driven): `poc-deployer` (preflight
 In stage R con `appType: code-app`: `poc-deployer` → `poc-datamodel` → `poc-demo-data` ∥ `poc-code-app` → `poc-tester` → `poc-deployer`.
 
 In stage R con `appType: power-pages`: `poc-deployer` → `poc-datamodel` → `poc-demo-data` ∥ `poc-power-pages` → `poc-tester` (una passata per persona) → `poc-deployer`. Lo scaffold SPA su mock può già girare in stage P.
+
+La simulazione condivisa (`simulation` in `config/index.yaml`, `npm run sim`) è stage P: locale, sintetica, nessun `pac`/`pacx`. Non apre lo stage R. `.sim/` è stato di runtime, non ha owner e non si committa. Il portale `plugin-spa` di una POC model-driven è di `poc-power-pages`; gli altri file seguono la tabella sopra.
 
 ## 5. Contratto del brief (orchestratore → sotto-agente)
 

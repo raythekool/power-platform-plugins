@@ -1,5 +1,30 @@
 ## Changelog
 
+### 2.1.0 — 2026-11-24
+
+#### Aggiunto
+
+- **Simulazione condivisa in stage P** (`simulation` in `config/index.yaml`, `npm run sim`): back-office e portale girano come siti locali sugli stessi dati demo sintetici, e una modifica fatta in una UI compare nell'altra.
+  - Server locale `scripts/sim-server.mjs` senza dipendenze: risponde solo su `127.0.0.1` e non fa chiamate in uscita.
+  - Lo stato vive in `.sim/` e lo YAML non viene mai riscritto.
+  - Concorrenza per revisione, con conflitto visibile e scelta tra ricarica e sovrascrittura.
+  - Le scritture rispettano le regole di `validate-poc-data`.
+  - Ripristino con backup. Uno stato illeggibile non viene mai cancellato in silenzio.
+  - Contratto in `references/simulazione-condivisa.md`.
+- **Prototipo model-driven modificabile** con la simulazione attiva: Salva, Salva e chiudi, Nuovo, Elimina e Aggiorna nei moduli. Le altre finestre si aggiornano senza ricaricare. `app/custom.js` riceve i cambi con `PocApp.onDataChanged`.
+- **Portale React del plugin sulla simulazione**:
+  - modalità `sim` dell'SPA, con gli script `dev:sim` e `build:sim` (servita su `/portal/`);
+  - `poc-spa-scaffold.mjs` genera il portale anche per una POC model-driven, con `simulation.portal.kind: plugin-spa` e `simulation.portal.screens`.
+- Script npm `sim` e `sim:reset` in `poc-init.mjs`; `.sim/` escluso da git. `--update` porta i nuovi file senza toccare `config/` e `app/custom.*`.
+
+#### Invariato
+
+- Senza il blocco `simulation` tutto funziona come prima:
+  - `dist/*.html` aperto dal disco resta statico e in sola lettura;
+  - `npm run serve` serve il prototipo in sola lettura;
+  - l'SPA `dev` resta su mock e `build` resta sulla Web API, senza il codice della simulazione.
+- La simulazione non apre lo stage R e non usa `pac`/`pacx`.
+
 ### 2.0.0 — 2026-11-08
 
 #### Breaking

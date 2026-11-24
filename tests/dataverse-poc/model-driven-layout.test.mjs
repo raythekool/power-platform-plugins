@@ -146,6 +146,17 @@ test('updating an existing POC leaves its workspace decision untouched', (t) => 
     const root = join(dir, 'poc');
     assert.equal(runInit(root, ['--customer-service-workspace']).status, 0);
     const index = join(root, 'config', 'index.yaml');
+    // Project extensions survive the update; the shared simulation files arrive with it.
+    const customJs = '/* progetto */ PocApp.onDataChanged(function () {});\n';
+    writeFileSync(join(root, 'app', 'custom.js'), customJs);
+    writeFileSync(join(root, 'app', 'custom.css'), '.x { color: red; }\n');
+    const afterUpdate = () => {
+        assert.equal(readFileSync(join(root, 'app', 'custom.js'), 'utf8'), customJs);
+        assert.equal(readFileSync(join(root, 'app', 'custom.css'), 'utf8'), '.x { color: red; }\n');
+        assert.ok(readFileSync(join(root, 'app', 'poc-sim.js'), 'utf8').includes('global.PocSim'));
+        const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+        assert.equal(pkg.scripts.sim, 'node scripts/sim-server.mjs');
+    };
     for (const text of [
         readFileSync(index, 'utf8'),
         readFileSync(index, 'utf8').replace(/^customerServiceWorkspace: true\r?\n/m, ''),
@@ -154,6 +165,7 @@ test('updating an existing POC leaves its workspace decision untouched', (t) => 
         const result = spawnSync(process.execPath, [init, '--root', root, '--update', '--no-install', '--json'], { encoding: 'utf8' });
         assert.equal(result.status, 0, result.stdout + result.stderr);
         assert.equal(readFileSync(index, 'utf8'), text);
+        afterUpdate();
     }
 });
 

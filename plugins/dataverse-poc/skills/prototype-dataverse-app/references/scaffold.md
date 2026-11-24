@@ -47,6 +47,7 @@ node <plugin-root>/scripts/poc-init.mjs --root POC/OrderService --app-type model
 | `check-poc.mjs` | Tutti i passi sopra + smoke test, con un riepilogo JSON (`--json`) |
 | `smoke-test.mjs` | Playwright su `dist/*.html`: app, aree, persone (power-pages), schermate, apertura record, simulazioni, errori console |
 | `serve.mjs` | Server statico senza dipendenze per il runtime |
+| `sim-server.mjs` | Simulazione condivisa (`npm run sim`): back-office su `/`, portale su `/portal/`, stato demo comune in `.sim/` ([simulazione-condivisa.md](simulazione-condivisa.md)) |
 
 Il renderer `app/poc-app.js` disegna viste, moduli, dashboard e componenti (`kpi`, `subgrid`, `timeline`, `bpf`, `generative-page`, `pcf`) dai soli YAML: le chiavi che legge sono in `yaml-schema.md`. Per un componente che il renderer non copre, registrarlo in `app/custom.js`:
 
@@ -56,7 +57,7 @@ PocApp.registerComponent('kpi', function (component, ctx, h) {
 });
 ```
 
-Con `appType: power-pages`, `node <plugin-root>/scripts/poc-spa-scaffold.mjs --root <poc-root> [--build]` genera dagli stessi YAML il progetto React + Vite del sito in `realization/power-pages/`. A ogni esecuzione rigenera `src/generated/` e `power-pages/`; il codice del progetto lo crea solo se manca.
+Con `appType: power-pages`, `node <plugin-root>/scripts/poc-spa-scaffold.mjs --root <poc-root> [--build]` genera dagli stessi YAML il progetto React + Vite del sito in `realization/power-pages/`. A ogni esecuzione rigenera `src/generated/` e `power-pages/`; il codice del progetto lo crea solo se manca. Lo stesso script genera il portale della simulazione condivisa anche per una POC model-driven con `simulation.portal.kind: plugin-spa`.
 
 `legacy-html`: gli script di estrazione (`extract-poc-config.mjs`, `extract-poc-data.mjs`, parser AST) non fanno parte del template e vanno scritti per la singola POC seguendo `procedure.md`.
 
