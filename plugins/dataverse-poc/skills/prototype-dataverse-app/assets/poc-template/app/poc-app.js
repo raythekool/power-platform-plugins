@@ -52,10 +52,14 @@
     }
     // valore chiave -> { ds, record }, usato per risolvere i lookup in etichette leggibili
     var refIndex = {};
-    Object.keys(data).forEach(function (ds) {
-        var kf = keyField(ds);
-        records(ds).forEach(function (r) { if (r && r[kf] !== undefined) refIndex[String(r[kf])] = { ds: ds, record: r }; });
-    });
+    function rebuildIndex() {
+        refIndex = {};
+        Object.keys(data).forEach(function (ds) {
+            var kf = keyField(ds);
+            records(ds).forEach(function (r) { if (r && r[kf] !== undefined) refIndex[String(r[kf])] = { ds: ds, record: r }; });
+        });
+    }
+    rebuildIndex();
     function recordLabel(ds, rec) {
         if (!rec) return '';
         var pf = primaryField(ds);
@@ -109,7 +113,96 @@
         return list && list.length ? '<span class="reqs">' + esc(list.join(' · ')) + '</span>' : '';
     }
 
+    // --- modifica (solo con la simulazione condivisa attiva: app/poc-sim.js + npm run sim) ---------
+    var dataListeners = [];
+    var rerender = function () {};
+    var drafts = {};    // tabKey -> { values: { colonna: valore }, rev }
+    var simMsg = {};    // tabKey -> { level, text }
+    var NEW_KEY = '__new__';
+    // Copia nel modello i dataset della simulazione e ridisegna (anche i componenti di custom.js).
+    function applySimData(event) {
+        var simData = global.PocSim.datasets();
+        Object.keys(simData).forEach(function (ds) {
+            if (data[ds]) data[ds].records = simData[ds].records;
+            else data[ds] = { keyField: simData[ds].keyField, records: simData[ds].records };
+        });
+        if (event && event.type === 'reset') { drafts = {}; simMsg = {}; }
+        rebuildIndex();
+        dataListeners.forEach(function (fn) { try { fn(event || { type: 'resync' }); } catch (e) { console.error(e); } });
+        rerender();
+    }
+    function simOn() {
+        var S = global.PocSim;
+        return !!(S && S.enabled && S.health && S.health.status === 'ok');
+    }
+    // Colonna del dataset in cui scrivere il campo: la prima chiave del campo usata dai record.
+    function writeKey(f, ds) {
+        var rows = records(ds);
+        return find(fieldKeys(f), function (k) { return rows.some(function (r) { return k in r; }); }) || null;
+    }
+    // Dataset da cui scegliere il valore di un lookup: quello del valore attuale, oppure la schermata la cui tabella e fra i targets.
+    function lookupDataset(f, value) {
+        var ref = value !== undefined && value !== null && refIndex[String(value)];
+        if (ref) return ref.ds;
+        var targets = (f.dataverse && f.dataverse.targets) || [];
+        var hit = null;
+        Object.keys(entities).forEach(function (ln) {
+            var t = entities[ln].entity && entities[ln].entity.dataverse && entities[ln].entity.dataverse.table;
+            if (!hit && t && targets.indexOf(t.logicalName) >= 0) hit = datasetForScreen(ln);
+        });
+        return hit;
+    }
+    function inputValue(v, f) {
+        if (v === undefined || v === null) return '';
+        if (f.control === 'datetime' && typeof v === 'string') {
+            var dateOnly = f.dataverse && f.dataverse.format === 'DateOnly';
+            return dateOnly ? v.slice(0, 10) : v.slice(0, 16);
+        }
+        return String(v);
+    }
+    // Riporta il valore dell'input al tipo del dato demo (numero, booleano, data con o senza secondi).
+    function fromInput(text, f, original) {
+        if (text === '') return null;
+        var numeric = ['money', 'decimal', 'whole'].indexOf(f.control) >= 0 || typeof original === 'number';
+        if (f.control === 'boolean' || typeof original === 'boolean') return text === 'true';
+        if (numeric || (f.control === 'choice' && (typeof original === 'number' || /^-?\d+$/.test(text)))) return Number(text);
+        if (f.control === 'datetime' && typeof original === 'string' && /T\d{2}:\d{2}:\d{2}/.test(original) && text.length === 16) return text + ':00';
+        return text;
+    }
+    function renderInput(f, ctx, col) {
+        var draft = ctx.draft || {};
+        var v = col in draft ? draft[col] : rawValue(f, ctx.record);
+        var attrs = ' data-sim-field="' + esc(col) + '" data-sim-control="' + esc(f.control || 'text') + '" name="' + esc(col) + '" aria-label="' + esc(f.displayName) + '"';
+        var opts = options(f);
+        var input;
+        if (opts || f.control === 'choice') {
+            input = '<select' + attrs + '><option value=""></option>' + (opts || []).map(function (o) {
+                return '<option value="' + esc(o.value) + '"' + (String(o.value) === String(v) ? ' selected' : '') + '>' + esc(o.label) + '</option>';
+            }).join('') + '</select>';
+        } else if (f.control === 'boolean' || typeof v === 'boolean') {
+            var b = (f.dataverse && f.dataverse.boolean) || {};
+            input = '<select' + attrs + '><option value=""></option><option value="true"' + (v === true ? ' selected' : '') + '>' + esc(b.trueLabel || 'Sì') + '</option>' +
+                '<option value="false"' + (v === false ? ' selected' : '') + '>' + esc(b.falseLabel || 'No') + '</option></select>';
+        } else if (f.control === 'lookup' && lookupDataset(f, v)) {
+            var lds = lookupDataset(f, v);
+            var lkf = keyField(lds);
+            input = '<select' + attrs + '><option value=""></option>' + records(lds).map(function (r) {
+                return '<option value="' + esc(r[lkf]) + '"' + (String(r[lkf]) === String(v) ? ' selected' : '') + '>' + esc(recordLabel(lds, r)) + '</option>';
+            }).join('') + '</select>';
+        } else if (f.control === 'memo') {
+            input = '<textarea rows="3"' + attrs + '>' + esc(inputValue(v, f)) + '</textarea>';
+        } else {
+            var type = ['money', 'decimal', 'whole'].indexOf(f.control) >= 0 || typeof v === 'number' ? 'number'
+                : f.control === 'datetime' ? (f.dataverse && f.dataverse.format === 'DateOnly' ? 'date' : 'datetime-local') : 'text';
+            input = '<input type="' + type + '"' + (type === 'number' ? ' step="any"' : '') + ' value="' + esc(inputValue(v, f)) + '"' + attrs + '>';
+        }
+        return '<div class="field editing' + (col in draft ? ' dirty' : '') + '" data-field="' + esc(f.logicalName) + '"><label>' + esc(f.displayName) +
+            (f.required ? '<span class="req">*</span>' : '') + '</label>' + input + (f.hint ? '<div class="hint">' + esc(f.hint) + '</div>' : '') + '</div>';
+    }
+
     function renderField(f, ctx) {
+        var col = ctx.edit && !f.readOnly ? writeKey(f, ctx.ds) : null;
+        if (col && (!ctx.record || col !== keyField(ctx.ds))) return renderInput(f, ctx, col);
         var v = fmt(rawValue(f, ctx.record), f, ctx.ds);
         var glyph = f.control === 'lookup' ? G.search : f.control === 'choice' ? G.chevron : '';
         return '<div class="field" data-field="' + esc(f.logicalName) + '"><label>' + esc(f.displayName) +
@@ -400,7 +493,9 @@
             var grid = data[ds]
                 ? '<div class="grid-surface">' + table(rows, columns(ent.columns, ds, meta, ent.primaryColumn), ds, ent.targetForm || null, meta) + MS.gridFooter(rows.length) + '</div>'
                 : notRendered('nessun dataset demo "' + esc(ds) + '"');
-            return MS.commandBar([{ label: 'Nuovo', glyph: G.plus }, { label: 'Elimina', glyph: G.del }, '|', { label: 'Aggiorna', glyph: G.refresh },
+            var editable = simOn() && data[ds] && ent.targetForm;
+            return MS.commandBar([{ label: 'Nuovo', glyph: G.plus, action: editable ? 'new' : null, target: ent.targetForm }, { label: 'Elimina', glyph: G.del }, '|',
+                { label: 'Aggiorna', glyph: G.refresh, action: simOn() ? 'refresh' : null },
                 { label: 'Invia collegamento', glyph: G.mail }, '|', { label: 'Flusso', glyph: G.flow }, { label: 'Esegui report', glyph: G.chart },
                 { label: 'Esporta in Excel', glyph: G.down }, { label: '', glyph: G.more }]) +
                 '<div class="page-head"><div class="titles"><h1>' + esc(ent.viewName || ent.displayName) + ' <span class="chev">' + G.chevron + '</span></h1>' +
@@ -410,13 +505,24 @@
         function formScreen(tab) {
             var doc = entities[tab.screen];
             var ent = doc.entity;
-            var ctx = recordFor(tab.screen, tab.key);
+            var isNew = tab.key === NEW_KEY;
+            var ctx = isNew ? { ds: datasetForScreen(tab.screen), record: null, key: null, screen: tab.screen } : recordFor(tab.screen, tab.key);
             var view = viewForForm(tab.screen);
             var tabs = formTabs(doc);
             var tabKey = tab.screen + '|' + tab.key;
             var active = state.formTab[tabKey] || tabs[0].logicalName;
-            return MS.commandBar([{ label: 'Salva', glyph: G.save }, { label: 'Salva e chiudi' }, { label: 'Nuovo', glyph: G.plus }, '|',
-                { label: 'Aggiorna', glyph: G.refresh }, { label: 'Assegna', glyph: G.assign }, { label: 'Elimina', glyph: G.del }, '|', { label: 'Flusso', glyph: G.flow }]) +
+            var edit = simOn() && !!data[ctx.ds] && (isNew || !!ctx.record);
+            var draft = drafts[tabKey];
+            ctx.edit = edit;
+            ctx.draft = draft && draft.values;
+            var msg = simMsg[tabKey];
+            var stale = edit && !isNew && draft && Object.keys(draft.values).length && draft.rev !== global.PocSim.revOf(ctx.ds, ctx.key);
+            var bars = (msg ? '<div class="message-bar ' + esc(msg.level) + '" style="margin-top:12px" data-sim-message>' + esc(msg.text) + '</div>' : '') +
+                (stale ? '<div class="message-bar warning" style="margin-top:12px">Il record è stato modificato in un\'altra finestra: al salvataggio potrai ricaricarlo o sovrascriverlo.</div>' : '');
+            return MS.commandBar([{ label: 'Salva', glyph: G.save, action: edit ? 'save' : null }, { label: 'Salva e chiudi', action: edit ? 'save-close' : null },
+                { label: 'Nuovo', glyph: G.plus, action: edit ? 'new' : null, target: tab.screen }, '|',
+                { label: 'Aggiorna', glyph: G.refresh, action: simOn() ? 'refresh' : null }, { label: 'Assegna', glyph: G.assign }, { label: 'Elimina', glyph: G.del }, '|', { label: 'Flusso', glyph: G.flow }]) +
+                bars +
                 '<div class="form-head"><div class="crumb">' + (view ? '<a data-nav="' + esc(view) + '">' + esc(entities[view].entity.displayName) + '</a> › ' : '') + esc(ent.displayName) + '</div>' +
                 '<div class="row"><h1>' + esc(ctx.record ? recordLabel(ctx.ds, ctx.record) : 'Nuovo record: ' + ent.displayName) + '</h1>' +
                 '<div class="head-fields">' + headerFields(doc, ctx) + '</div></div>' +
@@ -448,11 +554,100 @@
         function render() {
             var nc = navCfg();
             if (!find(nc.navigation.areas, function (a) { return a.logicalName === state.area; })) state.area = (nc.navigation.areas[0] || {}).logicalName;
+            // Un aggiornamento da un'altra finestra ridisegna la pagina: il campo in modifica resta a fuoco.
+            var focused = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-sim-field');
+            var caret = focused && typeof document.activeElement.selectionStart === 'number' ? document.activeElement.selectionStart : null;
             root.innerHTML = MS.renderHeader(cfg, cfg.demoUser && cfg.demoUser.initials, state) + MS.renderProtoBanner(cfg) +
                 MS.renderTabstrip(state, titleForTab, function (tab) { return pageTypeOf(tab.screen) || (navObjects[tab.screen] || {}).pageType || 'view'; }) +
                 '<div class="mda-body">' + MS.renderSitemap(state, nc, shellOpts) + '<main class="content">' + screen(MS.activeTab(state)) + '</main></div>';
+            if (focused) {
+                var again = root.querySelector('[data-sim-field="' + focused.replace(/"/g, '') + '"]');
+                if (again) { again.focus(); if (caret !== null) try { again.setSelectionRange(caret, caret); } catch (e) { /* input senza selezione */ } }
+            }
         }
+        rerender = render;
+
+        function activeTabKey() { var t = MS.activeTab(state); return t.screen + '|' + t.key; }
+        function fieldFor(screenName, ds, col) {
+            return find(allFields(entities[screenName]), function (f) { return writeKey(f, ds) === col; }) || { control: 'text' };
+        }
+        function onInput(event) {
+            var el = event.target.closest && event.target.closest('[data-sim-field]');
+            if (!el || !simOn()) return;
+            var tab = MS.activeTab(state);
+            var key = activeTabKey();
+            var ds = datasetForScreen(tab.screen);
+            var col = el.getAttribute('data-sim-field');
+            var ctx = tab.key === NEW_KEY ? { record: null } : recordFor(tab.screen, tab.key);
+            var original = ctx.record ? ctx.record[col] : undefined;
+            if (!drafts[key]) drafts[key] = { values: {}, rev: tab.key === NEW_KEY ? null : global.PocSim.revOf(ds, tab.key) };
+            drafts[key].values[col] = fromInput(el.value, fieldFor(tab.screen, ds, col), original);
+            el.closest('.field').classList.add('dirty');
+            delete simMsg[key];
+        }
+        document.addEventListener('input', onInput);
+        document.addEventListener('change', onInput);
+
+        var saving = false;
+        function save(close) {
+            var tab = MS.activeTab(state);
+            var key = activeTabKey();
+            var ds = datasetForScreen(tab.screen);
+            var isNew = tab.key === NEW_KEY;
+            var values = (drafts[key] && drafts[key].values) || {};
+            var view = viewForForm(tab.screen);
+            if (!Object.keys(values).length) {
+                if (close && view) state.tabs[state.active] = { screen: view, key: null };
+                else simMsg[key] = { level: 'info', text: 'Nessuna modifica da salvare.' };
+                render();
+                return;
+            }
+            if (saving) return;
+            saving = true;
+            var op = isNew ? global.PocSim.create(ds, values) : global.PocSim.update(ds, tab.key, values, drafts[key].rev);
+            op.then(function (rec) {
+                saving = false;
+                delete drafts[key];
+                delete simMsg[key];
+                var newKey = String(rec[keyField(ds)]);
+                if (close && view) state.tabs[state.active] = { screen: view, key: null };
+                else {
+                    state.tabs[state.active] = { screen: tab.screen, key: newKey };
+                    simMsg[tab.screen + '|' + newKey] = { level: 'success', text: isNew ? 'Record creato: ' + newKey + '.' : 'Modifiche salvate.' };
+                }
+                state.recent = state.recent.filter(function (r) { return r.key !== NEW_KEY; });
+                applySimData({ type: 'change', dataset: ds, key: newKey });
+            }).catch(function (err) {
+                saving = false;
+                if (err.status === 409 && !isNew && err.body && err.body.error === 'conflict') {
+                    return global.PocSim.resolveConflict(ds, err).then(function (choice) {
+                        if (choice === 'reload') { delete drafts[key]; simMsg[key] = { level: 'info', text: 'Record ricaricato con la versione dell\'altra finestra.' }; applySimData(); return; }
+                        drafts[key].rev = global.PocSim.revOf(ds, tab.key);
+                        save(close);
+                    });
+                }
+                var details = err.body && err.body.details ? ': ' + err.body.details.join('; ') : '';
+                simMsg[key] = { level: 'error', text: (err.message || 'Salvataggio non riuscito') + details };
+                render();
+            });
+        }
+        function simAction(action, target) {
+            if (!simOn()) return;
+            if (action === 'refresh') { global.PocSim.reload(); return; }
+            if (action === 'save' || action === 'save-close') { save(action === 'save-close'); return; }
+            if (action === 'new' && target) {
+                delete drafts[target + '|' + NEW_KEY];
+                delete simMsg[target + '|' + NEW_KEY];
+                MS.openRecord(state, target, NEW_KEY);
+                state.recent = state.recent.filter(function (r) { return r.key !== NEW_KEY; });
+                window.scrollTo(0, 0);
+                render();
+            }
+        }
+
         document.addEventListener('click', function (event) {
+            var act = event.target.closest('[data-sim-action]');
+            if (act) { simAction(act.getAttribute('data-sim-action'), act.getAttribute('data-sim-target')); return; }
             var formTab = event.target.closest('[data-form-tab]');
             if (formTab) { state.formTab[formTab.getAttribute('data-tab-key')] = formTab.getAttribute('data-form-tab'); render(); return; }
             if (event.target.closest('a[href="#"]') && !event.target.closest('[data-open]')) event.preventDefault();
@@ -526,6 +721,7 @@
             window.scrollTo(0, 0);
             render();
         });
+        rerender = render;
         render();
     }
 
@@ -645,11 +841,14 @@
             window.scrollTo(0, 0);
             render();
         });
+        rerender = render;
         render();
     }
 
     global.PocApp = {
         registerComponent: function (type, fn) { custom[type] = fn; },
+        // Simulazione condivisa: chiamata dopo ogni cambio dei dati (evento { type: change|reset|resync, dataset?, key? }).
+        onDataChanged: function (fn) { dataListeners.push(fn); },
         model: M
     };
     function start() {
@@ -657,6 +856,12 @@
         if (isMD) startModelDriven(root);
         else if (cfg.appType === 'power-pages') startPortal(root);
         else startCodeApp(root);
+        // Con npm run sim i dati arrivano dallo stato condiviso; senza server resta tutto come prima.
+        var S = global.PocSim;
+        if (S) {
+            S.onData(applySimData);
+            S.connect().then(function (ok) { if (ok) applySimData({ type: 'resync' }); });
+        }
     }
     // custom.js (caricato dopo) puo registrare renderer prima del primo render.
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

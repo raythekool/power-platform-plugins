@@ -100,6 +100,17 @@ Sono le stesse regole di `validate-poc-data.mjs`, che però in scrittura bloccan
 - **Reset:** chiede conferma, poi chiama `POST /_sim/reset`. Tutte le UI ricevono `reset` e si ricaricano.
 - **Banner:** ogni UI mostra "Simulazione locale: dati sintetici, nessun Dataverse".
 
+### Prototipo (`poc-runtime.html`)
+
+`app/poc-sim.js` è incluso solo nel runtime, mai in `dist/*.html`. Si attiva solo se `/_sim/health` risponde, cioè con `npm run sim`; con `npm run serve` o da `file://` il prototipo resta in sola lettura.
+
+- **Model-driven:**
+  - nei moduli, i campi non `readOnly` con una colonna nel dataset diventano modificabili;
+  - "Salva" e "Salva e chiudi" scrivono, "Nuovo" (vista o modulo) crea, "Aggiorna" ricarica;
+  - "Elimina" resta decorativo.
+- **Code app e power-pages:** restano in sola lettura, ma si aggiornano con le modifiche fatte altrove.
+- **`app/custom.js`:** riceve i cambi con `PocApp.onDataChanged(fn)`. I dati aggiornati sono in `PocApp.model.data`.
+
 ### Portali esterni (`kind: external`)
 
 Un'SPA che non nasce dal plugin, come un portale React già esistente, si collega allo stesso contratto:

@@ -18,7 +18,8 @@ if (!model.datasets.length) stop('nessun dataset in config/data: la simulazione 
 
 const sim = model.config.simulation ?? {};
 const port = Number(option('--port') ?? process.env.SIM_PORT ?? sim.port ?? 8090);
-if (!Number.isInteger(port) || port < 1 || port > 65535) stop(`porta non valida: ${port}`);
+// 0 = porta libera scelta dal sistema (usata dai test).
+if (!Number.isInteger(port) || port < 0 || port > 65535) stop(`porta non valida: ${port}`);
 
 let portalDir = null;
 if (sim.portal) {
@@ -39,9 +40,10 @@ if (health.seedChanged) console.warn('AVVISO  i dati in config/data sono cambiat
 const server = createSimServer({ pocDir, store, portalDir });
 server.on('error', (e) => stop(e.code === 'EADDRINUSE' ? `porta ${port} occupata: usare --port` : e.message));
 server.listen(port, '127.0.0.1', () => {
+    const actual = server.address().port;
     console.log('Simulazione locale: dati sintetici, nessun Dataverse');
-    console.log(`  back-office  http://127.0.0.1:${port}/`);
-    if (portalDir) console.log(`  portale      http://127.0.0.1:${port}/portal/`);
+    console.log(`  back-office  http://127.0.0.1:${actual}/`);
+    if (portalDir) console.log(`  portale      http://127.0.0.1:${actual}/portal/`);
     console.log(`  stato        .sim/state.json (rev ${store.rev})  —  Ctrl+C per fermare`);
 });
 const shutdown = () => server.closeAll().then(() => process.exit(0));

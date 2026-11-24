@@ -287,7 +287,9 @@
         var html = '<div class="command-bar">';
         commands.forEach(function (cmd) {
             if (cmd === '|') { html += '<span class="sep"></span>'; return; }
-            html += '<button class="cmd' + (cmd.disabled ? ' disabled' : '') + '">' +
+            // action/target: comandi attivi solo con la simulazione condivisa (poc-app.js), altrimenti decorativi.
+            html += '<button class="cmd' + (cmd.disabled ? ' disabled' : '') + (cmd.action ? ' sim-action' : '') + '"' +
+                (cmd.action ? ' data-sim-action="' + esc(cmd.action) + '"' : '') + (cmd.action && cmd.target ? ' data-sim-target="' + esc(cmd.target) + '"' : '') + '>' +
                 (cmd.glyph ? '<span class="glyph">' + cmd.glyph + '</span>' : '') + esc(cmd.label) + '</button>';
         });
         return html + '<span class="grow"></span></div>';

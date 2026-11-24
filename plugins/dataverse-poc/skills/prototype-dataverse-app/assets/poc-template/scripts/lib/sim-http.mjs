@@ -121,6 +121,7 @@ export function createSimServer({ pocDir, store, portalDir = null }) {
             try { path = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname); } catch { return json(res, 400, { error: 'bad_request', message: 'URL non valido.' }); }
             if (path.startsWith('/_sim/')) return await api(req, res, path);
             if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'method_not_allowed', message: 'Metodo non ammesso.' });
+            if (path === '/favicon.ico' && !existsSync(join(root, 'favicon.ico'))) { res.writeHead(204).end(); return; }
             if (path === '/portal') { res.writeHead(302, { Location: '/portal/' }).end(); return; }
             if (path.startsWith('/portal/')) {
                 if (!portalRoot) return json(res, 404, { error: 'not_found', message: 'Nessun portale configurato in simulation.portal.' });

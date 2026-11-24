@@ -12,7 +12,7 @@ if (!errors.length) {
     const banner = '// Generato da scripts/prepare-runtime-poc.mjs: non modificare a mano.\n';
     writeFileSync(join(pocDir, 'config', 'poc-config.js'), `${banner}window.POC_MODEL = Object.assign(window.POC_MODEL || {}, ${scriptJson(ui)});\n`);
     writeFileSync(join(pocDir, 'config', 'data', 'poc-data.js'), `${banner}window.POC_MODEL = Object.assign(window.POC_MODEL || {}, { data: ${scriptJson(data)} });\n`);
-    const { css, js } = appAssets(model.config.appType);
+    const { css, js } = appAssets(model.config.appType, { runtime: true });
     const head = css.map((f) => `<link rel="stylesheet" href="${f}">`).join('\n');
     const body = ['config/poc-config.js', 'config/data/poc-data.js', ...js].map((f) => `<script src="${f}"></script>`).join('\n');
     writeFileSync(join(pocDir, 'poc-runtime.html'), page({ title: `${model.config.application?.displayName ?? 'POC'} (runtime)`, head, body }));
