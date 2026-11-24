@@ -39,7 +39,7 @@ function readBody(req) {
 
 // Serves one file under `root`; dotted segments (.sim, .git, .env…) are never served.
 function serveFile(res, root, path, fallback) {
-    if (path.split('/').some((s) => s.startsWith('.') && s.length > 1)) return json(res, 404, { error: 'not_found', message: 'Risorsa inesistente.' });
+    if (path.split(/[\\/]/).some((s) => s.startsWith('.') && s.length > 1)) return json(res, 404, { error: 'not_found', message: 'Risorsa inesistente.' });
     let file = normalize(join(root, path));
     if (!file.startsWith(root + sep) && file !== root) return json(res, 403, { error: 'forbidden', message: 'Percorso non ammesso.' });
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, 'index.html');
