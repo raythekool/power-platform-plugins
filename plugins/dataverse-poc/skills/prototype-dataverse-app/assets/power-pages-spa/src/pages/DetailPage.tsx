@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { can, useRoles } from '../auth/user';
-import { data, type Row } from '../data/adapter';
+import { data, isConflict, type Row } from '../data/adapter';
 import { datetimeInputValue, datetimePatch, fmt } from '../data/format';
 import { screens, type Field, type Screen } from '../generated/screens';
+
+// Chiave di percorso del nuovo record (solo con la simulazione condivisa, che supporta create).
+export const NEW_KEY = 'nuovo';
 
 export default function DetailPage({ screen }: { screen: Screen }) {
   const { key = '' } = useParams();
@@ -17,36 +20,68 @@ function RecordDetail({ screen, recordKey: key }: { screen: Screen; recordKey: s
   const [tab, setTab] = useState(screen.tabs[0]?.logicalName);
   const [message, setMessage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [stale, setStale] = useState(false);
   const request = useRef(0);
+  const dirty = useRef(false);
+  const navigate = useNavigate();
+  const isNew = key === NEW_KEY && !!data.create;
+  dirty.current = Object.keys(draft).length > 0;
   useEffect(() => {
     const id = ++request.current;
-    setRecord(undefined);
+    setRecord(isNew ? { __key: '' } : undefined);
     setDraft({});
     setTab(screen.tabs[0]?.logicalName);
     setMessage(null);
     setSaving(false);
-    data.get(screen, key).then(
+    setStale(false);
+    if (isNew) return () => { request.current++; };
+    const load = () => data.get(screen, key).then(
       (row) => { if (request.current === id) setRecord(row); },
       (e) => { if (request.current === id) setMessage(String(e)); },
     );
-    return () => { request.current++; };
-  }, [screen, key]);
+    load();
+    // Simulazione condivisa: senza modifiche in corso il record si ricarica; con modifiche in corso si avvisa.
+    const unsubscribe = data.subscribe?.((event) => {
+      if (event.type === 'reset') { setDraft({}); setStale(false); setMessage(null); load(); return; }
+      if (event.dataset !== screen.dataset || event.key !== key) return;
+      if (dirty.current) setStale(true);
+      else load();
+    });
+    return () => { request.current++; unsubscribe?.(); };
+  }, [screen, key, isNew]);
 
-  const editable = can(screen.privileges, roles, 'write');
+  const editable = can(screen.privileges, roles, isNew ? 'create' : 'write');
   const parent = screen.parent ? screens[screen.parent] : undefined;
   const value = (f: Field) => (f.key in draft ? draft[f.key] : record?.[f.key]);
-  const save = async () => {
+  const save = async (expectedRev = record?.__rev) => {
     const id = request.current;
     setSaving(true);
     setMessage(null);
     try {
-      await data.update(screen, key, draft);
+      if (isNew) {
+        const created = await data.create!(screen, draft);
+        if (request.current === id) navigate(`${screen.path}/${encodeURIComponent(created.__key)}`, { replace: true });
+        return;
+      }
+      await data.update(screen, key, draft, expectedRev);
       if (request.current !== id) return;
-      setRecord({ ...record!, ...draft });
+      setRecord((await data.get(screen, key)) ?? { ...record!, ...draft });
       setDraft({});
+      setStale(false);
       setMessage('Modifiche salvate.');
     } catch (e) {
-      if (request.current === id) setMessage(`Salvataggio non riuscito: ${String(e)}`);
+      if (request.current !== id) return;
+      if (isConflict(e)) {
+        // Conferma = sovrascrivi con le proprie modifiche; Annulla = ricarica la versione salvata altrove.
+        if (window.confirm('Il record è stato modificato in un\'altra finestra. OK per sovrascrivere con le tue modifiche, Annulla per ricaricarlo.')) {
+          setSaving(false);
+          return save(e.current._rev as number);
+        }
+        setDraft({});
+        setStale(false);
+        setRecord(await data.get(screen, key));
+        setMessage('Record ricaricato con la versione dell\'altra finestra.');
+      } else setMessage(`Salvataggio non riuscito: ${String(e)}`);
     } finally {
       if (request.current === id) setSaving(false);
     }
@@ -54,15 +89,16 @@ function RecordDetail({ screen, recordKey: key }: { screen: Screen; recordKey: s
 
   if (record === undefined) return <p className="empty">{message ?? 'Caricamento…'}</p>;
   if (record === null) return <p className="empty">Record non trovato.</p>;
-  const title = screen.primaryField ? fmt(record[screen.primaryField]) : screen.displayName;
+  const title = isNew ? `Nuovo: ${screen.displayName}` : screen.primaryField ? fmt(record[screen.primaryField]) : screen.displayName;
   return (
     <>
       <div className="head">
         {parent && <Link className="button" to={parent.path}>← {parent.displayName}</Link>}
         <h1>{title || screen.displayName}</h1>
         <span className="grow" />
-        {editable && <button className="primary" disabled={saving || !Object.keys(draft).length} onClick={save}>Salva</button>}
+        {editable && <button className="primary" disabled={saving || !Object.keys(draft).length} onClick={() => save()}>Salva</button>}
       </div>
+      {stale && <p className="message warning" role="status">Il record è stato modificato in un'altra finestra: al salvataggio potrai sovrascriverlo o ricaricarlo.</p>}
       {message && <p className="message" role="status">{message}</p>}
       {screen.tabs.length > 1 && (
         <div className="tabs">

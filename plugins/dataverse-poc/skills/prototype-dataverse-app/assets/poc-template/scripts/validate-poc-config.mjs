@@ -263,10 +263,27 @@ if (md) {
     }
 }
 
+// Simulazione condivisa con portale del plugin su una POC model-driven: il portale espone solo le view in
+// simulation.portal.screens (piu i loro form) e usa web role e table permission di powerPages.
+const simPortal = config.simulation?.portal;
+const portalScreens = md && simPortal?.kind === 'plugin-spa' ? new Set() : null;
+if (portalScreens) {
+    for (const ln of simPortal.screens ?? []) {
+        const e = entityByName.get(ln);
+        if (!e) { errors.push(`config/index.yaml: simulation.portal.screens "${ln}" inesistente`); continue; }
+        if (e.pageType !== 'view') { errors.push(`config/index.yaml: simulation.portal.screens "${ln}" deve essere una view (i form arrivano da targetForm)`); continue; }
+        portalScreens.add(ln);
+        if (e.doc.entity.targetForm) portalScreens.add(e.doc.entity.targetForm);
+    }
+    if (!simPortal.screens?.length) errors.push('config/index.yaml: simulation.portal.screens obbligatorio con kind plugin-spa su una POC model-driven');
+    if (!config.powerPages) errors.push('config/index.yaml: blocco powerPages (webRoles, tablePermissions) obbligatorio con simulation.portal.kind plugin-spa');
+    for (const ln of config.powerPages?.navigation ?? []) if (entityByName.has(ln) && !portalScreens.has(ln)) errors.push(`config/index.yaml: powerPages.navigation "${ln}" non e fra simulation.portal.screens`);
+}
+
 // --- Power Pages: web role, table permission, accesso alle schermate -----------------------------------
 // Una schermata con tabella Dataverse e visibile solo se ogni ruolo che la vede ha una table permission con read:
 // e lo stesso controllo che in ambiente fa la Web API (/_api/), qui anticipato sul YAML.
-if (appType === 'power-pages') {
+if (appType === 'power-pages' || portalScreens) {
     const SCOPES = ['global', 'contact', 'account', 'self', 'parent'];
     const PRIVILEGES = ['read', 'create', 'write', 'delete', 'append', 'appendto'];
     const BUILTIN = ['anonymous', 'authenticated'];
@@ -291,7 +308,7 @@ if (appType === 'power-pages') {
         perms.push({ ...p, used: false });
     }
     for (const ln of pp.navigation ?? []) if (!entityByName.has(ln)) errors.push(`config/index.yaml: powerPages.navigation "${ln}" inesistente`);
-    for (const ln of config.demoPath ?? []) if (!entityByName.has(ln)) errors.push(`config/index.yaml: demoPath "${ln}" inesistente`);
+    if (!portalScreens) for (const ln of config.demoPath ?? []) if (!entityByName.has(ln)) errors.push(`config/index.yaml: demoPath "${ln}" inesistente`);
     if (pp.demoPersona) knownRole('powerPages.demoPersona', pp.demoPersona);
 
     // Il ruolo authenticated vale per ogni utente autenticato; anonymous solo per chi non ha fatto l'accesso.
@@ -304,6 +321,7 @@ if (appType === 'power-pages') {
     const parents = new Map([...entityByName.values()].filter((e) => e.doc.entity.targetForm).map((e) => [e.doc.entity.targetForm, e.doc.entity]));
     const details = new Set(parents.keys());
     for (const [ln, e] of entityByName) {
+        if (portalScreens && !portalScreens.has(ln)) continue;
         const ent = e.doc.entity;
         const access = ent.access ?? 'authenticated';
         const list = access === 'anonymous' || access === 'authenticated' ? [access] : Array.isArray(access) ? access : null;
@@ -321,6 +339,28 @@ if (appType === 'power-pages') {
         }
     }
     for (const p of perms) if (!p.used) warnings.push(`powerPages.tablePermissions ${p.logicalName}: non usata da nessuna schermata`);
+}
+
+// Shared local simulation (references/simulazione-condivisa.md): optional, stage P only.
+if (config.simulation !== undefined) {
+    const sim = config.simulation;
+    if (!sim || typeof sim !== 'object' || Array.isArray(sim)) errors.push('config/index.yaml: simulation deve essere un oggetto');
+    else {
+        const known = ['port', 'portal'];
+        for (const k of Object.keys(sim)) if (!known.includes(k)) warnings.push(`config/index.yaml: simulation.${k} sconosciuto (ammessi ${known.join(', ')})`);
+        if (sim.port !== undefined && !(Number.isInteger(sim.port) && sim.port >= 1024 && sim.port <= 65535)) errors.push(`config/index.yaml: simulation.port non valido (${sim.port}): intero 1024-65535`);
+        if (sim.portal !== undefined) {
+            const p = sim.portal;
+            if (!p || typeof p !== 'object') errors.push('config/index.yaml: simulation.portal deve essere un oggetto');
+            else {
+                if (!['plugin-spa', 'external'].includes(p.kind)) errors.push(`config/index.yaml: simulation.portal.kind non valido (${p.kind ?? 'assente'}): plugin-spa o external`);
+                if (p.kind === 'external' && !p.path) errors.push('config/index.yaml: simulation.portal.path obbligatorio con kind external');
+                for (const k of ['path', 'dist']) if (p[k] !== undefined && (typeof p[k] !== 'string' || !p[k].trim())) errors.push(`config/index.yaml: simulation.portal.${k} deve essere un percorso`);
+                if (p.screens !== undefined && (!Array.isArray(p.screens) || p.kind !== 'plugin-spa')) errors.push('config/index.yaml: simulation.portal.screens e una lista e vale solo con kind plugin-spa');
+            }
+        }
+    }
+    if (!model.datasets.length) errors.push('config/index.yaml: simulation richiede dataset demo in config/data');
 }
 
 report('validate:config', errors, warnings, { entities: entityByName.size, components: locals.size, definitions: definitions.size });

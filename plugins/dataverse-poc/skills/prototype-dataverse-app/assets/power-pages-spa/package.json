@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "build:mock": "tsc --noEmit && vite build --mode mock",
+    "dev:sim": "vite --mode sim",
+    "build:sim": "tsc --noEmit && vite build --mode sim",
     "preview": "vite preview"
   },
   "dependencies": {

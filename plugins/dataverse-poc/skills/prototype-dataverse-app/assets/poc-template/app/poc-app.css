@@ -575,3 +575,117 @@ body:has(.ca-app) {
   font-size: 12px;
   color: var(--fg-3);
 }
+
+/* --- simulazione condivisa (app/poc-sim.js, solo con npm run sim) ------------------- */
+.field.editing input,
+.field.editing select,
+.field.editing textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--stroke-1, #d1d1d1);
+  border-bottom-color: var(--fg-3, #616161);
+  border-radius: var(--radius, 4px);
+  padding: 5px 10px;
+  min-height: 32px;
+  background: var(--bg-1, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+}
+.field.editing input:focus,
+.field.editing select:focus,
+.field.editing textarea:focus {
+  outline: none;
+  border-bottom: 2px solid var(--brand, #0f6cbd);
+}
+.field.editing.dirty label::after {
+  content: " •";
+  color: var(--brand, #0f6cbd);
+}
+.message-bar.success {
+  background: #f1faf1;
+  border-color: #9fd89f;
+  color: #0e4a0e;
+}
+.cmd.sim-action {
+  cursor: pointer;
+}
+#poc-sim-banner {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px 6px 12px;
+  border: 1px solid #9fd89f;
+  border-radius: 6px;
+  background: #f1faf1;
+  color: #0e4a0e;
+  font: 12px/1.4 "Segoe UI", system-ui, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+#poc-sim-banner.warn {
+  border-color: #f3e0a3;
+  background: #fff9e6;
+  color: #4a3607;
+}
+#poc-sim-banner .sim-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+#poc-sim-banner .sim-warn {
+  font-weight: 600;
+}
+#poc-sim-banner button,
+.poc-sim-dialog button {
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  background: #fff;
+  color: #242424;
+  padding: 3px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+.poc-sim-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, .4);
+}
+.poc-sim-dialog .box {
+  max-width: 440px;
+  padding: 20px 24px;
+  border-radius: 8px;
+  background: #fff;
+  color: #242424;
+  font: 14px/1.45 "Segoe UI", system-ui, sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
+}
+.poc-sim-dialog h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.poc-sim-dialog .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.poc-sim-dialog button {
+  padding: 5px 14px;
+  font-size: 14px;
+}
+.poc-sim-dialog button.primary {
+  border-color: #0f6cbd;
+  background: #0f6cbd;
+  color: #fff;
+}

@@ -49,6 +49,7 @@ Generata da `scripts/poc-init.mjs` del plugin: dettaglio in [scaffold.md](refere
 - [componenti-simulati.md](references/componenti-simulati.md): resa di generative page e PCF simulati.
 - [dynamics-365-chrome.md](references/dynamics-365-chrome.md): site map, sessioni, viste e moduli in stile D365 CE (solo model-driven).
 - [standard-apps.md](references/standard-apps.md): site map standard di Sales Hub e Customer Service Hub.
+- [simulazione-condivisa.md](references/simulazione-condivisa.md): back-office e portale locali sugli stessi dati demo, modificabili (`npm run sim`); contratto `/_sim`.
 
 ## Asset
 

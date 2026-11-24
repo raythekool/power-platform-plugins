@@ -6,9 +6,11 @@ import { pocDir } from './poc-model.mjs';
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // app/ files in load order; mda-shell.* only exists in model-driven POCs.
-export function appAssets(appType) {
+// poc-sim.js (shared simulation client) only goes into the runtime page, never into dist/*.html:
+// it stays inactive unless npm run sim answers on /_sim/health.
+export function appAssets(appType, { runtime = false } = {}) {
     const css = ['app/mda-shell.css', 'app/poc-app.css', 'app/custom.css'];
-    const js = ['app/mda-shell.js', 'app/poc-app.js', 'app/custom.js'];
+    const js = ['app/mda-shell.js', ...(runtime ? ['app/poc-sim.js'] : []), 'app/poc-app.js', 'app/custom.js'];
     const keep = (f) => existsSync(join(pocDir, f)) && (appType === 'model-driven' || !f.includes('mda-shell'));
     return { css: css.filter(keep), js: js.filter(keep) };
 }

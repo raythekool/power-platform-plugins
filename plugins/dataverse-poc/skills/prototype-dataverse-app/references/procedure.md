@@ -143,6 +143,7 @@ Usare `npm run extract:all` solo per riallineare i layer YAML all'HTML legacy. P
 1. Validator UI e dati senza errori.
 2. Smoke test automatico: `npm run test:smoke` (vedi `scaffold.md` per aggiungerlo a una POC nuova).
 3. Modalita runtime: avviare `npm run serve`, poi aprire `http://127.0.0.1:8080/poc-runtime.html`.
+   Con il blocco `simulation`, `npm run sim` (porta 8090) rende i moduli modificabili e condivide i dati demo fra finestre e portale: vedi `simulazione-condivisa.md`.
 4. Modalita statica: aprire il file in `dist/` direttamente dal filesystem e verificare che non richieda YAML o bootstrap esterni.
 5. Smoke test di almeno una lista, un dettaglio, una subgrid e un controllo dichiarativo della schermata aggiornata.
 6. Per un componente PCF dichiarato, verificare che l'host riporti logical name, control name e fallback corretti; non dichiarare il PCF funzionante finche il bundle non e realmente integrato.

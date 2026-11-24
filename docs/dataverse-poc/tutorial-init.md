@@ -182,6 +182,32 @@ Descrivi all'orchestratore requisiti, schermate e percorso demo (o allega il doc
 
 Nessuno di questi passi scrive HTML o JavaScript: il renderer generico disegna viste, moduli, dashboard, KPI, timeline, BPF, subgrid e i componenti simulati (generative page, PCF) direttamente dai YAML.
 
+### Back-office e portale sugli stessi dati (facoltativo)
+
+Per mostrare in demo il back-office e un portale che lavorano sugli stessi dati, con le modifiche visibili subito nell'altra UI, aggiungi in `config/index.yaml`:
+
+```yaml
+simulation:
+  portal:
+    kind: plugin-spa
+    screens: [ava_richiesta_view]   # le view da esporre nel portale
+powerPages:
+  navigation: [ava_richiesta_view]
+  tablePermissions:
+    - { logicalName: ava_tp_richieste, displayName: Richieste, table: ava_richiesta, scope: global, privileges: [read, write, create], roles: [authenticated] }
+```
+
+Poi esegui:
+
+```powershell
+node <plugin-root>/scripts/poc-spa-scaffold.mjs --root . --build
+npm run sim
+```
+
+Il back-office è su `http://127.0.0.1:8090/` e il portale su `http://127.0.0.1:8090/portal/`. I moduli diventano modificabili e ogni finestra vede le modifiche delle altre. "Ripristina" (oppure `npm run sim:reset`) riporta i dati iniziali.
+
+Resta tutto locale e con dati sintetici: nessun Dataverse, e lo stage R non si apre. Il dettaglio è in `references/simulazione-condivisa.md` della skill prototype-dataverse-app.
+
 ## 8. Preparare lo stage R (ambiente DEV)
 
 Lo stage R non si apre mai per inferenza. Prima:

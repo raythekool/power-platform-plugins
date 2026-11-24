@@ -25,6 +25,9 @@ const PIPELINE_SCRIPTS = {
     check: 'node scripts/check-poc.mjs',
     'test:smoke': 'node scripts/smoke-test.mjs',
     serve: 'node scripts/serve.mjs',
+    // Simulazione condivisa (references/simulazione-condivisa.md): stato demo comune a back-office e portale.
+    sim: 'node scripts/sim-server.mjs',
+    'sim:reset': 'node scripts/sim-server.mjs --reset',
 };
 const PIPELINE_DEPS = { 'js-yaml': '^4.1.0', 'playwright-core': '^1.48.0' };
 
@@ -65,7 +68,7 @@ if (update) {
     pkg.devDependencies = { ...pkg.devDependencies, ...PIPELINE_DEPS };
     writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`);
     const r = args.flags.has('no-install') ? { status: 0 } : spawnSync(isWin ? 'npm.cmd' : 'npm', ['install', '--no-audit', '--no-fund', '--loglevel=error'], { cwd: root, encoding: 'utf8', shell: isWin });
-    const out = { ok: r.status === 0, root, appType: type, updated: ['scripts/*', 'app/poc-app.*', type === 'model-driven' ? 'app/mda-shell.*' : null, 'package.json'].filter(Boolean) };
+    const out = { ok: r.status === 0, root, appType: type, updated: ['scripts/*', 'app/poc-app.*', 'app/poc-sim.js', type === 'model-driven' ? 'app/mda-shell.*' : null, 'package.json'].filter(Boolean) };
     console.log(json ? JSON.stringify(out) : `Pipeline aggiornata in ${root}: eseguire npm run check`);
     process.exit(out.ok ? 0 : 1);
 }
@@ -113,7 +116,7 @@ write('package.json', `${JSON.stringify({
     scripts: PIPELINE_SCRIPTS,
     devDependencies: PIPELINE_DEPS,
 }, null, 2)}\n`);
-write('.gitignore', 'node_modules/\nrealization/solutions/*.zip\nrealization/test-reports/*.png\n');
+write('.gitignore', 'node_modules/\n.sim/\nrealization/solutions/*.zip\nrealization/test-reports/*.png\n');
 
 // --- config ------------------------------------------------------------------------------------
 const requirements = sample ? `requirements:

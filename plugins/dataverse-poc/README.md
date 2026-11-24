@@ -47,6 +47,7 @@ Fa parte del marketplace [power-platform-plugins](https://github.com/raythekool/
 | `scripts/poc-preflight.mjs` | Profili PAC/PACX attivi contro il target del piano; blocca senza conferma dello stage R | orchestratore, sotto-agenti di stage R |
 | `scripts/poc-solution-zip.mjs` | Versione, componenti e generative page di uno zip esportato | `poc-deployer`, `poc-tester` |
 | `npm run check` (nella POC) | Validator config e dati, runtime, statico, copertura, smoke test, riepilogo JSON | orchestratore, `poc-prototype-builder`, `poc-tester` |
+| `npm run sim` (nella POC) | Simulazione condivisa in stage P: back-office e portale locali sugli stessi dati demo, modificabili e sincronizzati fra finestre (`sim:reset` riparte dai dati iniziali) | utente, `poc-tester` |
 
 ### 🧭 Come funziona
 
@@ -144,6 +145,7 @@ Le skill di altri plugin richiamate per nome (`pacx-*`, `appmaker-*`, `pcf-*`, `
 - Lo smoke test presuppone le convenzioni del renderer generico (`[data-nav]`, `tr[data-open]`, `[data-form-tab]`, `.sim-frame`): un renderer scritto a mano deve rispettarle.
 - La modalità `legacy-html` (estrazione da HTML monolitico) non ha script pronti: l'estrazione resta guidata dalle procedure.
 - `poc-add-standard.mjs` riscrive `config/index.yaml` senza i commenti.
+- Simulazione condivisa: nessuna logica di business, si salvano solo i dati. In model-driven sono modificabili i moduli, mentre code app e power-pages simulati restano in sola lettura. Nelle SPA generate prima della 2.1.0 la modalità `sim` va portata rigenerando con `--force` o a mano.
 - Siti Power Pages: il progetto React generato è un punto di partenza. I lookup della Web API (`_<colonna>_value`), l'URL di accesso e i ruoli dell'utente reale vanno verificati sul sito; il provider di identità si configura in Power Pages.
 
 ### 📜 Versioni

@@ -22,6 +22,8 @@ application:
   logicalName: ava_order_service
   displayName: Order Service
 customerServiceWorkspace: false # opzionale, solo model-driven; true solo su richiesta esplicita
+simulation:                    # opzionale: simulazione condivisa in stage P, vedi simulazione-condivisa.md
+  portal: { kind: plugin-spa, screens: [ava_order_view] }
 modelDrivenApps:               # opzionale, solo appType: model-driven
   - logicalName: ava_order_service
     displayName: Order Service
