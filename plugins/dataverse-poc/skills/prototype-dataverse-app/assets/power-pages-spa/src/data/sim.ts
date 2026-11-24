@@ -13,6 +13,7 @@ export class ConflictError extends Error {
 }
 
 const clientId = (() => {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'sim') return '';
   try {
     const saved = sessionStorage.getItem('poc-sim-client');
     if (saved) return saved;
