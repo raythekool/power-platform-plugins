@@ -1,5 +1,5 @@
 ---
-name: config
+name: power-platform-wiki-config
 description: "Reconfigure an initialized LLM Wiki: add or remove sources (code repositories, Azure DevOps Boards, Dataverse, F&O metadata, GitHub, SharePoint), change profiles, language, governance, publish target (Azure DevOps Wiki / GitHub Wiki), automation, sprint settings; refresh the managed engine after a plugin update (--refresh-engine); migrate a v2 wiki to the v3 conventions (--migrate). Never changes wiki content except during --migrate."
 argument-hint: "[--refresh-engine] [--migrate]"
 user-invocable: true
@@ -37,7 +37,7 @@ Run after a plugin update, or when the agent reports that `llm-wiki/.engine/VERS
 pwsh -NoProfile -File "<plugin>/scripts/Install-Engine.ps1" -LlmWikiPath llm-wiki
 ```
 
-Show the old and new version, then suggest `/power-platform-llm-wiki:update --lint` because lint rules may have changed. If `wiki.config.yml` has no section that the new `assets/wiki.config.yml` introduces (e.g. `graph:`), add it with its defaults and comments, and say so. Log `config --refresh-engine`.
+Show the old and new version, then suggest `/power-platform-wiki-update --lint` because lint rules may have changed. If `wiki.config.yml` has no section that the new `assets/wiki.config.yml` introduces (e.g. `graph:`), add it with its defaults and comments, and say so. Log `config --refresh-engine`.
 
 ### `--migrate` (v2 -> v3 conventions)
 

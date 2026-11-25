@@ -1,5 +1,5 @@
 ---
-name: init
+name: power-platform-wiki-init
 description: "Initialize an LLM Wiki in the current project: interactive wizard (project, agent tools VS Code / Copilot CLI / Claude Code, profiles CE/Power Platform/F&O, code repositories, Azure DevOps, Dataverse, F&O metadata, publishing to Azure DevOps Wiki or GitHub Wiki, governance), scaffolds llm-wiki/ (raw/, wiki/, .state/), installs the managed engine (AGENTS.md, scripts, templates, profiles), writes wiki.config.yml, MCP configuration (.vscode/mcp.json, .mcp.json), agent instructions (copilot-instructions, CLAUDE.md) and .gitignore. Use for first-time setup or to repair missing scaffolding."
 argument-hint: "Run from the root of the project that will host llm-wiki/"
 user-invocable: true
@@ -107,13 +107,13 @@ First-run notes, only for the selected tools:
 
 ## Next steps message
 
-Always show the full command names (`/power-platform-llm-wiki:<skill>`), never the short ones (`/init`, `/update`, ...): those belong to the tool itself and would not run this plugin.
+Always show the full command names (`/power-platform-wiki-<skill>`), never the short ones (`/init`, `/update`, ...): those belong to the tool itself and would not run this plugin.
 
-- Code repositories: `/power-platform-llm-wiki:update --source code` (builds `wiki/code/` and `wiki/projects/`).
-- Boards: `/power-platform-llm-wiki:update --source devops`. Dataverse: `/power-platform-llm-wiki:update --source dataverse` (check `pacx auth ping`). F&O: `/power-platform-llm-wiki:update --source fno`.
-- Documents and minutes: drop files in `llm-wiki/raw/<folder>/`, then `/power-platform-llm-wiki:ingest <file>` or `/power-platform-llm-wiki:update --full`.
-- Publishing: `/power-platform-llm-wiki:update --publish` once the lint is clean.
-- Always available: `/power-platform-llm-wiki:query <question>`, `/power-platform-llm-wiki:update --lint`, `/power-platform-llm-wiki:config`.
+- Code repositories: `/power-platform-wiki-update --source code` (builds `wiki/code/` and `wiki/projects/`).
+- Boards: `/power-platform-wiki-update --source devops`. Dataverse: `/power-platform-wiki-update --source dataverse` (check `pacx auth ping`). F&O: `/power-platform-wiki-update --source fno`.
+- Documents and minutes: drop files in `llm-wiki/raw/<folder>/`, then `/power-platform-wiki-ingest <file>` or `/power-platform-wiki-update --full`.
+- Publishing: `/power-platform-wiki-update --publish` once the lint is clean.
+- Always available: `/power-platform-wiki-query <question>`, `/power-platform-wiki-update --lint`, `/power-platform-wiki-config`.
 
 ## Bookkeeping
 

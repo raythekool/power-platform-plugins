@@ -21,7 +21,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $pluginRoot = Join-Path $RepoRoot 'plugins/power-platform-llm-wiki'
-$expectedSkills = @('init', 'config', 'update', 'ingest', 'query')
+$expectedSkills = @('power-platform-wiki-init', 'power-platform-wiki-config', 'power-platform-wiki-update', 'power-platform-wiki-ingest', 'power-platform-wiki-query')
 $errors = [System.Collections.Generic.List[string]]::new()
 $warnings = [System.Collections.Generic.List[string]]::new()
 
@@ -81,9 +81,9 @@ else {
 $required = @('references/AGENTS.md', 'references/publishing.md', 'references/tfvc.md', 'scripts/Install-Engine.ps1', 'scripts/LlmWiki.Common.ps1', 'scripts/Test-WikiLint.ps1', 'scripts/Get-RawDelta.ps1', 'scripts/Get-CodeInventory.ps1', 'scripts/Get-WikiGraph.ps1', 'scripts/Export-Wiki.ps1', 'scripts/Test-Prerequisites.ps1',
     'templates/meeting.md', 'templates/requirement.md', 'templates/design.md', 'templates/adr.md', 'templates/code-component.md', 'templates/source.md',
     'references/profiles/power-platform.md', 'references/profiles/dynamics-fno.md', 'references/profiles/generic.md',
-    'skills/init/assets/wiki.config.yml', 'skills/init/assets/mcp-servers.json', 'skills/init/assets/copilot-snippet.md', 'skills/init/assets/wiki-index.md', 'skills/init/assets/automation-prompt.md', 'skills/init/assets/copilot-setup-steps.yml')
+    'skills/power-platform-wiki-init/assets/wiki.config.yml', 'skills/power-platform-wiki-init/assets/mcp-servers.json', 'skills/power-platform-wiki-init/assets/copilot-snippet.md', 'skills/power-platform-wiki-init/assets/wiki-index.md', 'skills/power-platform-wiki-init/assets/automation-prompt.md', 'skills/power-platform-wiki-init/assets/copilot-setup-steps.yml')
 foreach ($r in $required) { if (-not (Test-Path -LiteralPath (Join-Path $pluginRoot $r))) { $errors.Add("Missing engine file: $r") } }
-$mcpAsset = Read-Json (Join-Path $pluginRoot 'skills/init/assets/mcp-servers.json')
+$mcpAsset = Read-Json (Join-Path $pluginRoot 'skills/power-platform-wiki-init/assets/mcp-servers.json')
 if ($mcpAsset) {
     # Claude Code reads an entry without 'type' as stdio, so a url-only entry would fail in .mcp.json.
     foreach ($s in $mcpAsset.servers.PSObject.Properties) {
@@ -93,8 +93,8 @@ if ($mcpAsset) {
 }
 
 # 5. Legacy references and link syntax
-$docs = Get-ChildItem -LiteralPath $pluginRoot -Recurse -File -Include '*.md', '*.yml', '*.json'
-$legacy = 'CLAUDE_PLUGIN_ROOT|llm-wiki/skills/|skills/init\.md|llm-wiki-sync-|llm-wiki-full-update|copilot_setup\b|@azure-devops/mcp@latest'
+$docs = Get-ChildItem -LiteralPath $pluginRoot -Recurse -File -Include '*.md', '*.yml', '*.json' | Where-Object Name -ne 'CHANGELOG.md'
+$legacy = 'power-platform-llm-wiki:(init|config|update|ingest|query)\b|CLAUDE_PLUGIN_ROOT|llm-wiki/skills/|skills/init\.md|llm-wiki-sync-|llm-wiki-full-update|copilot_setup\b|@azure-devops/mcp@latest'
 foreach ($f in $docs) {
     foreach ($m in (Select-String -LiteralPath $f.FullName -Pattern $legacy)) { $errors.Add("Legacy reference in $([IO.Path]::GetRelativePath($RepoRoot, $f.FullName)):$($m.LineNumber): $($m.Matches[0].Value)") }
 }

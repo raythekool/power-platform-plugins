@@ -1,5 +1,5 @@
 ---
-name: query
+name: power-platform-wiki-query
 description: "Answer a project question using only the LLM Wiki (never general knowledge): reads wiki/index.md, follows relevant pages, cites every claim with links, reports certification status, contradictions, drift and gaps, and can save the answer as a reusable FAQ page in wiki/reference/queries/."
 argument-hint: "<question>"
 user-invocable: true
@@ -30,7 +30,7 @@ user-invocable: true
     - state the status of the main sources (draft / reviewed / certified) - prefer certified content when sources disagree;
     - surface `⚠️ Contradiction` / `⚠️ Drift` markers (`flags` and `drift` / `contradiction` relations in the graph) and `🕐 Stale` pages that affect the answer;
     - say clearly what the wiki does not cover.
-4. If the wiki has no answer: reply **"Not documented yet."** and propose the step that would add it (`/power-platform-llm-wiki:ingest <file>`, `/power-platform-llm-wiki:update --source code`, `/power-platform-llm-wiki:update --source devops`, ...). Do not use general knowledge.
+4. If the wiki has no answer: reply **"Not documented yet."** and propose the step that would add it (`/power-platform-wiki-ingest <file>`, `/power-platform-wiki-update --source code`, `/power-platform-wiki-update --source devops`, ...). Do not use general knowledge.
 5. Offer to save the answer (Yes / No). If Yes, create `wiki/reference/queries/<slug>.md` (`type: query`, `status: draft`, `updated`, `question`), with sections Question, Answer, Sources, Open questions; add it to `index.md`; append to `log.md`:
 
 ```markdown

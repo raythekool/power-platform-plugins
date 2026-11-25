@@ -13,16 +13,16 @@ Quick install in Claude Code:
 ## 🧱 Components
 
 > [!IMPORTANT]
-> Always type the full command name: `/power-platform-llm-wiki:init`, `/power-platform-llm-wiki:config`, `/power-platform-llm-wiki:update`, `/power-platform-llm-wiki:ingest`, `/power-platform-llm-wiki:query`. The short names (`/init`, `/update`, ...) belong to the tool itself and do not run this plugin.
+> Always type the full command name: `/power-platform-wiki-init`, `/power-platform-wiki-config`, `/power-platform-wiki-update`, `/power-platform-wiki-ingest`, `/power-platform-wiki-query`. The short names (`/init`, `/update`, ...) belong to the tool itself and do not run this plugin. In Claude Code the canonical form is `/power-platform-llm-wiki:power-platform-wiki-init`; the bare `/power-platform-wiki-init` works as long as no other command has the same name.
 
 |     | Component        | Path                       | Purpose                                                                                                |
 | --- | ---------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
 | 🤖   | Agent            | `agents/llm-wiki.agent.md` | **LLM Wiki** agent: bootstrap, routing to skills, core rules                                           |
-| 🧙   | Skill `init`     | `skills/init/`             | Wizard, scaffolding, engine installation, host integration (assets in `skills/init/assets/`)           |
-| ⚙️   | Skill `config`   | `skills/config/`           | Change settings, `--refresh-engine`, `--migrate` (v2 -> v3)                                            |
-| 🔄   | Skill `update`   | `skills/update/`           | Sources (code, devops, dataverse, fno, github), `--full`, `--lint`, `--publish`, `--sprint`, lifecycle |
-| 📥   | Skill `ingest`   | `skills/ingest/`           | Meetings, FDD, TDD, ADR, generic documents                                                             |
-| 💬   | Skill `query`    | `skills/query/`            | Grounded answers with citations                                                                        |
+| 🧙   | Skill `power-platform-wiki-init`     | `skills/power-platform-wiki-init/`             | Wizard, scaffolding, engine installation, host integration (assets in `skills/power-platform-wiki-init/assets/`)           |
+| ⚙️   | Skill `power-platform-wiki-config`   | `skills/power-platform-wiki-config/`           | Change settings, `--refresh-engine`, `--migrate` (v2 -> v3)                                            |
+| 🔄   | Skill `power-platform-wiki-update`   | `skills/power-platform-wiki-update/`           | Sources (code, devops, dataverse, fno, github), `--full`, `--lint`, `--publish`, `--sprint`, lifecycle |
+| 📥   | Skill `power-platform-wiki-ingest`   | `skills/power-platform-wiki-ingest/`           | Meetings, FDD, TDD, ADR, generic documents                                                             |
+| 💬   | Skill `power-platform-wiki-query`    | `skills/power-platform-wiki-query/`            | Grounded answers with citations                                                                        |
 | 📘   | Operating manual | `references/AGENTS.md`     | Installed as `llm-wiki/AGENTS.md`                                                                      |
 | 🧩   | Profiles         | `references/profiles/`     | `power-platform`, `dynamics-fno`, `generic`                                                            |
 | 🌐   | Publishing       | `references/publishing.md` | Azure DevOps Wiki / GitHub Wiki procedure                                                              |

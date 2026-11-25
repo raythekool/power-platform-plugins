@@ -90,4 +90,4 @@ CI runs the same checks, except `claude plugin validate`. Open a pull request fr
 - Wiki content conventions (links, front matter, lifecycle) live in `references/AGENTS.md`; change them there and in `Test-WikiLint.ps1` together.
 - Every script change gets a fixture and assertions in `tests/power-platform-llm-wiki/Invoke-Tests.ps1`.
 - Images are self-contained SVG files in `docs/power-platform-llm-wiki/images/`, with a background and `<title>`/`<desc>`. The website copies them at build time.
-- Breaking changes to links, front matter, configuration or host layout require migration steps in `/power-platform-llm-wiki:config --migrate` and in `docs/power-platform-llm-wiki/`. After an update, projects run `/power-platform-llm-wiki:config --refresh-engine`.
+- Breaking changes to links, front matter, configuration or host layout require migration steps in `/power-platform-wiki-config --migrate` and in `docs/power-platform-llm-wiki/`. After an update, projects run `/power-platform-wiki-config --refresh-engine`.

@@ -1,11 +1,11 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-    Installs or refreshes the managed LLM Wiki engine in a host project (used by `init` and `config --refresh-engine`).
+    Installs or refreshes the managed LLM Wiki engine in a host project (used by `power-platform-wiki-init` and `power-platform-wiki-config --refresh-engine`).
 .DESCRIPTION
     Copies from the plugin into <LlmWikiPath>:
       AGENTS.md                         <- references/AGENTS.md
-      .engine/skills/<name>/SKILL.md    <- skills/{update,ingest,query}/SKILL.md (for headless runs)
+      .engine/skills/<name>/SKILL.md    <- skills/power-platform-wiki-{update,ingest,query}/SKILL.md (for headless runs; short folder names kept stable)
       .engine/scripts/                  <- scripts/*.ps1
       .engine/templates/                <- templates/*.md
       .engine/profiles/                 <- references/profiles/*.md
@@ -39,7 +39,7 @@ Copy-Into (Join-Path $pluginRoot 'references/AGENTS.md') (Join-Path $LlmWikiPath
 Copy-Into (Join-Path $pluginRoot 'references/publishing.md') (Join-Path $engine 'publishing.md')
 Copy-Into (Join-Path $pluginRoot 'references/tfvc.md') (Join-Path $engine 'tfvc.md')
 foreach ($s in @('update', 'ingest', 'query')) {
-    Copy-Into (Join-Path $pluginRoot "skills/$s/SKILL.md") (Join-Path $engine "skills/$s/SKILL.md")
+    Copy-Into (Join-Path $pluginRoot "skills/power-platform-wiki-$s/SKILL.md") (Join-Path $engine "skills/$s/SKILL.md")
 }
 foreach ($f in Get-ChildItem -LiteralPath (Join-Path $pluginRoot 'scripts') -Filter '*.ps1' -File) { Copy-Into $f.FullName (Join-Path $engine "scripts/$($f.Name)") }
 foreach ($f in Get-ChildItem -LiteralPath (Join-Path $pluginRoot 'templates') -Filter '*.md' -File) { Copy-Into $f.FullName (Join-Path $engine "templates/$($f.Name)") }

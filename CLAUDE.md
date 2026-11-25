@@ -63,7 +63,7 @@ Run only the checks for the plugin you touched, plus `validate-marketplace.mjs`.
 - Every script change ⇒ fixture + assertions in `tests/power-platform-llm-wiki/Invoke-Tests.ps1`.
 - Skills reference scripts as `llm-wiki/.engine/scripts/<name>.ps1`; no `context:` or `disable-model-invocation: true` in front matter.
 - Wiki conventions live in `references/AGENTS.md` — change them together with `Test-WikiLint.ps1`.
-- Breaking changes to links/front matter/config need migration in `/power-platform-llm-wiki:config --migrate` and in `docs/`.
+- Breaking changes to links/front matter/config need migration in `/power-platform-wiki-config --migrate` and in `docs/`.
 
 ## Environment notes
 

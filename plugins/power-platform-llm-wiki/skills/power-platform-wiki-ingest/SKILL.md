@@ -1,5 +1,5 @@
 ---
-name: ingest
+name: power-platform-wiki-ingest
 description: "Process one source from llm-wiki/raw/ into the wiki: meeting minutes and Teams transcripts (structured synthesis with decisions, action items, risks), FDD / functional analysis (one requirement page per REQ id), TDD / specs (design pages), ADRs, generic documents. Uses standard templates, updates related pages and the index, flags contradictions, records provenance. Auto-detects the type from the folder; --type overrides."
 argument-hint: "<file in llm-wiki/raw/> [--type meeting|fdd|tdd|adr|generic]"
 user-invocable: true
