@@ -3,7 +3,7 @@
 Percorso guidato, un passo alla volta, per configurare la wiki di un progetto. Per ogni passo trovi **cosa ti chiede il wizard**, **come scegliere** e **come verificare** di aver fatto bene. Per l'uso quotidiano passa poi alla [guida utente](guida-utente.md).
 
 > [!TIP]
-> Non devi conoscere i file di configurazione: scrivi `/power-platform-llm-wiki:init` all'agente **LLM Wiki** e rispondi alle domande. Questa pagina spiega cosa rispondere e perché.
+> Non devi conoscere i file di configurazione: scrivi `/power-platform-wiki-init` all'agente **LLM Wiki** e rispondi alle domande. Questa pagina spiega cosa rispondere e perché.
 >
 > Preferisci seguirlo un passo alla volta, spuntando le verifiche? Usa la [versione web interattiva](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/wizard.html).
 
@@ -26,15 +26,15 @@ Il wizard funziona in tre ambienti. Scegli quello che usi: i passi seguenti indi
 
 | Ambiente                  | Installazione (passo 1)                                                                         | Come avvii il wizard (passo 2)  |
 | ------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- |
-| 🟦 **VS Code**             | Impostazioni e vista Extensions                                                                 | `/power-platform-llm-wiki:init` |
-| ⌨️ **GitHub Copilot CLI** | Copilot CLI (`winget`, `brew` o `npm`), poi `copilot plugin marketplace add` e `plugin install` | `/power-platform-llm-wiki:init` |
-| 🟠 **Claude Code**         | `claude plugin install ... --marketplace` (2.1.275+)                                            | `/power-platform-llm-wiki:init` |
+| 🟦 **VS Code**             | Impostazioni e vista Extensions                                                                 | `/power-platform-wiki-init` |
+| ⌨️ **GitHub Copilot CLI** | Copilot CLI (`winget`, `brew` o `npm`), poi `copilot plugin marketplace add` e `plugin install` | `/power-platform-wiki-init` |
+| 🟠 **Claude Code**         | `claude plugin install ... --marketplace` (2.1.275+)                                            | `/power-platform-wiki-init` |
 
 > [!NOTE]
-> Copilot CLI e Claude Code non leggono `.vscode/mcp.json`. Al [passo 3](#-passo-3---progetto-profili-e-strumenti) dici a `/power-platform-llm-wiki:init` quali strumenti usa il team: scriverà anche `.mcp.json` (letto da entrambi) e, per Claude Code, `CLAUDE.md`.
+> Copilot CLI e Claude Code non leggono `.vscode/mcp.json`. Al [passo 3](#-passo-3---progetto-profili-e-strumenti) dici a `/power-platform-wiki-init` quali strumenti usa il team: scriverà anche `.mcp.json` (letto da entrambi) e, per Claude Code, `CLAUDE.md`.
 
 > [!IMPORTANT]
-> Scrivi sempre il **nome completo** del comando, `/power-platform-llm-wiki:<comando>` (`:init`, `:config`, `:update`, `:ingest`, `:query`), come in tutta la pagina. I nomi brevi come `/init` o `/update` appartengono allo strumento (per esempio `/init` crea il file di istruzioni del progetto) e non avviano questo plugin. Se lo strumento non propone il nome completo, scegli l'agente **LLM Wiki** (nella chat di VS Code, o con `/agent` in Copilot CLI) e chiedi l'operazione a parole.
+> Scrivi sempre il **nome completo** del comando, `/power-platform-wiki-<comando>` (`init`, `config`, `update`, `ingest`, `query`), come in tutta la pagina. I nomi brevi come `/init` o `/update` appartengono allo strumento (per esempio `/init` crea il file di istruzioni del progetto) e non avviano questo plugin. Se lo strumento non propone il nome completo, scegli l'agente **LLM Wiki** (nella chat di VS Code, o con `/agent` in Copilot CLI) e chiedi l'operazione a parole.
 
 ---
 
@@ -67,7 +67,7 @@ Servono sempre **PowerShell 7**, **git** e lo strumento che hai scelto (**VS Cod
 ✅ **Verifica:** i comandi che ti servono rispondono con un numero di versione. Se `pwsh` manca, **fermati**: senza PowerShell 7 la wiki non funziona.
 
 > [!NOTE]
-> L'agente non installa nulla da solo. `/power-platform-llm-wiki:init` esegue un controllo in sola lettura (`Test-Prerequisites.ps1`) prima del wizard e di nuovo dopo la conferma, sulle fonti scelte: ti segnala cosa manca, con il comando per installarlo, e ti lascia decidere.
+> L'agente non installa nulla da solo. `/power-platform-wiki-init` esegue un controllo in sola lettura (`Test-Prerequisites.ps1`) prima del wizard e di nuovo dopo la conferma, sulle fonti scelte: ti segnala cosa manca, con il comando per installarlo, e ti lascia decidere.
 
 ---
 
@@ -120,27 +120,27 @@ claude plugin marketplace add raythekool/power-platform-plugins
 claude plugin install power-platform-llm-wiki@power-platform-plugins
 ```
 
-I comandi del plugin si chiamano `/power-platform-llm-wiki:init`, `:config`, `:update`, `:ingest` e `:query`.
+I comandi del plugin si chiamano `/power-platform-wiki-init`, `/power-platform-wiki-config`, `/power-platform-wiki-update`, `/power-platform-wiki-ingest` e `/power-platform-wiki-query`.
 
 ✅ **Verifica:**
 
 - VS Code: nella chat, nell'elenco degli agenti compare **LLM Wiki**.
 - Copilot CLI: `copilot plugin list` mostra il plugin e `/agent` elenca **LLM Wiki**.
-- Claude Code: `claude plugin list` mostra il plugin; scrivendo `/power-platform-llm-wiki:` le skill si completano da sole.
+- Claude Code: `claude plugin list` mostra il plugin; scrivendo `/power-platform-wiki-` le skill si completano da sole.
 
 ---
 
-### 🚪 Passo 2 - Avvia `/power-platform-llm-wiki:init`
+### 🚪 Passo 2 - Avvia `/power-platform-wiki-init`
 
 1. Apri la cartella del **repository del progetto**, quello che ospiterà la cartella `llm-wiki/`: in VS Code dal menu File, da terminale con `cd` (poi avvia `copilot` o `claude`).
-2. Scrivi il comando completo nella chat (VS Code) o nella sessione (Copilot CLI, Claude Code): `/power-platform-llm-wiki:init`. Non scrivere `/init`: è il comando dello strumento, non quello del plugin.
+2. Scrivi il comando completo nella chat (VS Code) o nella sessione (Copilot CLI, Claude Code): `/power-platform-wiki-init`. Non scrivere `/init`: è il comando dello strumento, non quello del plugin.
 
 Il wizard ti chiede subito la modalità:
 
 | Scelta             | Quando sceglierla                                                                                                         |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
 | 🧭 **Guidato**      | Prima volta, o non conosci i file di configurazione (consigliato)                                                         |
-| 📝 **Self-service** | Sai già cosa vuoi: crea un file `wiki.config.yml` commentato, lo compili tu e poi lanci `/power-platform-llm-wiki:config` |
+| 📝 **Self-service** | Sai già cosa vuoi: crea un file `wiki.config.yml` commentato, lo compili tu e poi lanci `/power-platform-wiki-config` |
 
 Il resto di questa pagina segue la modalità guidata.
 
@@ -160,15 +160,15 @@ Il resto di questa pagina segue la modalità guidata.
 | `dynamics-fno`   | usa Finance & Operations: tabelle, estensioni, classi, data entity, sicurezza |
 | `generic`        | è fatto di integrazioni, Azure Functions, API, .NET                           |
 
-- **Strumenti** (puoi sceglierne più di uno): quelli che il team userà con la wiki. Il wizard preseleziona quello da cui stai lanciando `/power-platform-llm-wiki:init`.
+- **Strumenti** (puoi sceglierne più di uno): quelli che il team userà con la wiki. Il wizard preseleziona quello da cui stai lanciando `/power-platform-wiki-init`.
 
-| Strumento     | Cosa scrive `/power-platform-llm-wiki:init` in più                               |
+| Strumento     | Cosa scrive `/power-platform-wiki-init` in più                               |
 | ------------- | -------------------------------------------------------------------------------- |
 | `vscode`      | `.vscode/mcp.json`                                                               |
 | `copilot-cli` | `.mcp.json` nella radice del progetto                                            |
 | `claude-code` | `.mcp.json` e `CLAUDE.md`, che importa `.github/copilot-instructions.md` con `@` |
 
-✅ **Verifica:** i profili scelti corrispondono a ciò che c'è davvero nel codice e gli strumenti a quelli del team. In caso di dubbio scegli quelli che ti servono ora: li cambi più avanti con `/power-platform-llm-wiki:config`.
+✅ **Verifica:** i profili scelti corrispondono a ciò che c'è davvero nel codice e gli strumenti a quelli del team. In caso di dubbio scegli quelli che ti servono ora: li cambi più avanti con `/power-platform-wiki-config`.
 
 ---
 
@@ -249,9 +249,9 @@ Il wizard te lo chiede **solo** se il repository ospite è su GitHub.
 | -------- | ----------------------------------------------------------------------------- |
 | `weekly` | Aggiornamento settimanale automatico (consigliato per iniziare)               |
 | `daily`  | Aggiornamento ogni giorno                                                     |
-| `manual` | Nessuna automazione: aggiorni tu con `/power-platform-llm-wiki:update --full` |
+| `manual` | Nessuna automazione: aggiorni tu con `/power-platform-wiki-update --full` |
 
-Se scegli una pianificazione, l'agente ti dà il testo da incollare in **Repository → Agents → Automations → Create new → On a schedule**. Se il repository è su Azure DevOps, salta questo passo e lancia `/power-platform-llm-wiki:update --full` dal tuo strumento quando serve.
+Se scegli una pianificazione, l'agente ti dà il testo da incollare in **Repository → Agents → Automations → Create new → On a schedule**. Se il repository è su Azure DevOps, salta questo passo e lancia `/power-platform-wiki-update --full` dal tuo strumento quando serve.
 
 **Sprint** (solo con Azure DevOps Boards): durata (predefinita 2 settimane) e formato del nome (`YYYY-SNN`).
 
@@ -266,7 +266,7 @@ Al termine il progetto contiene:
 
 | Cosa                              | A cosa serve                                                                     |
 | --------------------------------- | -------------------------------------------------------------------------------- |
-| `llm-wiki/wiki.config.yml`        | Le tue scelte (puoi modificarlo a mano o con `/power-platform-llm-wiki:config`)  |
+| `llm-wiki/wiki.config.yml`        | Le tue scelte (puoi modificarlo a mano o con `/power-platform-wiki-config`)  |
 | `llm-wiki/raw/`                   | Dove metti FDD, TDD, verbali e altri documenti                                   |
 | `llm-wiki/wiki/`                  | La wiki vera e propria (pagine Markdown)                                         |
 | `llm-wiki/.engine/` e `AGENTS.md` | Il motore gestito dal plugin: **non modificarli**                                |
@@ -295,7 +295,7 @@ Accetta la richiesta di fiducia nella cartella quando avvii `copilot`: i server 
 2. Con `/context` controlla che `CLAUDE.md` compaia tra i **Memory files**.
 
 > [!TIP]
-> Wiki creata con una versione precedente del plugin? Lancia `/power-platform-llm-wiki:config`, scegli **strumenti** e aggiungi `copilot-cli` o `claude-code`: crea i file mancanti senza toccare il resto.
+> Wiki creata con una versione precedente del plugin? Lancia `/power-platform-wiki-config`, scegli **strumenti** e aggiungi `copilot-cli` o `claude-code`: crea i file mancanti senza toccare il resto.
 
 ---
 
@@ -305,23 +305,23 @@ Scegli in base alle fonti che hai attivato:
 
 | Se hai attivato…       | Scrivi all'agente                                                                                                             |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 🧬 Codice               | `/power-platform-llm-wiki:update --source code`                                                                               |
-| 🗄️ Dataverse            | `/power-platform-llm-wiki:update --source dataverse`                                                                          |
-| 🏭 F&O                  | `/power-platform-llm-wiki:update --source fno`                                                                                |
-| 📋 Boards               | `/power-platform-llm-wiki:update --source devops`                                                                             |
-| 📄 Documenti già pronti | copia i file in `llm-wiki/raw/analysis/`, `specs/` o `meetings/`, poi `/power-platform-llm-wiki:ingest raw/<cartella>/<file>` |
+| 🧬 Codice               | `/power-platform-wiki-update --source code`                                                                               |
+| 🗄️ Dataverse            | `/power-platform-wiki-update --source dataverse`                                                                          |
+| 🏭 F&O                  | `/power-platform-wiki-update --source fno`                                                                                |
+| 📋 Boards               | `/power-platform-wiki-update --source devops`                                                                             |
+| 📄 Documenti già pronti | copia i file in `llm-wiki/raw/analysis/`, `specs/` o `meetings/`, poi `/power-platform-wiki-ingest raw/<cartella>/<file>` |
 
 Quando hai finito:
 
-1. `/power-platform-llm-wiki:update --lint` controlla la qualità (deve restare a 0 errori).
-2. `/power-platform-llm-wiki:query "come è fatto il modulo vendite?"` prova una domanda sulla wiki.
-3. `/power-platform-llm-wiki:update --publish` pubblica, se hai configurato la pubblicazione.
+1. `/power-platform-wiki-update --lint` controlla la qualità (deve restare a 0 errori).
+2. `/power-platform-wiki-query "come è fatto il modulo vendite?"` prova una domanda sulla wiki.
+3. `/power-platform-wiki-update --publish` pubblica, se hai configurato la pubblicazione.
 
 ---
 
 ### 🔁 Cambiare idea più tardi
 
-Non devi rifare `/power-platform-llm-wiki:init`. Scrivi `/power-platform-llm-wiki:config` e scegli cosa cambiare: aggiungere o togliere fonti, profili, lingua, pubblicazione, governance, automazione. Dopo un aggiornamento del plugin lancia `/power-platform-llm-wiki:config --refresh-engine`, poi `/power-platform-llm-wiki:update --lint`.
+Non devi rifare `/power-platform-wiki-init`. Scrivi `/power-platform-wiki-config` e scegli cosa cambiare: aggiungere o togliere fonti, profili, lingua, pubblicazione, governance, automazione. Dopo un aggiornamento del plugin lancia `/power-platform-wiki-config --refresh-engine`, poi `/power-platform-wiki-update --lint`.
 
 ### 🩺 Se qualcosa non funziona
 
@@ -333,9 +333,9 @@ Non devi rifare `/power-platform-llm-wiki:init`. Scrivi `/power-platform-llm-wik
 | `tf` non trovato (codice in TFVC)                           | Apri una **Developer PowerShell for VS**, oppure usa `provider: local` con una copia scaricata dal portale web                                                                                                                |
 | `tf` segnala modifiche in sospeso nel workspace             | L'agente si ferma per non toccare il tuo lavoro: fai check-in o annulla le modifiche tu, oppure usa un workspace dedicato                                                                                                     |
 | Dataverse non risponde                                      | Esegui `pacx auth list` e `pacx auth ping`; seleziona il profilo giusto con `pacx auth select`                                                                                                                                |
-| Le Boards non restituiscono dati                            | Controlla organizzazione e progetto con `/power-platform-llm-wiki:config` e verifica di avere accesso al progetto                                                                                                             |
-| Il lint segnala errori dopo `/power-platform-llm-wiki:init` | Leggi l'elenco degli errori (o il report `llm-wiki/wiki/lint-*.md` generato da `/power-platform-llm-wiki:update --lint`), correggi e rilancia `/power-platform-llm-wiki:update --lint`                                        |
-| Vuoi ripartire da zero                                      | Rilancia `/power-platform-llm-wiki:init`: non sovrascrive le pagine né i documenti già presenti in `raw/`                                                                                                                     |
+| Le Boards non restituiscono dati                            | Controlla organizzazione e progetto con `/power-platform-wiki-config` e verifica di avere accesso al progetto                                                                                                             |
+| Il lint segnala errori dopo `/power-platform-wiki-init` | Leggi l'elenco degli errori (o il report `llm-wiki/wiki/lint-*.md` generato da `/power-platform-wiki-update --lint`), correggi e rilancia `/power-platform-wiki-update --lint`                                        |
+| Vuoi ripartire da zero                                      | Rilancia `/power-platform-wiki-init`: non sovrascrive le pagine né i documenti già presenti in `raw/`                                                                                                                     |
 
 > [!TIP]
 > Altre risposte nelle [domande frequenti](guida-utente.md#-domande-frequenti).

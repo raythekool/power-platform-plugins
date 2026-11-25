@@ -118,13 +118,13 @@
             </h1>
             <p class="lead" lang="en">
               You do not need to know the configuration files: run
-              <code>/power-platform-llm-wiki:init</code> and answer the
+              <code>/power-platform-wiki-init</code> and answer the
               questions. For each step you find what the wizard asks, how to
               choose and how to verify you got it right.
             </p>
             <p class="lead" lang="it">
               Non devi conoscere i file di configurazione: lancia
-              <code>/power-platform-llm-wiki:init</code> e rispondi alle
+              <code>/power-platform-wiki-init</code> e rispondi alle
               domande. Per ogni passo trovi cosa ti chiede il wizard, come
               scegliere e come verificare di aver fatto bene.
             </p>
@@ -206,11 +206,11 @@
               <b>Claude Code</b>
               <span class="env-d" lang="en"
                 >In the terminal, with
-                <code>/power-platform-llm-wiki:…</code> skills.</span
+                <code>/power-platform-wiki-…</code> skills.</span
               >
               <span class="env-d" lang="it"
                 >Da terminale, con le skill
-                <code>/power-platform-llm-wiki:…</code>.</span
+                <code>/power-platform-wiki-…</code>.</span
               >
             </button>
           </div>
@@ -239,7 +239,7 @@
                   <b>Start</b
                   ><span
                     >In the chat type
-                    <code>/power-platform-llm-wiki:init</code> (not
+                    <code>/power-platform-wiki-init</code> (not
                     <code>/init</code>, which is the VS Code command that
                     creates the project instructions). If it is not suggested,
                     pick the <b>LLM Wiki</b> agent and ask for the setup in
@@ -250,7 +250,7 @@
                   <b>Good to know</b
                   ><span
                     >At step 3 choose <code>vscode</code> among the tools:
-                    <code>/power-platform-llm-wiki:init</code> writes
+                    <code>/power-platform-wiki-init</code> writes
                     <code>.vscode/mcp.json</code> and
                     <code>.github/copilot-instructions.md</code>, which VS Code
                     uses automatically.</span
@@ -282,7 +282,7 @@
                   <b>Avvia</b
                   ><span
                     >Nella chat scrivi
-                    <code>/power-platform-llm-wiki:init</code> (non
+                    <code>/power-platform-wiki-init</code> (non
                     <code>/init</code>, che è il comando di VS Code per creare
                     le istruzioni del progetto). Se non viene suggerito, scegli
                     l'agente <b>LLM Wiki</b> e chiedi il setup a parole.</span
@@ -292,7 +292,7 @@
                   <b>Da sapere</b
                   ><span
                     >Al passo 3 scegli <code>vscode</code> tra gli strumenti:
-                    <code>/power-platform-llm-wiki:init</code> scrive
+                    <code>/power-platform-wiki-init</code> scrive
                     <code>.vscode/mcp.json</code> e
                     <code>.github/copilot-instructions.md</code>, che VS Code
                     usa in automatico.</span
@@ -376,7 +376,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                 <li>
                   <b>Start</b
                   ><span
-                    >Type <code>/power-platform-llm-wiki:init</code> (not
+                    >Type <code>/power-platform-wiki-init</code> (not
                     <code>/init</code>, which is the Copilot CLI command that
                     creates the project instructions). If it is not suggested,
                     type <code>/agent</code>, pick <b>LLM Wiki</b> and ask for
@@ -387,7 +387,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   <b>Good to know</b
                   ><span
                     >At step 3 choose <code>copilot-cli</code> among the tools:
-                    <code>/power-platform-llm-wiki:init</code> also writes
+                    <code>/power-platform-wiki-init</code> also writes
                     <code>.mcp.json</code>, because Copilot CLI does not read
                     <code>.vscode/mcp.json</code>. Accept the folder trust
                     prompt so the servers load (<a href="#step-8"
@@ -471,7 +471,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                 <li>
                   <b>Avvia</b
                   ><span
-                    >Scrivi <code>/power-platform-llm-wiki:init</code> (non
+                    >Scrivi <code>/power-platform-wiki-init</code> (non
                     <code>/init</code>, che è il comando di Copilot CLI per
                     creare le istruzioni del progetto). Se non viene suggerito,
                     scrivi <code>/agent</code>, scegli <b>LLM Wiki</b> e chiedi
@@ -482,7 +482,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   <b>Da sapere</b
                   ><span
                     >Al passo 3 scegli <code>copilot-cli</code> tra gli
-                    strumenti: <code>/power-platform-llm-wiki:init</code> scrive
+                    strumenti: <code>/power-platform-wiki-init</code> scrive
                     anche <code>.mcp.json</code>, perché Copilot CLI non legge
                     <code>.vscode/mcp.json</code>. Accetta la richiesta di
                     fiducia nella cartella perché i server si carichino (<a
@@ -530,11 +530,11 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                 <li>
                   <b>Start</b
                   ><span
-                    >Type <code>/power-platform-llm-wiki:init</code> (not
+                    >Type <code>/power-platform-wiki-init</code> (not
                     <code>/init</code>, which is the Claude Code command that
                     creates <code>CLAUDE.md</code>). The other skills use the
-                    same prefix: <code>:config</code>, <code>:update</code>,
-                    <code>:ingest</code>, <code>:query</code>. The steps below
+                    same prefix: <code>/power-platform-wiki-config</code>, <code>/power-platform-wiki-update</code>,
+                    <code>/power-platform-wiki-ingest</code>, <code>/power-platform-wiki-query</code>. The steps below
                     always show the full name.</span
                   >
                 </li>
@@ -542,7 +542,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   <b>Good to know</b
                   ><span
                     >At step 3 choose <code>claude-code</code> among the tools:
-                    <code>/power-platform-llm-wiki:init</code> also writes
+                    <code>/power-platform-wiki-init</code> also writes
                     <code>.mcp.json</code> and a <code>CLAUDE.md</code> that
                     imports the wiki instructions. At the next start approve the
                     project servers (<a href="#step-8">details in step 8</a
@@ -586,11 +586,11 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                 <li>
                   <b>Avvia</b
                   ><span
-                    >Scrivi <code>/power-platform-llm-wiki:init</code> (non
+                    >Scrivi <code>/power-platform-wiki-init</code> (non
                     <code>/init</code>, che è il comando di Claude Code per
                     creare <code>CLAUDE.md</code>). Le altre skill usano lo
-                    stesso prefisso: <code>:config</code>, <code>:update</code>,
-                    <code>:ingest</code>, <code>:query</code>. I passi qui sotto
+                    stesso prefisso: <code>/power-platform-wiki-config</code>, <code>/power-platform-wiki-update</code>,
+                    <code>/power-platform-wiki-ingest</code>, <code>/power-platform-wiki-query</code>. I passi qui sotto
                     mostrano sempre il nome completo.</span
                   >
                 </li>
@@ -598,7 +598,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   <b>Da sapere</b
                   ><span
                     >Al passo 3 scegli <code>claude-code</code> tra gli
-                    strumenti: <code>/power-platform-llm-wiki:init</code> scrive
+                    strumenti: <code>/power-platform-wiki-init</code> scrive
                     anche <code>.mcp.json</code> e un <code>CLAUDE.md</code> che
                     importa le istruzioni della wiki. Al successivo avvio
                     approva i server del progetto (<a href="#step-8"
@@ -859,7 +859,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   </div>
                   <p class="callout info">
                     <b>Note:</b> the agent installs nothing on its own.
-                    <code>/power-platform-llm-wiki:init</code> runs a read-only
+                    <code>/power-platform-wiki-init</code> runs a read-only
                     check (<code>Test-Prerequisites.ps1</code>) before the
                     wizard and again after you confirm, on the sources you
                     chose: it tells you what is missing, with the install
@@ -945,7 +945,7 @@ copilot plugin install power-platform-llm-wiki@power-platform-plugins</code></pr
                   </div>
                   <p class="callout info">
                     <b>Nota:</b> l'agente non installa nulla da solo.
-                    <code>/power-platform-llm-wiki:init</code> esegue un
+                    <code>/power-platform-wiki-init</code> esegue un
                     controllo in sola lettura
                     (<code>Test-Prerequisites.ps1</code>) prima del wizard e di
                     nuovo dopo la conferma, sulle fonti scelte: ti segnala cosa
@@ -1232,26 +1232,26 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   </div>
                   <p lang="en">
                     The skills are called
-                    <code>/power-platform-llm-wiki:init</code>,
-                    <code>:config</code>, <code>:update</code>,
-                    <code>:ingest</code> and <code>:query</code>.
+                    <code>/power-platform-wiki-init</code>,
+                    <code>/power-platform-wiki-config</code>, <code>/power-platform-wiki-update</code>,
+                    <code>/power-platform-wiki-ingest</code> and <code>/power-platform-wiki-query</code>.
                   </p>
                   <p lang="it">
                     Le skill si chiamano
-                    <code>/power-platform-llm-wiki:init</code>,
-                    <code>:config</code>, <code>:update</code>,
-                    <code>:ingest</code> e <code>:query</code>.
+                    <code>/power-platform-wiki-init</code>,
+                    <code>/power-platform-wiki-config</code>, <code>/power-platform-wiki-update</code>,
+                    <code>/power-platform-wiki-ingest</code> e <code>/power-platform-wiki-query</code>.
                   </p>
                   <p class="verify" lang="en">
                     <b>✅ Verify:</b> <code>claude plugin list</code> shows
                     <code>power-platform-llm-wiki</code>; typing
-                    <code>/power-platform-llm-wiki:</code> in a session
+                    <code>/power-platform-wiki-</code> in a session
                     autocompletes the skills.
                   </p>
                   <p class="verify" lang="it">
                     <b>✅ Verifica:</b> <code>claude plugin list</code> mostra
                     <code>power-platform-llm-wiki</code>; scrivendo
-                    <code>/power-platform-llm-wiki:</code> in una sessione le
+                    <code>/power-platform-wiki-</code> in una sessione le
                     skill si completano da sole.
                   </p>
                 </div>
@@ -1276,9 +1276,9 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                     <h2 id="step-2-t" tabindex="-1">
                       🚪
                       <span lang="en"
-                        >Start <code>/power-platform-llm-wiki:init</code></span
+                        >Start <code>/power-platform-wiki-init</code></span
                       ><span lang="it"
-                        >Avvia <code>/power-platform-llm-wiki:init</code></span
+                        >Avvia <code>/power-platform-wiki-init</code></span
                       >
                     </h2>
                   </div>
@@ -1293,7 +1293,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       </li>
                       <li>
                         In the chat type
-                        <code>/power-platform-llm-wiki:init</code>, not
+                        <code>/power-platform-wiki-init</code>, not
                         <code>/init</code> (the VS Code command that creates the
                         project instructions).
                       </li>
@@ -1308,7 +1308,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                         <code>copilot</code>.
                       </li>
                       <li>
-                        Type <code>/power-platform-llm-wiki:init</code>, not
+                        Type <code>/power-platform-wiki-init</code>, not
                         <code>/init</code> (the Copilot CLI command that creates
                         the project instructions).
                       </li>
@@ -1322,7 +1322,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                         <code>llm-wiki/</code> folder, and start
                         <code>claude</code>.
                       </li>
-                      <li>Type <code>/power-platform-llm-wiki:init</code>.</li>
+                      <li>Type <code>/power-platform-wiki-init</code>.</li>
                       <li>
                         Answer the questions: the other skills use the same
                         prefix.
@@ -1343,7 +1343,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       ><span
                         >You already know what you want: it creates a commented
                         <code>wiki.config.yml</code>, you fill it in and then
-                        run <code>/power-platform-llm-wiki:config</code>.</span
+                        run <code>/power-platform-wiki-config</code>.</span
                       >
                     </div>
                   </div>
@@ -1359,7 +1359,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       </li>
                       <li>
                         Nella chat scrivi
-                        <code>/power-platform-llm-wiki:init</code>, non
+                        <code>/power-platform-wiki-init</code>, non
                         <code>/init</code> (il comando di VS Code che crea le
                         istruzioni del progetto).
                       </li>
@@ -1374,7 +1374,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                         <code>copilot</code>.
                       </li>
                       <li>
-                        Scrivi <code>/power-platform-llm-wiki:init</code>, non
+                        Scrivi <code>/power-platform-wiki-init</code>, non
                         <code>/init</code> (il comando di Copilot CLI che crea
                         le istruzioni del progetto).
                       </li>
@@ -1389,7 +1389,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                         <code>claude</code>.
                       </li>
                       <li>
-                        Scrivi <code>/power-platform-llm-wiki:init</code>.
+                        Scrivi <code>/power-platform-wiki-init</code>.
                       </li>
                       <li>
                         Rispondi alle domande: le altre skill usano lo stesso
@@ -1412,7 +1412,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                         >Sai già cosa vuoi: crea un file
                         <code>wiki.config.yml</code> commentato, lo compili tu e
                         poi lanci
-                        <code>/power-platform-llm-wiki:config</code>.</span
+                        <code>/power-platform-wiki-config</code>.</span
                       >
                     </div>
                   </div>
@@ -1482,7 +1482,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                     <b>Agent tools</b>: the tools the team will use with the
                     wiki (more than one is fine). The wizard pre-selects the one
                     you are running
-                    <code>/power-platform-llm-wiki:init</code> from.
+                    <code>/power-platform-wiki-init</code> from.
                   </p>
                   <div class="opts">
                     <div class="opt">
@@ -1508,7 +1508,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                     <b>✅ Verify:</b> the chosen profiles match what is really
                     in the code, and the tools match the team. When in doubt
                     pick the ones you need now: you can change them later with
-                    <code>/power-platform-llm-wiki:config</code>.
+                    <code>/power-platform-wiki-config</code>.
                   </p>
                 </div>
                 <div lang="it">
@@ -1550,7 +1550,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   <p>
                     <b>Strumenti</b>: quelli che il team userà con la wiki
                     (anche più di uno). Il wizard preseleziona quello da cui
-                    stai lanciando <code>/power-platform-llm-wiki:init</code>.
+                    stai lanciando <code>/power-platform-wiki-init</code>.
                   </p>
                   <div class="opts">
                     <div class="opt">
@@ -1576,7 +1576,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                     <b>✅ Verifica:</b> i profili scelti corrispondono a ciò che
                     c'è davvero nel codice e gli strumenti a quelli del team. In
                     caso di dubbio scegli quelli che ti servono ora: li cambi
-                    più avanti con <code>/power-platform-llm-wiki:config</code>.
+                    più avanti con <code>/power-platform-wiki-config</code>.
                   </p>
                 </div>
                 <label class="wz-done"
@@ -2108,7 +2108,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       <b><code>manual</code></b
                       ><span
                         >No automation: you update with
-                        <code>/power-platform-llm-wiki:update --full</code
+                        <code>/power-platform-wiki-update --full</code
                         >.</span
                       >
                     </div>
@@ -2120,7 +2120,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       >Repository → Agents → Automations → Create new → On a
                       schedule</b
                     >. If the repository is on Azure DevOps, skip this step and
-                    run <code>/power-platform-llm-wiki:update --full</code> from
+                    run <code>/power-platform-wiki-update --full</code> from
                     your tool when needed.
                   </p>
                   <p>
@@ -2146,7 +2146,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       <b><code>manual</code></b
                       ><span
                         >Nessuna automazione: aggiorni tu con
-                        <code>/power-platform-llm-wiki:update --full</code
+                        <code>/power-platform-wiki-update --full</code
                         >.</span
                       >
                     </div>
@@ -2159,7 +2159,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                       schedule</b
                     >. Se il repository è su Azure DevOps, salta questo passo e
                     lancia
-                    <code>/power-platform-llm-wiki:update --full</code> dal tuo
+                    <code>/power-platform-wiki-update --full</code> dal tuo
                     strumento quando serve.
                   </p>
                   <p>
@@ -2217,7 +2217,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td><code>llm-wiki/wiki.config.yml</code></td>
                           <td>
                             Your choices (edit by hand or with
-                            <code>/power-platform-llm-wiki:config</code>)
+                            <code>/power-platform-wiki-config</code>)
                           </td>
                         </tr>
                         <tr>
@@ -2293,7 +2293,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   </div>
                   <p class="callout info" data-env-only="cli claude">
                     <b>Wiki created with an older plugin version?</b> Run
-                    <code>/power-platform-llm-wiki:config</code>, choose
+                    <code>/power-platform-wiki-config</code>, choose
                     <b>agent tools</b> and add your tool: it creates the missing
                     files without touching the rest.
                   </p>
@@ -2328,7 +2328,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td><code>llm-wiki/wiki.config.yml</code></td>
                           <td>
                             Le tue scelte (puoi modificarlo a mano o con
-                            <code>/power-platform-llm-wiki:config</code>)
+                            <code>/power-platform-wiki-config</code>)
                           </td>
                         </tr>
                         <tr>
@@ -2405,7 +2405,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   </div>
                   <p class="callout info" data-env-only="cli claude">
                     <b>Wiki creata con una versione precedente del plugin?</b>
-                    Lancia <code>/power-platform-llm-wiki:config</code>, scegli
+                    Lancia <code>/power-platform-wiki-config</code>, scegli
                     <b>strumenti</b> e aggiungi il tuo: crea i file mancanti
                     senza toccare il resto.
                   </p>
@@ -2471,7 +2471,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🧬 Code</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               code</code
                             >
                           </td>
@@ -2480,7 +2480,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🗄️ Dataverse</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               dataverse</code
                             >
                           </td>
@@ -2489,7 +2489,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🏭 F&amp;O</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               fno</code
                             >
                           </td>
@@ -2498,7 +2498,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>📋 Boards</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               devops</code
                             >
                           </td>
@@ -2510,7 +2510,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                             <code>llm-wiki/raw/analysis/</code>,
                             <code>specs/</code> or <code>meetings/</code>, then
                             <code
-                              >/power-platform-llm-wiki:ingest
+                              >/power-platform-wiki-ingest
                               raw/&lt;folder&gt;/&lt;file&gt;</code
                             >
                           </td>
@@ -2521,18 +2521,18 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   <p>When you are done:</p>
                   <ol>
                     <li>
-                      <code>/power-platform-llm-wiki:update --lint</code> checks
+                      <code>/power-platform-wiki-update --lint</code> checks
                       the quality (it must stay at 0 errors).
                     </li>
                     <li>
                       <code
-                        >/power-platform-llm-wiki:query "how is the sales module
+                        >/power-platform-wiki-query "how is the sales module
                         built?"</code
                       >
                       tries a question on the wiki.
                     </li>
                     <li>
-                      <code>/power-platform-llm-wiki:update --publish</code>
+                      <code>/power-platform-wiki-update --publish</code>
                       publishes, if you configured publishing.
                     </li>
                   </ol>
@@ -2552,7 +2552,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🧬 Codice</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               code</code
                             >
                           </td>
@@ -2561,7 +2561,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🗄️ Dataverse</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               dataverse</code
                             >
                           </td>
@@ -2570,7 +2570,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>🏭 F&amp;O</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               fno</code
                             >
                           </td>
@@ -2579,7 +2579,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                           <td>📋 Boards</td>
                           <td>
                             <code
-                              >/power-platform-llm-wiki:update --source
+                              >/power-platform-wiki-update --source
                               devops</code
                             >
                           </td>
@@ -2590,7 +2590,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                             copia i file in <code>llm-wiki/raw/analysis/</code>,
                             <code>specs/</code> o <code>meetings/</code>, poi
                             <code
-                              >/power-platform-llm-wiki:ingest
+                              >/power-platform-wiki-ingest
                               raw/&lt;cartella&gt;/&lt;file&gt;</code
                             >
                           </td>
@@ -2601,18 +2601,18 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                   <p>Quando hai finito:</p>
                   <ol>
                     <li>
-                      <code>/power-platform-llm-wiki:update --lint</code>
+                      <code>/power-platform-wiki-update --lint</code>
                       controlla la qualità (deve restare a 0 errori).
                     </li>
                     <li>
                       <code
-                        >/power-platform-llm-wiki:query "come è fatto il modulo
+                        >/power-platform-wiki-query "come è fatto il modulo
                         vendite?"</code
                       >
                       prova una domanda sulla wiki.
                     </li>
                     <li>
-                      <code>/power-platform-llm-wiki:update --publish</code>
+                      <code>/power-platform-wiki-update --publish</code>
                       pubblica, se hai configurato la pubblicazione.
                     </li>
                   </ol>
@@ -2651,20 +2651,20 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
             <h2 lang="en">Change your mind later.</h2>
             <h2 lang="it">Cambiare idea più tardi.</h2>
             <p lang="en">
-              No need to run <code>/power-platform-llm-wiki:init</code> again.
-              Type <code>/power-platform-llm-wiki:config</code>
+              No need to run <code>/power-platform-wiki-init</code> again.
+              Type <code>/power-platform-wiki-config</code>
               and choose what to change: sources, profiles, language,
               publishing, governance, automation. After a plugin update run
-              <code>/power-platform-llm-wiki:config --refresh-engine</code>,
-              then <code>/power-platform-llm-wiki:update --lint</code>.
+              <code>/power-platform-wiki-config --refresh-engine</code>,
+              then <code>/power-platform-wiki-update --lint</code>.
             </p>
             <p lang="it">
-              Non devi rifare <code>/power-platform-llm-wiki:init</code>. Scrivi
-              <code>/power-platform-llm-wiki:config</code> e scegli cosa
+              Non devi rifare <code>/power-platform-wiki-init</code>. Scrivi
+              <code>/power-platform-wiki-config</code> e scegli cosa
               cambiare: fonti, profili, lingua, pubblicazione, governance,
               automazione. Dopo un aggiornamento del plugin lancia
-              <code>/power-platform-llm-wiki:config --refresh-engine</code>, poi
-              <code>/power-platform-llm-wiki:update --lint</code>.
+              <code>/power-platform-wiki-config --refresh-engine</code>, poi
+              <code>/power-platform-wiki-update --lint</code>.
             </p>
           </header>
 
@@ -2703,13 +2703,13 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
               <p lang="en" data-env-only="claude">
                 Run <code>claude plugin list</code>: if the plugin is missing,
                 repeat the install and restart the session. The commands start
-                with <code>/power-platform-llm-wiki:</code>: type it and use
+                with <code>/power-platform-wiki-</code>: type it and use
                 autocomplete.
               </p>
               <p lang="it" data-env-only="claude">
                 Esegui <code>claude plugin list</code>: se il plugin manca,
                 ripeti l'installazione e riavvia la sessione. I comandi iniziano
-                con <code>/power-platform-llm-wiki:</code>: scrivilo e usa il
+                con <code>/power-platform-wiki-</code>: scrivilo e usa il
                 completamento.
               </p>
             </details>
@@ -2800,12 +2800,12 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
               </summary>
               <p lang="en">
                 Check organization and project with
-                <code>/power-platform-llm-wiki:config</code> and make sure you
+                <code>/power-platform-wiki-config</code> and make sure you
                 have access to the project.
               </p>
               <p lang="it">
                 Controlla organizzazione e progetto con
-                <code>/power-platform-llm-wiki:config</code> e verifica di avere
+                <code>/power-platform-wiki-config</code> e verifica di avere
                 accesso al progetto.
               </p>
             </details>
@@ -2813,23 +2813,23 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
               <summary>
                 <span lang="en"
                   >The lint reports errors after
-                  <code>/power-platform-llm-wiki:init</code></span
+                  <code>/power-platform-wiki-init</code></span
                 ><span lang="it"
                   >Il lint segnala errori dopo
-                  <code>/power-platform-llm-wiki:init</code></span
+                  <code>/power-platform-wiki-init</code></span
                 >
               </summary>
               <p lang="en">
                 Read the error list (or the
                 <code>llm-wiki/wiki/lint-*.md</code> report generated by
-                <code>/power-platform-llm-wiki:update --lint</code>), fix and
-                run <code>/power-platform-llm-wiki:update --lint</code> again.
+                <code>/power-platform-wiki-update --lint</code>), fix and
+                run <code>/power-platform-wiki-update --lint</code> again.
               </p>
               <p lang="it">
                 Leggi l'elenco degli errori (o il report
                 <code>llm-wiki/wiki/lint-*.md</code> generato da
-                <code>/power-platform-llm-wiki:update --lint</code>), correggi e
-                rilancia <code>/power-platform-llm-wiki:update --lint</code>.
+                <code>/power-platform-wiki-update --lint</code>), correggi e
+                rilancia <code>/power-platform-wiki-update --lint</code>.
               </p>
             </details>
             <details>
@@ -2838,11 +2838,11 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins</code></pre
                 ><span lang="it">Vuoi ripartire da zero</span>
               </summary>
               <p lang="en">
-                Run <code>/power-platform-llm-wiki:init</code> again: it does
+                Run <code>/power-platform-wiki-init</code> again: it does
                 not overwrite pages or documents already in <code>raw/</code>.
               </p>
               <p lang="it">
-                Rilancia <code>/power-platform-llm-wiki:init</code>: non
+                Rilancia <code>/power-platform-wiki-init</code>: non
                 sovrascrive le pagine né i documenti già presenti in
                 <code>raw/</code>.
               </p>

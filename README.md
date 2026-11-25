@@ -18,7 +18,7 @@ One repository, one marketplace: add it once to **VS Code (GitHub Copilot)**, **
 | Plugin | Version | What it does | VS Code | Copilot CLI | Claude Code | Docs |
 | --- | --- | --- | :-: | :-: | :-: | --- |
 | 🧪 [`dataverse-poc`](plugins/dataverse-poc/README.md) | 2.1.0 | Multi-agent **Dataverse POC**: an orchestrator plans the POC (model-driven, code app or Power Pages SPA site) and delegates to sub-agents for the HTML/YAML prototype, data model, demo data, forms/views/sitemap, generative pages, PCF, web resources, code app, React Power Pages site, tests and deploy. Deterministic scripts do the mechanical work: init, prototype pipeline, React site scaffold, preflight and solution checks. A `PreToolUse` guard asks before risky PAC/PACX commands. Content in Italian. | ✅ | ✅ | ✅ | [README](plugins/dataverse-poc/README.md) · [Tutorial 🇮🇹](docs/dataverse-poc/tutorial-init.md) · [CHANGELOG](plugins/dataverse-poc/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/dataverse-poc/) |
-| 📖 [`power-platform-llm-wiki`](plugins/power-platform-llm-wiki/README.md) | 3.3.1 | **LLM Wiki**: a code-first project knowledge base for Dynamics 365 (CE / Power Platform and F&O). It analyses code, Dataverse and F&O metadata, work items, meetings and FDD/TDD, and publishes to Azure DevOps Wiki or GitHub Wiki. | ✅ | ✅ | ✅ | [Guide](docs/power-platform-llm-wiki/README.md) · [Guida utente 🇮🇹](docs/power-platform-llm-wiki/guida-utente.md) · [CHANGELOG](plugins/power-platform-llm-wiki/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/) |
+| 📖 [`power-platform-llm-wiki`](plugins/power-platform-llm-wiki/README.md) | 4.0.0 | **LLM Wiki**: a code-first project knowledge base for Dynamics 365 (CE / Power Platform and F&O). It analyses code, Dataverse and F&O metadata, work items, meetings and FDD/TDD, and publishes to Azure DevOps Wiki or GitHub Wiki. | ✅ | ✅ | ✅ | [Guide](docs/power-platform-llm-wiki/README.md) · [Guida utente 🇮🇹](docs/power-platform-llm-wiki/guida-utente.md) · [CHANGELOG](plugins/power-platform-llm-wiki/CHANGELOG.md) · [Website](https://raythekool.github.io/power-platform-plugins/power-platform-llm-wiki/) |
 
 ## 🚀 Install
 
@@ -51,7 +51,7 @@ claude plugin install power-platform-llm-wiki@power-platform-plugins
 The same commands work inside a session as `/plugin marketplace add ...` and `/plugin install ...`. Run `/plugin` to browse the marketplace. To update: `claude plugin update <plugin>@power-platform-plugins`.
 
 > [!IMPORTANT]
-> Plugin commands are namespaced: for example `/dataverse-poc:poc` and `/power-platform-llm-wiki:init`. Each plugin README explains how to start it in each tool.
+> Plugin commands are namespaced in Claude Code (for example `/dataverse-poc:poc`). LLM Wiki skills always start with `power-platform-wiki-` (for example `/power-platform-wiki-init`) in every tool. Each plugin README explains how to start it in each tool.
 
 ## 🔁 Moving from the old marketplaces
 
@@ -67,7 +67,7 @@ Both plugins used to have a marketplace of their own. Those repositories are arc
    - Copilot CLI: `copilot plugin marketplace remove <old>`;
    - Claude Code: `claude plugin marketplace remove <old>`.
 2. Add `raythekool/power-platform-plugins` and install again, as shown in [🚀 Install](#-install).
-3. LLM Wiki projects: run `/power-platform-llm-wiki:config --refresh-engine` once. Nothing else changes in the project.
+3. LLM Wiki projects: run `/power-platform-wiki-config --refresh-engine` once. Nothing else changes in the project.
 
 ## 🗂️ Repository layout
 

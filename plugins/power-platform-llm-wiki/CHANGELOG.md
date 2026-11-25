@@ -1,7 +1,20 @@
 ## Changelog
 
-## Unreleased
+## 4.0.0 - 2026-11-24
 
+### Breaking
+
+- 🏷️ The skills are renamed with the `power-platform-wiki-` prefix: `init` → `power-platform-wiki-init`, `config` → `power-platform-wiki-config`, `update` → `power-platform-wiki-update`, `ingest` → `power-platform-wiki-ingest`, `query` → `power-platform-wiki-query` (folders `skills/power-platform-wiki-*/`). In VS Code and Copilot CLI the commands no longer clash with the tools' own `/init` and `/update`. In Claude Code the bare `/power-platform-wiki-<skill>` works when no other command has that name; the canonical form is `/power-platform-llm-wiki:power-platform-wiki-<skill>`.
+
+### Migration
+
+1. Update the plugin, then use the new names: `/power-platform-llm-wiki:init` → `/power-platform-wiki-init` (same for `config`, `update`, `ingest`, `query`).
+2. In each project run `/power-platform-wiki-config --refresh-engine` once. The engine layout (`llm-wiki/.engine/skills/{update,ingest,query}/`) is unchanged, so headless automations keep working without edits.
+3. Update any personal notes, scripts or project instructions that mention the old command names.
+
+### Other
+
+- 🛡️ `Validate-Plugin.ps1` rejects the old `power-platform-llm-wiki:<skill>` command names.
 - 📦 The plugin is now distributed from the `raythekool/power-platform-plugins` marketplace (install as `power-platform-llm-wiki@power-platform-plugins`), which replaces `raythekool/power-platform-llm-wiki`. Docs, tests and website moved to `docs/`, `tests/`, `site/power-platform-llm-wiki/` of that repository; the plugin content is unchanged.
 
 ## 3.3.1 - 2026-10-20

@@ -1,5 +1,5 @@
 ---
-name: update
+name: power-platform-wiki-update
 description: "Maintain the LLM Wiki. Sync sources into raw/ and wiki/: code repositories (Azure Repos, GitHub, TFVC / TFS, local folders; code-first as-built docs with requirement traceability and FDD-vs-code drift), Azure DevOps work items, Dataverse metadata, Dynamics 365 F&O metadata, GitHub activity. Also: full incremental run (--full), deterministic lint (--lint), publish to Azure DevOps Wiki or GitHub Wiki (--publish), sprint snapshot (--sprint), review/certify pages on human request (--review / --certify). Headless-safe."
 argument-hint: "[--source code|devops|dataverse|fno|github|all] [--full] [--lint] [--publish] [--sprint [<id>]] [--review|--certify <page> --by <name>]"
 user-invocable: true
@@ -43,7 +43,7 @@ Without flags: ask which mode (interactive) or run `--full` (headless).
 ## Phase 0 - Bootstrap
 
 1. Read `llm-wiki/wiki.config.yml` and `llm-wiki/wiki/index.md`.
-2. Compare `llm-wiki/.engine/VERSION` with the plugin version (`plugin.json`, two folders above the plugin's skills). If they differ, tell the user to run `/power-platform-llm-wiki:config --refresh-engine` (headless: continue with the installed engine and mention it in the PR).
+2. Compare `llm-wiki/.engine/VERSION` with the plugin version (`plugin.json`, two folders above the plugin's skills). If they differ, tell the user to run `/power-platform-wiki-config --refresh-engine` (headless: continue with the installed engine and mention it in the PR).
 3. Expand the flags into an ordered list of phases.
 
 ## Phase 1 - Sources
