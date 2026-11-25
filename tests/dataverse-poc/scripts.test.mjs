@@ -2,7 +2,7 @@
 // The end-to-end scaffold test needs npm registry access (npm install in a temp POC); set SKIP_E2E=1 to skip it.
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
@@ -264,7 +264,8 @@ async function checkPowerPagesSpa(root) {
 async function checkPowerPagesBrowser(root, spa) {
     const { createServer } = await import(pathToFileURL(join(spa, 'node_modules', 'vite', 'dist', 'node', 'index.js')).href);
     const { chromium } = createRequire(join(root, 'package.json'))('playwright-core');
-    const server = await createServer({ root: spa, mode: 'mock', server: { port: 0, host: '127.0.0.1' } });
+    // Vite compares ids against a canonical root: an 8.3 short path (Windows tmpdir) leaves modules untransformed.
+    const server = await createServer({ root: realpathSync.native(spa), mode: 'mock', server: { port: 0, host: '127.0.0.1' } });
     let browser;
     try {
         await server.listen();
@@ -385,5 +386,6 @@ test('scaffold + Sales Hub baseline + pipeline check (end to end)', { skip: proc
         writeFileSync(index, readFileSync(index, 'utf8').replace(/appType: \S+/, 'appType: canvas'));
         assert.throws(() => execFileSync(process.execPath, [join(root, 'scripts', 'validate-poc-config.mjs')], { stdio: 'pipe' }));
     }
-    rmSync(dir, { recursive: true });
+    // On Windows, Rollup's native addon and esbuild's binary loaded by Vite stay locked until this process exits.
+    try { rmSync(dir, { recursive: true }); } catch (error) { if (process.platform !== 'win32') throw error; }
 });
